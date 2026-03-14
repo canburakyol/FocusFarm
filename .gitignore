@@ -23,3 +23,9 @@ app/google-services.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Internal AI / Planning
+.agent/
+.gemini/
+.planning/
+build-output.txt
