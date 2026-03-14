@@ -29,3 +29,11 @@ Thumbs.db
 .gemini/
 .planning/
 build-output.txt
+
+# Project Notes & Scripts (Kept local only)
+*.md
+!README.md
+scripts/
+privacy-policy/
+canburakyol.github.io/
+.firebaserc
