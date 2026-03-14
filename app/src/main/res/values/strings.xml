@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="PluralsCandidate">
+    <string name="app_name">Focus Farm</string>
+
+    <string name="tab_home">Ana Sayfa</string>
+    <string name="tab_garden">Bahçem</string>
+    <string name="tab_stats">İstatistik</string>
+    <string name="tab_shop">Mağaza</string>
+
+    <string name="greeting">Focus Farm</string>
+    <string name="greeting_subtitle">Bugün neye odaklanacaksın?</string>
+    <string name="start_focus">Odak Oturumunu Başlat</string>
+    <string name="select_plant">Bitki Seç</string>
+    <string name="select_duration">Süre Seç</string>
+    <string name="minutes_short">%d dk</string>
+    <string name="min_session">Minimum %d dk</string>
+    <string name="focus_session">Odak Oturumu</string>
+    <string name="focus_tip">Telefonu kenara bırak, ritmini koru.</string>
+    <string name="app_leave_warning">Uygulamadan uzun süre ayrı kalırsan bu oturumdaki bitki kaybolur.</string>
+    <string name="give_up">Pes Et</string>
+
+    <string name="abandon_title">Oturumu bırakmak istiyor musun?</string>
+    <string name="abandon_message">Şimdi çıkarsan bu oturumdaki bitkin kaybolur.</string>
+    <string name="abandon_confirm">Oturumu Bırak</string>
+    <string name="continue_btn">Devam Et</string>
+
+    <string name="plant_died">Bitki Soldu</string>
+    <string name="plant_died_desc">Oturum bitmeden uygulamadan uzun süre ayrı kaldığın için bitkin soldu. Yeniden deneyebilirsin.</string>
+    <string name="session_complete">Oturum Tamamlandı</string>
+    <string name="go_garden">Bahçeye Git</string>
+    <string name="go_home">Ana Sayfaya Dön</string>
+    <string name="go_back">Geri</string>
+
+    <string name="session_reflection_label">Oturum Notu</string>
+    <string name="session_reflection_placeholder">Bu oturumda ne iyi gitti? Sonraki adımın ne?</string>
+    <string name="session_reflection_save">Notu Kaydet</string>
+    <string name="session_reflection_saved">Not kaydedildi</string>
+    <string name="reflection_history_title">Odak Notları</string>
+
+    <string name="empty_garden_title">Bahçen Henüz Boş</string>
+    <string name="empty_garden_desc">İlk başarılı odak oturumundan sonra bitkilerin burada görünecek.</string>
+    <string name="collection_book">Koleksiyon</string>
+    <string name="collection_subtitle">Yetiştirdiğin tüm bitkileri burada takip et.</string>
+    <string name="collection_premium_locked">Premium kilitli</string>
+    <string name="collection_not_discovered">Henüz keşfedilmedi</string>
+    <string name="collection_discovered_count">%d kez yetiştirildi</string>
+    <string name="collection_last_grown">Son yetiştirme: %s</string>
+    <string name="collection_claim_reward">Ödülü Al</string>
+    <string name="collection_reward_claimed">Koleksiyon ödülü alındı</string>
+    <string name="collection_reward_seeds">Keşif ödülü: +%d seed</string>
+
+    <string name="total_plants">Toplam Bitki</string>
+    <string name="total_sessions">Toplam Oturum</string>
+    <string name="total_focus">Toplam Odak</string>
+    <string name="total_focus_hours_minutes">%1$d sa %2$d dk</string>
+    <string name="total_focus_minutes">%d dk</string>
+    <string name="focused_minutes">%d dakika odaklandın</string>
+    <string name="total_hours_short">%d sa</string>
+
+    <string name="today">Bugün</string>
+    <string name="today_focus">Bugünkü Odak</string>
+    <string name="current_streak">Seri</string>
+    <string name="streak_days_short">%d gün</string>
+
+    <string name="daily_plan_title">Günlük Plan</string>
+    <string name="daily_plan_subtitle">Hedefe dengeli ilerle.</string>
+    <string name="daily_plan_progress">Oturum %1$d/%2$d - Dakika %3$d/%4$d</string>
+    <string name="daily_plan_action_start">Planı Başlat (%d dk)</string>
+
+    <string name="personal_goal_title">Kişisel Hedefin</string>
+    <string name="personal_goal_default">Bugün ritmini korumak için en az bir odak oturumu tamamla.</string>
+    <string name="personal_goal_complete">Bugünkü planı tamamladın. İstersen ekstra bir seansla avantajı büyüt.</string>
+    <string name="personal_goal_push">Bugün hedefe ulaşmak için %1$d oturum ve %2$d dakika kaldı.</string>
+    <string name="personal_goal_weekly_reward">Haftalık hedef tamamlandı. Ödülünü almayı unutma.</string>
+    <string name="personal_goal_weekly_done">Bu hafta hedefini tamamladın. Ritmini koru.</string>
+
+    <string name="engagement_nudge_title">Hızlı Başlangıç</string>
+    <string name="nudge_first_focus_title">İlk odak oturumunu başlat</string>
+    <string name="nudge_first_focus_body">Kısa bir başlangıç bugün ritmini belirler.</string>
+    <string name="nudge_first_focus_action">Hemen Başla (%d dk)</string>
+    <string name="nudge_streak_risk_title">Seri riski var</string>
+    <string name="nudge_streak_risk_body">Kısa bir seansla serini güvenceye alabilirsin.</string>
+    <string name="nudge_streak_risk_action">Seriyi Koru (%d dk)</string>
+    <string name="nudge_weekly_push_title">Haftalık hedefe yaklaş</string>
+    <string name="nudge_weekly_push_body">Bugün biraz daha odaklanırsan haftalık hedefe güçlü yaklaşırsın.</string>
+    <string name="nudge_weekly_push_action">Hedefi İlerle (%d dk)</string>
+    <string name="nudge_plan_finish_title">Günlük planı tamamla</string>
+    <string name="nudge_plan_finish_body">Planı kapatmak için kısa bir odak turu yeterli.</string>
+    <string name="nudge_plan_finish_action">Planı Bitir (%d dk)</string>
+
+    <string name="weekly_report_title">Haftalık Kişisel Rapor</string>
+    <string name="weekly_report_subtitle">%1$s haftası</string>
+    <string name="weekly_report_stat_sessions">Toplam Oturum</string>
+    <string name="weekly_report_stat_minutes">Toplam Odak</string>
+    <string name="weekly_report_stat_average">Ortalama Seans</string>
+    <string name="weekly_report_stat_longest">En Uzun Seans</string>
+    <string name="weekly_report_best_day">En güçlü gün: %1$s (%2$d dk)</string>
+    <string name="weekly_report_insight_label">Öne Çıkan</string>
+    <string name="weekly_report_insight_great">Geçen hafta çok güçlü bir odak ritmi yakaladın. Bu ivmeyi koru.</string>
+    <string name="weekly_report_insight_good">Düzenli ve sağlam ilerliyorsun. Bu hafta bir adım daha ileri gidebilirsin.</string>
+    <string name="weekly_report_insight_start">Ritmi yeniden kurmak için bugün kısa bir seansla başlamak yeterli.</string>
+    <string name="weekly_report_next_goal">Bu haftaki kişisel hedef: %d dakika</string>
+    <string name="weekly_report_action_start">Hedefe Başla (%d dk)</string>
+    <string name="weekly_report_action_later">Daha Sonra</string>
+
+    <string name="daily_quests_title">Günlük Görevler</string>
+    <string name="quest_complete_sessions">%d oturum tamamla</string>
+    <string name="quest_focus_minutes">%d dakika odaklan</string>
+    <string name="quest_deep_session">Tek seferde %d dakika odaklan</string>
+    <string name="quest_claim">Ödülü Al</string>
+    <string name="quest_claimed">Alındı</string>
+    <string name="quest_reward_seeds">Ödül: +%d seed</string>
+
+    <string name="weekly_challenge_progress">Oturum %1$d/%2$d - Dakika %3$d/%4$d</string>
+    <string name="weekly_reward_seeds">Haftalık ödül: +%d seed</string>
+    <string name="weekly_reward_claim">Haftalık Ödülü Al</string>
+    <string name="weekly_reward_claimed">Haftalık ödül alındı</string>
+
+    <string name="seed_balance">Seed Cüzdanı</string>
+    <string name="seed_balance_short">%d seed</string>
+    <string name="freeze_tokens">Freeze Hakkı</string>
+    <string name="freeze_tokens_short">%d adet</string>
+    <string name="use_streak_freeze">Streak Freeze Kullan</string>
+
+    <string name="last_session">Son Oturum</string>
+    <string name="last_minute">Son dakika</string>
+    <string name="minutes_remaining">%d dakika kaldı</string>
+
+    <string name="this_week">Bu Hafta</string>
+    <string name="recent_sessions">Son Oturumlar</string>
+    <string name="duration_minutes_short">%d dk</string>
+    <string name="no_data_title">Henüz veri yok</string>
+    <string name="no_data_desc">İlk oturumu tamamladığında istatistikler burada görünür.</string>
+
+    <string name="day_mon_short">Pzt</string>
+    <string name="day_tue_short">Sal</string>
+    <string name="day_wed_short">Çar</string>
+    <string name="day_thu_short">Per</string>
+    <string name="day_fri_short">Cum</string>
+    <string name="day_sat_short">Cmt</string>
+    <string name="day_sun_short">Paz</string>
+
+    <string name="shop_subtitle">Koleksiyonunu genişlet</string>
+    <string name="admob_app_id">ca-app-pub-3074026744164717~3241143217</string>
+    <string name="admob_rewarded_unit_id">ca-app-pub-3074026744164717/3456765631</string>
+    <string name="admob_banner_unit_id">ca-app-pub-3074026744164717/8709092317</string>
+    <string name="ad_banner_label">Destek için reklam</string>
+    <string name="ad_rewards_title">Bonus Merkezi</string>
+    <string name="ad_rewards_desc">Kısa reklam izleyerek ekstra ödül kazan.</string>
+    <string name="ad_reward_quest_reroll_action">Reklam İzle • 1 Görevi Yenile</string>
+    <string name="ad_reward_quest_reroll_done">Görev yenileme bugün kullanıldı</string>
+    <string name="ad_reward_next_session_boost_action">Reklam İzle • Sonraki Oturum 2x Seed</string>
+    <string name="ad_reward_next_session_boost_ready">2x Seed bonusu hazır</string>
+    <string name="ad_reward_seeds_action">Reklam İzle • +%d seed</string>
+    <string name="ad_reward_freeze_action">Reklam İzle • +%d freeze</string>
+    <string name="premium_title">Premium</string>
+    <string name="premium_desc">Ek bitkiler, reklamsız deneyim ve gelişmiş istatistikler.</string>
+    <string name="premium_locked_hint">Premium bitkiler için Mağaza sekmesini ziyaret et.</string>
+    <string name="shop_loading_products">Premium planlar yükleniyor…</string>
+    <string name="shop_billing_disconnected">Google Play bağlantısı kurulamadı.</string>
+    <string name="shop_retry">Tekrar Dene</string>
+    <string name="shop_premium_active">Premium aktif. Tüm premium bitkiler kullanımda.</string>
+    <string name="shop_plans_title">Premium Planlar</string>
+    <string name="shop_buy_now">Satın Al</string>
+    <string name="shop_current_plan">Aktif</string>
+    <string name="shop_restore">Satın Alımları Yenile</string>
+    <string name="plan_monthly">Aylık</string>
+    <string name="plan_yearly">Yıllık</string>
+    <string name="plan_lifetime">Ömür Boyu</string>
+
+    <string name="free_badge">Ücretsiz</string>
+    <string name="premium_badge">Premium</string>
+    <string name="unlocked_badge">Açık</string>
+
+    <string name="reminder_title">Odak zamanı</string>
+    <string name="reminder_body">Kısa bir oturumla ritmini koru.</string>
+
+    <string name="action_ok">Tamam</string>
+
+    <string name="status_quest_claimed">+%d seed kazanıldı.</string>
+    <string name="status_quest_claim_failed">Görev ödülü alınamadı.</string>
+    <string name="status_freeze_used">Streak Freeze kullanıldı. Seri korundu.</string>
+    <string name="status_freeze_failed">Freeze hakkı kullanılamadı.</string>
+    <string name="status_weekly_reward_claimed">Haftalık ödül alındı: +%d seed.</string>
+    <string name="status_weekly_reward_already_claimed">Haftalık ödül zaten alınmış.</string>
+    <string name="status_collection_reward_unavailable">Bu ödül şu anda alınamıyor.</string>
+    <string name="status_collection_reward_claimed">%1$s ödülü alındı: +%2$d seed.</string>
+    <string name="status_collection_reward_already_claimed">Bu koleksiyon ödülü daha önce alınmış.</string>
+    <string name="status_ad_reward_seeds">Reklam ödülü alındı: +%d seed.</string>
+    <string name="status_ad_reward_freeze">Reklam ödülü alındı: +%d freeze hakkı.</string>
+    <string name="status_ad_not_ready">Reklam henüz hazır değil. Kısa süre sonra tekrar dene.</string>
+    <string name="status_quest_reroll_already_used">Bugünkü görev yenileme hakkını kullandın.</string>
+    <string name="status_quest_reroll_unavailable">Şu an yenilenebilecek görev yok.</string>
+    <string name="status_quest_rerolled">Görev yenilendi. Yeni ödül: +%d seed.</string>
+    <string name="status_next_session_boost_armed">Hazır. Sonraki başarılı oturum 2x seed verecek.</string>
+    <string name="status_next_session_boost_already_active">2x seed bonusu zaten aktif.</string>
+    <string name="status_session_revived">Oturum kurtarıldı. Devam et.</string>
+    <string name="status_session_revive_unavailable">Bu oturum için kurtarma hakkı kullanılamıyor.</string>
+    <string name="session_revive_with_ad">Reklam İzle ve Oturumu Kurtar</string>
+    <string name="session_revive_now">Oturumu Kurtar</string>
+    <string name="session_reward_loading">Oturum ödülü hesaplanıyor…</string>
+    <string name="session_reward_seeds">Oturum ödülü: +%d seed</string>
+    <string name="session_reward_seeds_boosted">Oturum ödülü: +%1$d seed (2x bonus, normal %2$d)</string>
+</resources>

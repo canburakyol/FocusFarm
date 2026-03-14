@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@color/ic_launcher_vivid_sun"
+        android:pathData="M54,18C47,18 42,23 42,30C42,37 47,42 54,42C61,42 66,37 66,30C66,23 61,18 54,18Z" />
+    <path
+        android:fillColor="@color/ic_launcher_vivid_stem"
+        android:pathData="M51,40h6v34h-6z" />
+    <path
+        android:fillColor="@color/ic_launcher_vivid_leaf_left"
+        android:pathData="M54,48C41,48 30,40 28,28C40,28 51,36 54,48Z" />
+    <path
+        android:fillColor="@color/ic_launcher_vivid_leaf_right"
+        android:pathData="M54,48C67,48 78,40 80,28C68,28 57,36 54,48Z" />
+    <path
+        android:fillColor="@color/ic_launcher_vivid_soil"
+        android:pathData="M30,74C37,84 71,84 78,74L74,88H34Z" />
+    <path
+        android:fillColor="@color/ic_launcher_vivid_highlight"
+        android:pathData="M36,76C42,82 66,82 72,76V80C66,85 42,85 36,80Z" />
+</vector>

@@ -1,0 +1,25 @@
+# Built outputs
+/build/
+/app/build/
+
+# Gradle
+.gradle/
+local.properties
+
+# Signing
+*.jks
+*.keystore
+
+# Firebase
+app/google-services.json
+
+# IDE
+.idea/
+*.iml
+
+# Kotlin
+.kotlin/
+
+# OS
+.DS_Store
+Thumbs.db
