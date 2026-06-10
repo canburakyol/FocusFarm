@@ -18,7 +18,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         StreakHistoryEntity::class,
     ],
     version = 6,
-    exportSchema = false,
+    exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun sessionDao(): SessionDao
