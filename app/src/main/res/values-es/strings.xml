@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="PluralsCandidate">
+    <string name="app_name">Focus Farm</string>
+
+    <string name="tab_home">Inicio</string>
+    <string name="tab_garden">Mi Jardín</string>
+    <string name="tab_stats">Estadísticas</string>
+    <string name="tab_shop">Tienda</string>
+
+    <string name="greeting">Focus Farm</string>
+    <string name="greeting_subtitle">¿En qué te vas a concentrar hoy?</string>
+    <string name="start_focus">Iniciar sesión de enfoque</string>
+    <string name="select_plant">Elegir planta</string>
+    <string name="select_duration">Elegir duración</string>
+    <string name="minutes_short">%d min</string>
+    <string name="min_session">Mínimo %d min</string>
+    <string name="focus_session">Sesión de enfoque</string>
+    <string name="focus_tip">Deja el teléfono a un lado y mantén tu ritmo.</string>
+    <string name="app_leave_warning">Si te alejas de la app demasiado tiempo, tu planta se marchitará.</string>
+    <string name="give_up">Rendirse</string>
+
+    <string name="abandon_title">¿Quieres abandonar esta sesión?</string>
+    <string name="abandon_message">Si te rindes ahora, tu planta se marchitará.</string>
+    <string name="abandon_confirm">Abandonar sesión</string>
+    <string name="continue_btn">Continuar</string>
+
+    <string name="plant_died">Planta marchita</string>
+    <string name="plant_died_desc">Tu planta se marchitó porque dejaste la app demasiado tiempo antes de que terminara la sesión. Puedes intentarlo de nuevo.</string>
+    <string name="session_complete">Sesión completada</string>
+    <string name="session_finalizing_title">Guardando sesión</string>
+    <string name="session_finalizing_body">Tu sesión y recompensas se están guardando de forma segura. La pantalla de resultados aparecerá cuando se complete.</string>
+    <string name="session_finalizing_retry">Reintentar</string>
+    <string name="session_persist_failed_retry">No se pudo guardar la sesión. Reintenta para completar el guardado de forma segura.</string>
+    <string name="go_garden">Ir al jardín</string>
+    <string name="go_home">Volver al inicio</string>
+    <string name="go_back">Atrás</string>
+
+    <string name="session_reflection_label">Nota de sesión</string>
+    <string name="session_reflection_placeholder">¿Qué salió bien? ¿Cuál es tu siguiente paso?</string>
+    <string name="session_reflection_save">Guardar nota</string>
+    <string name="session_reflection_saved">Nota guardada</string>
+    <string name="reflection_history_title">Notas de enfoque</string>
+
+    <string name="empty_garden_title">Tu jardín está vacío</string>
+    <string name="empty_garden_desc">Tus plantas aparecerán aquí después de tu primera sesión de enfoque exitosa.</string>
+    <string name="collection_book">Colección</string>
+    <string name="collection_subtitle">Sigue aquí todas las plantas que has cultivado.</string>
+    <string name="collection_premium_locked">Bloqueado para Premium</string>
+    <string name="collection_not_discovered">Aún no descubierta</string>
+    <string name="collection_discovered_count">Cultivada %d veces</string>
+    <string name="collection_last_grown">Último cultivo: %s</string>
+    <string name="collection_claim_reward">Reclamar recompensa</string>
+    <string name="collection_reward_claimed">Recompensa de colección obtenida</string>
+    <string name="collection_reward_seeds">Recompensa de descubrimiento: +%d seeds</string>
+
+    <string name="total_plants">Plantas totales</string>
+    <string name="total_sessions">Sesiones totales</string>
+    <string name="total_focus">Enfoque total</string>
+    <string name="total_focus_hours_minutes">%1$d h %2$d min</string>
+    <string name="total_focus_minutes">%d min</string>
+    <string name="focused_minutes">%d minutos de enfoque</string>
+    <string name="total_hours_short">%d h</string>
+
+    <string name="today">Hoy</string>
+    <string name="today_focus">Enfoque de hoy</string>
+    <string name="current_streak">Racha</string>
+    <string name="streak_days_short">%d días</string>
+
+    <string name="daily_plan_title">Plan diario</string>
+    <string name="daily_plan_subtitle">Avanza con constancia hacia tu meta.</string>
+    <string name="daily_plan_progress">Sesión %1$d/%2$d — Minuto %3$d/%4$d</string>
+    <string name="daily_plan_action_start">Iniciar plan (%d min)</string>
+
+    <string name="personal_goal_title">Tu objetivo personal</string>
+    <string name="personal_goal_default">Completa al menos una sesión de enfoque hoy para mantener tu ritmo.</string>
+    <string name="personal_goal_complete">Completaste el plan de hoy. Intenta una sesión extra para ampliar tu ventaja.</string>
+    <string name="personal_goal_push">Faltan %1$d sesiones y %2$d minutos para alcanzar la meta de hoy.</string>
+    <string name="personal_goal_weekly_reward">Objetivo semanal completado. No olvides reclamar tu recompensa.</string>
+    <string name="personal_goal_weekly_done">Alcanzaste tu objetivo semanal. Mantén el ritmo.</string>
+
+    <string name="engagement_nudge_title">Inicio rápido</string>
+    <string name="nudge_first_focus_title">Inicia tu primera sesión de enfoque</string>
+    <string name="nudge_first_focus_body">Un inicio corto marca el tono del día.</string>
+    <string name="nudge_first_focus_action">Empezar ahora (%d min)</string>
+    <string name="nudge_streak_risk_title">Racha en riesgo</string>
+    <string name="nudge_streak_risk_body">Una sesión rápida puede asegurar tu racha.</string>
+    <string name="nudge_streak_risk_action">Proteger racha (%d min)</string>
+    <string name="nudge_weekly_push_title">Acércate al objetivo semanal</string>
+    <string name="nudge_weekly_push_body">Un poco más de enfoque hoy y estarás fuerte para la meta semanal.</string>
+    <string name="nudge_weekly_push_action">Avanzar hacia la meta (%d min)</string>
+    <string name="nudge_plan_finish_title">Completa el plan diario</string>
+    <string name="nudge_plan_finish_body">Una ronda corta de enfoque basta para cerrar el plan.</string>
+    <string name="nudge_plan_finish_action">Terminar plan (%d min)</string>
+
+    <string name="weekly_report_title">Informe personal semanal</string>
+    <string name="weekly_report_subtitle">Semana del %1$s</string>
+    <string name="weekly_report_stat_sessions">Sesiones totales</string>
+    <string name="weekly_report_stat_minutes">Enfoque total</string>
+    <string name="weekly_report_stat_average">Sesión promedio</string>
+    <string name="weekly_report_stat_longest">Sesión más larga</string>
+    <string name="weekly_report_best_day">Mejor día: %1$s (%2$d min)</string>
+    <string name="weekly_report_insight_label">Destacado</string>
+    <string name="weekly_report_insight_great">Tuviste un ritmo de enfoque increíble la semana pasada. Mantén el impulso.</string>
+    <string name="weekly_report_insight_good">Avanzas con constancia. Da un paso más esta semana.</string>
+    <string name="weekly_report_insight_start">Una sesión corta hoy es suficiente para reconstruir tu ritmo.</string>
+    <string name="weekly_report_next_goal">Objetivo personal de la semana: %d minutos</string>
+    <string name="weekly_report_action_start">Empezar objetivo (%d min)</string>
+    <string name="weekly_report_action_later">Más tarde</string>
+
+    <string name="daily_quests_title">Misiones diarias</string>
+    <string name="quest_complete_sessions">Completa %d sesiones</string>
+    <string name="quest_focus_minutes">Concéntrate %d minutos</string>
+    <string name="quest_deep_session">Concéntrate %d minutos en una sesión</string>
+    <string name="quest_claim">Reclamar recompensa</string>
+    <string name="quest_claimed">Reclamada</string>
+    <string name="quest_reward_seeds">Recompensa: +%d seeds</string>
+
+    <string name="weekly_challenge_progress">Sesión %1$d/%2$d — Minuto %3$d/%4$d</string>
+    <string name="weekly_reward_seeds">Recompensa semanal: +%d seeds</string>
+    <string name="weekly_reward_claim">Reclamar recompensa semanal</string>
+    <string name="weekly_reward_claimed">Recompensa semanal reclamada</string>
+
+    <string name="seed_balance">Billetera de seeds</string>
+    <string name="seed_balance_short">%d seeds</string>
+    <string name="freeze_tokens">Tokens de congelación</string>
+    <string name="freeze_tokens_short">%d tokens</string>
+    <string name="use_streak_freeze">Usar Streak Freeze</string>
+
+    <string name="last_session">Última sesión</string>
+    <string name="last_minute">Último minuto</string>
+    <string name="minutes_remaining">%d minutos restantes</string>
+
+    <string name="this_week">Esta semana</string>
+    <string name="recent_sessions">Sesiones recientes</string>
+    <string name="duration_minutes_short">%d min</string>
+    <string name="no_data_title">Aún no hay datos</string>
+    <string name="no_data_desc">Las estadísticas aparecerán aquí después de completar tu primera sesión.</string>
+
+    <string name="day_mon_short">Lun</string>
+    <string name="day_tue_short">Mar</string>
+    <string name="day_wed_short">Mié</string>
+    <string name="day_thu_short">Jue</string>
+    <string name="day_fri_short">Vie</string>
+    <string name="day_sat_short">Sáb</string>
+    <string name="day_sun_short">Dom</string>
+
+    <string name="shop_subtitle">Amplía tu colección</string>
+    <string name="ad_banner_label">Anuncio de apoyo</string>
+    <string name="ad_rewards_title">Centro de bonificaciones</string>
+    <string name="ad_rewards_desc">Mira un anuncio corto para ganar recompensas extra.</string>
+    <string name="ad_consent_pending_title">Consentimiento de anuncios pendiente</string>
+    <string name="ad_consent_pending_body">Las superficies de anuncios estarán disponibles una vez registrado tu consentimiento.</string>
+    <string name="ad_reward_quest_reroll_action">Ver anuncio • Renovar 1 misión</string>
+    <string name="ad_reward_quest_reroll_done">Renovación de misión usada hoy</string>
+    <string name="ad_reward_next_session_boost_action">Ver anuncio • Próxima sesión 2x Seeds</string>
+    <string name="ad_reward_next_session_boost_ready">Bono 2x Seeds listo</string>
+    <string name="ad_reward_seeds_action">Ver anuncio • +%d seeds</string>
+    <string name="ad_reward_freeze_action">Ver anuncio • +%d freeze</string>
+    <string name="premium_title">Premium</string>
+    <string name="premium_desc">Plantas adicionales, experiencia sin anuncios y estadísticas avanzadas.</string>
+    <string name="premium_locked_hint">Visita la pestaña Tienda para plantas premium.</string>
+    <string name="shop_loading_products">Cargando planes premium…</string>
+    <string name="shop_billing_disconnected">No se pudo conectar a Google Play.</string>
+    <string name="shop_retry">Reintentar</string>
+    <string name="shop_premium_active">Premium activo. Todas las plantas premium están disponibles.</string>
+    <string name="shop_plans_title">Planes Premium</string>
+    <string name="shop_buy_now">Comprar</string>
+    <string name="shop_current_plan">Activo</string>
+    <string name="shop_restore">Restaurar compras</string>
+    <string name="plan_monthly">Mensual</string>
+    <string name="plan_yearly">Anual</string>
+    <string name="plan_lifetime">De por vida</string>
+
+    <string name="free_badge">Gratis</string>
+    <string name="premium_badge">Premium</string>
+    <string name="unlocked_badge">Desbloqueada</string>
+
+    <string name="reminder_title">Hora de enfocarse</string>
+    <string name="reminder_body">Mantén tu ritmo con una sesión corta.</string>
+
+    <string name="action_ok">Aceptar</string>
+
+    <string name="status_quest_claimed">+%d seeds ganados.</string>
+    <string name="status_quest_claim_failed">No se pudo reclamar la recompensa de misión.</string>
+    <string name="status_freeze_used">Streak Freeze usado. Racha protegida.</string>
+    <string name="status_freeze_failed">No se pudo usar el token de congelación.</string>
+    <string name="status_weekly_reward_claimed">Recompensa semanal reclamada: +%d seeds.</string>
+    <string name="status_weekly_reward_already_claimed">Recompensa semanal ya reclamada.</string>
+    <string name="status_collection_reward_unavailable">Esta recompensa no está disponible actualmente.</string>
+    <string name="status_collection_reward_claimed">Recompensa %1$s reclamada: +%2$d seeds.</string>
+    <string name="status_collection_reward_already_claimed">Esta recompensa de colección ya fue reclamada.</string>
+    <string name="status_ad_reward_seeds">Recompensa de anuncio obtenida: +%d seeds.</string>
+    <string name="status_ad_reward_freeze">Recompensa de anuncio obtenida: +%d tokens de congelación.</string>
+    <string name="status_ad_not_ready">Anuncio aún no listo. Intenta de nuevo en un momento.</string>
+    <string name="status_quest_reroll_already_used">Ya usaste la renovación de misión de hoy.</string>
+    <string name="status_quest_reroll_unavailable">No hay misiones disponibles para renovar ahora.</string>
+    <string name="status_quest_rerolled">Misión renovada. Nueva recompensa: +%d seeds.</string>
+    <string name="status_next_session_boost_armed">Listo. Tu próxima sesión exitosa dará 2x seeds.</string>
+    <string name="status_next_session_boost_already_active">El bono 2x seeds ya está activo.</string>
+    <string name="status_session_revived">Sesión revivida. Continúa.</string>
+    <string name="status_session_revive_unavailable">La recuperación no está disponible para esta sesión.</string>
+    <string name="session_revive_with_ad">Ver anuncio y revivir sesión</string>
+    <string name="session_revive_now">Revivir sesión</string>
+    <string name="session_reward_loading">Calculando recompensa de sesión…</string>
+    <string name="session_reward_seeds">Recompensa de sesión: +%d seeds</string>
+    <string name="session_reward_seeds_boosted">Recompensa de sesión: +%1$d seeds (bono 2x, normal %2$d)</string>
+    <string name="paywall_title">FocusFarm Premium</string>
+    <string name="paywall_subtitle">Lleva tu enfoque mas lejos</string>
+    <string name="paywall_feature_1">Acceso a todas las plantas premium</string>
+    <string name="paywall_feature_2">Experiencia sin anuncios</string>
+    <string name="paywall_feature_3">Estadisticas avanzadas</string>
+    <string name="paywall_feature_4">Temas especiales de jardin</string>
+    <string name="paywall_feature_5">Derechos de freeze ilimitados</string>
+    <string name="paywall_feature_6">Ganancia de seeds x2</string>
+    <string name="paywall_trial_button">Probar gratis - 3 dias</string>
+    <string name="paywall_restore">Restaurar compras</string>
+    <string name="paywall_disclaimer">Despues de la prueba gratuita de 3 dias, el plan seleccionado se cobra automaticamente. Puedes cancelar cuando quieras.</string>
+    <string name="paywall_close">Cerrar</string>
+    <string name="paywall_recommended">RECOMENDADO</string>
+    <string name="paywall_error_purchase_failed">Compra fallida</string>
+    <string name="paywall_error_restore_failed">Restauracion fallida</string>
+</resources>

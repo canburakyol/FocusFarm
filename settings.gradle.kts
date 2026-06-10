@@ -15,3 +15,10 @@ dependencyResolutionManagement {
 
 rootProject.name = "FocusFarm"
 include(":app")
+include(":core:model")
+include(":core:data")
+include(":core:ui")
+include(":core:monetization")
+include(":feature-home")
+include(":feature-session")
+include(":feature-stats")

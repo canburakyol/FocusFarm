@@ -9,10 +9,12 @@
 
     <application
         android:name=".FocusFarmApp"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_premium"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round_premium"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FocusFarm">
         <meta-data
@@ -27,11 +29,24 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="focusfarm.app"
+                    android:pathPrefix="/referral"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
 
         <receiver
             android:name=".notifications.FocusReminderReceiver"
-            android:exported="false" />
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.focusfarm.app.action.FOCUS_REMINDER" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".notifications.BootCompletedReceiver"
@@ -41,6 +56,16 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

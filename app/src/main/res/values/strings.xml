@@ -27,6 +27,10 @@
     <string name="plant_died">Bitki Soldu</string>
     <string name="plant_died_desc">Oturum bitmeden uygulamadan uzun süre ayrı kaldığın için bitkin soldu. Yeniden deneyebilirsin.</string>
     <string name="session_complete">Oturum Tamamlandı</string>
+    <string name="session_finalizing_title">Oturum Kaydediliyor</string>
+    <string name="session_finalizing_body">Oturumun ve ödülün güvenli şekilde kaydediliyor. Bu adım tamamlanınca sonuç ekranı açılacak.</string>
+    <string name="session_finalizing_retry">Tekrar Dene</string>
+    <string name="session_persist_failed_retry">Oturum kaydı tamamlanamadı. Tekrar deneyerek kaydı güvenli şekilde bitirebilirsin.</string>
     <string name="go_garden">Bahçeye Git</string>
     <string name="go_home">Ana Sayfaya Dön</string>
     <string name="go_back">Geri</string>
@@ -141,12 +145,14 @@
     <string name="day_sun_short">Paz</string>
 
     <string name="shop_subtitle">Koleksiyonunu genişlet</string>
-    <string name="admob_app_id">ca-app-pub-3074026744164717~3241143217</string>
-    <string name="admob_rewarded_unit_id">ca-app-pub-3074026744164717/3456765631</string>
-    <string name="admob_banner_unit_id">ca-app-pub-3074026744164717/8709092317</string>
+    <string name="admob_app_id" translatable="false">ca-app-pub-3074026744164717~3241143217</string>
+    <string name="admob_rewarded_unit_id" translatable="false">ca-app-pub-3074026744164717/3456765631</string>
+    <string name="admob_banner_unit_id" translatable="false">ca-app-pub-3074026744164717/8709092317</string>
     <string name="ad_banner_label">Destek için reklam</string>
     <string name="ad_rewards_title">Bonus Merkezi</string>
     <string name="ad_rewards_desc">Kısa reklam izleyerek ekstra ödül kazan.</string>
+    <string name="ad_consent_pending_title">Reklam izni bekleniyor</string>
+    <string name="ad_consent_pending_body">Reklam yüzeyleri, izin tercihin tamamlandıktan sonra açılacak.</string>
     <string name="ad_reward_quest_reroll_action">Reklam İzle • 1 Görevi Yenile</string>
     <string name="ad_reward_quest_reroll_done">Görev yenileme bugün kullanıldı</string>
     <string name="ad_reward_next_session_boost_action">Reklam İzle • Sonraki Oturum 2x Seed</string>
@@ -201,4 +207,20 @@
     <string name="session_reward_loading">Oturum ödülü hesaplanıyor…</string>
     <string name="session_reward_seeds">Oturum ödülü: +%d seed</string>
     <string name="session_reward_seeds_boosted">Oturum ödülü: +%1$d seed (2x bonus, normal %2$d)</string>
+
+    <string name="paywall_title">FocusFarm Premium</string>
+    <string name="paywall_subtitle">Odak yolculugunu zirveye tasi</string>
+    <string name="paywall_feature_1">Tum premium bitkilere erisim</string>
+    <string name="paywall_feature_2">Reklamsiz deneyim</string>
+    <string name="paywall_feature_3">Gelimis istatistikler</string>
+    <string name="paywall_feature_4">Ozel bahce temalari</string>
+    <string name="paywall_feature_5">Sonsuz freeze hakki</string>
+    <string name="paywall_feature_6">2x seed kazanci</string>
+    <string name="paywall_trial_button">Ucretsiz Dene - 3 Gun</string>
+    <string name="paywall_restore">Satin Alimlari Geri Yuke</string>
+    <string name="paywall_disclaimer">3 gun ucretsiz deneme sonrasi otomatik olarak secilen plan ucretlendirilir. Istedigin zaman iptal edebilirsin.</string>
+    <string name="paywall_close">Kapat</string>
+    <string name="paywall_recommended">ONERILEN</string>
+    <string name="paywall_error_purchase_failed">Satin alma basarisiz</string>
+    <string name="paywall_error_restore_failed">Geri yukleme basarisiz</string>
 </resources>

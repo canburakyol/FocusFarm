@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="PluralsCandidate">
+    <string name="app_name">Focus Farm</string>
+
+    <string name="tab_home">Accueil</string>
+    <string name="tab_garden">Mon Jardin</string>
+    <string name="tab_stats">Statistiques</string>
+    <string name="tab_shop">Boutique</string>
+
+    <string name="greeting">Focus Farm</string>
+    <string name="greeting_subtitle">Sur quoi vas-tu te concentrer aujourd\'hui ?</string>
+    <string name="start_focus">Démarrer une session de focus</string>
+    <string name="select_plant">Choisir une plante</string>
+    <string name="select_duration">Choisir la durée</string>
+    <string name="minutes_short">%d min</string>
+    <string name="min_session">Minimum %d min</string>
+    <string name="focus_session">Session de focus</string>
+    <string name="focus_tip">Pose ton téléphone et garde ton rythme.</string>
+    <string name="app_leave_warning">Si tu quittes l\'application trop longtemps, ta plante va se faner.</string>
+    <string name="give_up">Abandonner</string>
+
+    <string name="abandon_title">Veux-tu abandonner cette session ?</string>
+    <string name="abandon_message">Si tu arrêtes maintenant, ta plante va se faner.</string>
+    <string name="abandon_confirm">Abandonner la session</string>
+    <string name="continue_btn">Continuer</string>
+
+    <string name="plant_died">Plante fanée</string>
+    <string name="plant_died_desc">Ta plante s\'est fanée parce que tu as quitté l\'application trop longtemps avant la fin de la session. Tu peux réessayer.</string>
+    <string name="session_complete">Session terminée</string>
+    <string name="session_finalizing_title">Sauvegarde de la session</string>
+    <string name="session_finalizing_body">Ta session et tes récompenses sont en cours de sauvegarde. L\'écran de résultats apparaîtra une fois cette étape terminée.</string>
+    <string name="session_finalizing_retry">Réessayer</string>
+    <string name="session_persist_failed_retry">La session n\'a pas pu être sauvegardée. Réessaye pour terminer la sauvegarde en toute sécurité.</string>
+    <string name="go_garden">Aller au jardin</string>
+    <string name="go_home">Retour à l\'accueil</string>
+    <string name="go_back">Retour</string>
+
+    <string name="session_reflection_label">Note de session</string>
+    <string name="session_reflection_placeholder">Qu\'est-ce qui s\'est bien passé ? Quelle est ta prochaine étape ?</string>
+    <string name="session_reflection_save">Enregistrer la note</string>
+    <string name="session_reflection_saved">Note enregistrée</string>
+    <string name="reflection_history_title">Notes de focus</string>
+
+    <string name="empty_garden_title">Ton jardin est encore vide</string>
+    <string name="empty_garden_desc">Tes plantes apparaîtront ici après ta première session de focus réussie.</string>
+    <string name="collection_book">Collection</string>
+    <string name="collection_subtitle">Suis ici toutes les plantes que tu as cultivées.</string>
+    <string name="collection_premium_locked">Réservé aux Premium</string>
+    <string name="collection_not_discovered">Pas encore découvert</string>
+    <string name="collection_discovered_count">Cultivé %d fois</string>
+    <string name="collection_last_grown">Dernière culture : %s</string>
+    <string name="collection_claim_reward">Récupérer la récompense</string>
+    <string name="collection_reward_claimed">Récompense de collection obtenue</string>
+    <string name="collection_reward_seeds">Récompense de découverte : +%d seeds</string>
+
+    <string name="total_plants">Plantes totales</string>
+    <string name="total_sessions">Sessions totales</string>
+    <string name="total_focus">Focus total</string>
+    <string name="total_focus_hours_minutes">%1$d h %2$d min</string>
+    <string name="total_focus_minutes">%d min</string>
+    <string name="focused_minutes">%d minutes de concentration</string>
+    <string name="total_hours_short">%d h</string>
+
+    <string name="today">Aujourd\'hui</string>
+    <string name="today_focus">Focus du jour</string>
+    <string name="current_streak">Série</string>
+    <string name="streak_days_short">%d jours</string>
+
+    <string name="daily_plan_title">Plan du jour</string>
+    <string name="daily_plan_subtitle">Progresse régulièrement vers ton objectif.</string>
+    <string name="daily_plan_progress">Session %1$d/%2$d — Minute %3$d/%4$d</string>
+    <string name="daily_plan_action_start">Démarrer le plan (%d min)</string>
+
+    <string name="personal_goal_title">Ton objectif personnel</string>
+    <string name="personal_goal_default">Termine au moins une session de focus aujourd\'hui pour garder ton rythme.</string>
+    <string name="personal_goal_complete">Tu as terminé le plan du jour. Essaye une session supplémentaire pour plus d\'avance.</string>
+    <string name="personal_goal_push">Encore %1$d sessions et %2$d minutes pour atteindre l\'objectif du jour.</string>
+    <string name="personal_goal_weekly_reward">Objectif hebdomadaire atteint. N\'oublie pas de récupérer ta récompense.</string>
+    <string name="personal_goal_weekly_done">Tu as atteint ton objectif hebdomadaire. Garde le rythme.</string>
+
+    <string name="engagement_nudge_title">Démarrage rapide</string>
+    <string name="nudge_first_focus_title">Lance ta première session de focus</string>
+    <string name="nudge_first_focus_body">Un court début donne le ton de la journée.</string>
+    <string name="nudge_first_focus_action">Commencer maintenant (%d min)</string>
+    <string name="nudge_streak_risk_title">Série en danger</string>
+    <string name="nudge_streak_risk_body">Une courte session peut sécuriser ta série.</string>
+    <string name="nudge_streak_risk_action">Protéger la série (%d min)</string>
+    <string name="nudge_weekly_push_title">Rapproche-toi de l\'objectif hebdo</string>
+    <string name="nudge_weekly_push_body">Un peu plus de focus aujourd\'hui et tu seras bien parti pour la semaine.</string>
+    <string name="nudge_weekly_push_action">Avancer vers l\'objectif (%d min)</string>
+    <string name="nudge_plan_finish_title">Termine le plan du jour</string>
+    <string name="nudge_plan_finish_body">Un court tour de focus suffit pour boucler le plan.</string>
+    <string name="nudge_plan_finish_action">Terminer le plan (%d min)</string>
+
+    <string name="weekly_report_title">Rapport personnel hebdomadaire</string>
+    <string name="weekly_report_subtitle">Semaine du %1$s</string>
+    <string name="weekly_report_stat_sessions">Sessions totales</string>
+    <string name="weekly_report_stat_minutes">Focus total</string>
+    <string name="weekly_report_stat_average">Session moyenne</string>
+    <string name="weekly_report_stat_longest">Session la plus longue</string>
+    <string name="weekly_report_best_day">Meilleur jour : %1$s (%2$d min)</string>
+    <string name="weekly_report_insight_label">Point fort</string>
+    <string name="weekly_report_insight_great">Tu as eu un rythme de focus incroyable la semaine dernière. Continue sur cette lancée.</string>
+    <string name="weekly_report_insight_good">Tu progresses régulièrement. Pousse d\'un cran cette semaine.</string>
+    <string name="weekly_report_insight_start">Une courte session aujourd\'hui suffit pour retrouver ton rythme.</string>
+    <string name="weekly_report_next_goal">Objectif personnel de la semaine : %d minutes</string>
+    <string name="weekly_report_action_start">Commencer l\'objectif (%d min)</string>
+    <string name="weekly_report_action_later">Plus tard</string>
+
+    <string name="daily_quests_title">Quêtes du jour</string>
+    <string name="quest_complete_sessions">Termine %d sessions</string>
+    <string name="quest_focus_minutes">Concentre-toi %d minutes</string>
+    <string name="quest_deep_session">Concentre-toi %d minutes en une session</string>
+    <string name="quest_claim">Récupérer la récompense</string>
+    <string name="quest_claimed">Récupéré</string>
+    <string name="quest_reward_seeds">Récompense : +%d seeds</string>
+
+    <string name="weekly_challenge_progress">Session %1$d/%2$d — Minute %3$d/%4$d</string>
+    <string name="weekly_reward_seeds">Récompense hebdo : +%d seeds</string>
+    <string name="weekly_reward_claim">Récupérer la récompense hebdo</string>
+    <string name="weekly_reward_claimed">Récompense hebdomadaire récupérée</string>
+
+    <string name="seed_balance">Portefeuille de seeds</string>
+    <string name="seed_balance_short">%d seeds</string>
+    <string name="freeze_tokens">Jetons de gel</string>
+    <string name="freeze_tokens_short">%d jetons</string>
+    <string name="use_streak_freeze">Utiliser le Streak Freeze</string>
+
+    <string name="last_session">Dernière session</string>
+    <string name="last_minute">Dernière minute</string>
+    <string name="minutes_remaining">%d minutes restantes</string>
+
+    <string name="this_week">Cette semaine</string>
+    <string name="recent_sessions">Sessions récentes</string>
+    <string name="duration_minutes_short">%d min</string>
+    <string name="no_data_title">Pas encore de données</string>
+    <string name="no_data_desc">Les statistiques apparaîtront ici après ta première session terminée.</string>
+
+    <string name="day_mon_short">Lun</string>
+    <string name="day_tue_short">Mar</string>
+    <string name="day_wed_short">Mer</string>
+    <string name="day_thu_short">Jeu</string>
+    <string name="day_fri_short">Ven</string>
+    <string name="day_sat_short">Sam</string>
+    <string name="day_sun_short">Dim</string>
+
+    <string name="shop_subtitle">Agrandis ta collection</string>
+    <string name="ad_banner_label">Publicité pour nous soutenir</string>
+    <string name="ad_rewards_title">Centre de bonus</string>
+    <string name="ad_rewards_desc">Regarde une courte publicité pour gagner des récompenses supplémentaires.</string>
+    <string name="ad_consent_pending_title">Consentement publicitaire en attente</string>
+    <string name="ad_consent_pending_body">Les espaces publicitaires seront disponibles une fois ton consentement enregistré.</string>
+    <string name="ad_reward_quest_reroll_action">Regarder une pub • Renouveler 1 quête</string>
+    <string name="ad_reward_quest_reroll_done">Renouvellement de quête utilisé aujourd\'hui</string>
+    <string name="ad_reward_next_session_boost_action">Regarder une pub • Prochaine session 2x Seeds</string>
+    <string name="ad_reward_next_session_boost_ready">Bonus 2x Seeds prêt</string>
+    <string name="ad_reward_seeds_action">Regarder une pub • +%d seeds</string>
+    <string name="ad_reward_freeze_action">Regarder une pub • +%d freeze</string>
+    <string name="premium_title">Premium</string>
+    <string name="premium_desc">Des plantes supplémentaires, pas de publicités et des statistiques avancées.</string>
+    <string name="premium_locked_hint">Visite l\'onglet Boutique pour les plantes premium.</string>
+    <string name="shop_loading_products">Chargement des offres premium…</string>
+    <string name="shop_billing_disconnected">Impossible de se connecter à Google Play.</string>
+    <string name="shop_retry">Réessayer</string>
+    <string name="shop_premium_active">Premium actif. Toutes les plantes premium sont disponibles.</string>
+    <string name="shop_plans_title">Offres Premium</string>
+    <string name="shop_buy_now">Acheter</string>
+    <string name="shop_current_plan">Actif</string>
+    <string name="shop_restore">Restaurer les achats</string>
+    <string name="plan_monthly">Mensuel</string>
+    <string name="plan_yearly">Annuel</string>
+    <string name="plan_lifetime">À vie</string>
+
+    <string name="free_badge">Gratuit</string>
+    <string name="premium_badge">Premium</string>
+    <string name="unlocked_badge">Débloqué</string>
+
+    <string name="reminder_title">C\'est l\'heure du focus</string>
+    <string name="reminder_body">Garde ton rythme avec une courte session.</string>
+
+    <string name="action_ok">OK</string>
+
+    <string name="status_quest_claimed">+%d seeds gagnés.</string>
+    <string name="status_quest_claim_failed">Impossible de récupérer la récompense de quête.</string>
+    <string name="status_freeze_used">Streak Freeze utilisé. Série préservée.</string>
+    <string name="status_freeze_failed">Impossible d\'utiliser le jeton de gel.</string>
+    <string name="status_weekly_reward_claimed">Récompense hebdo récupérée : +%d seeds.</string>
+    <string name="status_weekly_reward_already_claimed">Récompense hebdomadaire déjà récupérée.</string>
+    <string name="status_collection_reward_unavailable">Cette récompense n\'est pas disponible actuellement.</string>
+    <string name="status_collection_reward_claimed">Récompense %1$s récupérée : +%2$d seeds.</string>
+    <string name="status_collection_reward_already_claimed">Cette récompense de collection a déjà été récupérée.</string>
+    <string name="status_ad_reward_seeds">Récompense pub obtenue : +%d seeds.</string>
+    <string name="status_ad_reward_freeze">Récompense pub obtenue : +%d jetons de gel.</string>
+    <string name="status_ad_not_ready">Pub pas encore prête. Réessaye dans un instant.</string>
+    <string name="status_quest_reroll_already_used">Tu as déjà utilisé le renouvellement de quête aujourd\'hui.</string>
+    <string name="status_quest_reroll_unavailable">Aucune quête à renouveler pour le moment.</string>
+    <string name="status_quest_rerolled">Quête renouvelée. Nouvelle récompense : +%d seeds.</string>
+    <string name="status_next_session_boost_armed">Prêt. Ta prochaine session réussie rapportera 2x seeds.</string>
+    <string name="status_next_session_boost_already_active">Le bonus 2x seeds est déjà actif.</string>
+    <string name="status_session_revived">Session relancée. Continue.</string>
+    <string name="status_session_revive_unavailable">La relance n\'est pas disponible pour cette session.</string>
+    <string name="session_revive_with_ad">Regarder une pub et relancer la session</string>
+    <string name="session_revive_now">Relancer la session</string>
+    <string name="session_reward_loading">Calcul de la récompense de session…</string>
+    <string name="session_reward_seeds">Récompense de session : +%d seeds</string>
+    <string name="session_reward_seeds_boosted">Récompense de session : +%1$d seeds (bonus 2x, normal %2$d)</string>
+    <string name="paywall_title">FocusFarm Premium</string>
+    <string name="paywall_subtitle">Va plus loin dans ton parcours de concentration</string>
+    <string name="paywall_feature_1">Acces a toutes les plantes premium</string>
+    <string name="paywall_feature_2">Experience sans publicite</string>
+    <string name="paywall_feature_3">Statistiques avancees</string>
+    <string name="paywall_feature_4">Themes de jardin speciaux</string>
+    <string name="paywall_feature_5">Droits de freeze illimites</string>
+    <string name="paywall_feature_6">Gains de seeds x2</string>
+    <string name="paywall_trial_button">Essai gratuit - 3 jours</string>
+    <string name="paywall_restore">Restaurer les achats</string>
+    <string name="paywall_disclaimer">Apres l\'essai gratuit de 3 jours, le forfait choisi est facture automatiquement. Tu peux annuler a tout moment.</string>
+    <string name="paywall_close">Fermer</string>
+    <string name="paywall_recommended">RECOMMANDE</string>
+    <string name="paywall_error_purchase_failed">Achat echoue</string>
+    <string name="paywall_error_restore_failed">Restauration echouee</string>
+</resources>

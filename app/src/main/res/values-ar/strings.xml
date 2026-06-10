@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="PluralsCandidate">
+    <string name="app_name">Focus Farm</string>
+
+    <string name="tab_home">الرئيسية</string>
+    <string name="tab_garden">حديقتي</string>
+    <string name="tab_stats">الإحصائيات</string>
+    <string name="tab_shop">المتجر</string>
+
+    <string name="greeting">Focus Farm</string>
+    <string name="greeting_subtitle">على ماذا ستركّز اليوم؟</string>
+    <string name="start_focus">بدء جلسة التركيز</string>
+    <string name="select_plant">اختر نبتة</string>
+    <string name="select_duration">اختر المدة</string>
+    <string name="minutes_short">%d د</string>
+    <string name="min_session">%d دقيقة كحد أدنى</string>
+    <string name="focus_session">جلسة تركيز</string>
+    <string name="focus_tip">ضع هاتفك جانبًا وحافظ على إيقاعك.</string>
+    <string name="app_leave_warning">إذا ابتعدت عن التطبيق لفترة طويلة، ستذبل نبتتك.</string>
+    <string name="give_up">استسلام</string>
+
+    <string name="abandon_title">هل تريد ترك هذه الجلسة؟</string>
+    <string name="abandon_message">إذا توقفت الآن، ستذبل نبتتك.</string>
+    <string name="abandon_confirm">ترك الجلسة</string>
+    <string name="continue_btn">متابعة</string>
+
+    <string name="plant_died">النبتة ذبلت</string>
+    <string name="plant_died_desc">ذبلت نبتتك لأنك ابتعدت عن التطبيق لفترة طويلة قبل انتهاء الجلسة. يمكنك المحاولة مرة أخرى.</string>
+    <string name="session_complete">اكتملت الجلسة</string>
+    <string name="session_finalizing_title">جارٍ حفظ الجلسة</string>
+    <string name="session_finalizing_body">يتم حفظ جلستك ومكافآتك بأمان. ستظهر شاشة النتائج بمجرد اكتمال هذه الخطوة.</string>
+    <string name="session_finalizing_retry">إعادة المحاولة</string>
+    <string name="session_persist_failed_retry">تعذّر حفظ الجلسة. أعد المحاولة لإتمام الحفظ بأمان.</string>
+    <string name="go_garden">الذهاب إلى الحديقة</string>
+    <string name="go_home">العودة إلى الرئيسية</string>
+    <string name="go_back">رجوع</string>
+
+    <string name="session_reflection_label">ملاحظة الجلسة</string>
+    <string name="session_reflection_placeholder">ما الذي سار بشكل جيد؟ ما خطوتك التالية؟</string>
+    <string name="session_reflection_save">حفظ الملاحظة</string>
+    <string name="session_reflection_saved">تم حفظ الملاحظة</string>
+    <string name="reflection_history_title">ملاحظات التركيز</string>
+
+    <string name="empty_garden_title">حديقتك فارغة</string>
+    <string name="empty_garden_desc">ستظهر نباتاتك هنا بعد أول جلسة تركيز ناجحة.</string>
+    <string name="collection_book">المجموعة</string>
+    <string name="collection_subtitle">تتبع جميع النباتات التي زرعتها هنا.</string>
+    <string name="collection_premium_locked">محتوى مميز مقفل</string>
+    <string name="collection_not_discovered">لم يُكتشف بعد</string>
+    <string name="collection_discovered_count">تمت زراعته %d مرة</string>
+    <string name="collection_last_grown">آخر زراعة: %s</string>
+    <string name="collection_claim_reward">استلام المكافأة</string>
+    <string name="collection_reward_claimed">تم استلام مكافأة المجموعة</string>
+    <string name="collection_reward_seeds">مكافأة الاكتشاف: +%d بذرة</string>
+
+    <string name="total_plants">إجمالي النباتات</string>
+    <string name="total_sessions">إجمالي الجلسات</string>
+    <string name="total_focus">إجمالي التركيز</string>
+    <string name="total_focus_hours_minutes">%1$d س %2$d د</string>
+    <string name="total_focus_minutes">%d د</string>
+    <string name="focused_minutes">تركيز لمدة %d دقيقة</string>
+    <string name="total_hours_short">%d س</string>
+
+    <string name="today">اليوم</string>
+    <string name="today_focus">تركيز اليوم</string>
+    <string name="current_streak">السلسلة</string>
+    <string name="streak_days_short">%d يوم</string>
+
+    <string name="daily_plan_title">الخطة اليومية</string>
+    <string name="daily_plan_subtitle">تقدّم بثبات نحو هدفك.</string>
+    <string name="daily_plan_progress">الجلسة %1$d/%2$d — الدقيقة %3$d/%4$d</string>
+    <string name="daily_plan_action_start">بدء الخطة (%d د)</string>
+
+    <string name="personal_goal_title">هدفك الشخصي</string>
+    <string name="personal_goal_default">أكمل جلسة تركيز واحدة على الأقل اليوم للحفاظ على إيقاعك.</string>
+    <string name="personal_goal_complete">أكملت خطة اليوم. جرّب جلسة إضافية لتعزيز تقدمك.</string>
+    <string name="personal_goal_push">بقي %1$d جلسة و%2$d دقيقة للوصول إلى هدف اليوم.</string>
+    <string name="personal_goal_weekly_reward">تم تحقيق الهدف الأسبوعي. لا تنسَ استلام مكافأتك.</string>
+    <string name="personal_goal_weekly_done">حققت هدفك الأسبوعي. حافظ على الإيقاع.</string>
+
+    <string name="engagement_nudge_title">بداية سريعة</string>
+    <string name="nudge_first_focus_title">ابدأ أول جلسة تركيز</string>
+    <string name="nudge_first_focus_body">بداية قصيرة تحدد نغمة اليوم.</string>
+    <string name="nudge_first_focus_action">ابدأ الآن (%d د)</string>
+    <string name="nudge_streak_risk_title">السلسلة في خطر</string>
+    <string name="nudge_streak_risk_body">جلسة سريعة يمكن أن تحمي سلسلتك.</string>
+    <string name="nudge_streak_risk_action">حماية السلسلة (%d د)</string>
+    <string name="nudge_weekly_push_title">اقترب من الهدف الأسبوعي</string>
+    <string name="nudge_weekly_push_body">المزيد من التركيز اليوم وستكون قويًا للهدف الأسبوعي.</string>
+    <string name="nudge_weekly_push_action">نحو الهدف (%d د)</string>
+    <string name="nudge_plan_finish_title">أكمل الخطة اليومية</string>
+    <string name="nudge_plan_finish_body">جولة تركيز قصيرة تكفي لإتمام الخطة.</string>
+    <string name="nudge_plan_finish_action">إنهاء الخطة (%d د)</string>
+
+    <string name="weekly_report_title">تقرير شخصي أسبوعي</string>
+    <string name="weekly_report_subtitle">أسبوع %1$s</string>
+    <string name="weekly_report_stat_sessions">إجمالي الجلسات</string>
+    <string name="weekly_report_stat_minutes">إجمالي التركيز</string>
+    <string name="weekly_report_stat_average">متوسط الجلسة</string>
+    <string name="weekly_report_stat_longest">أطول جلسة</string>
+    <string name="weekly_report_best_day">أفضل يوم: %1$s (%2$d د)</string>
+    <string name="weekly_report_insight_label">أبرز النقاط</string>
+    <string name="weekly_report_insight_great">كان لديك إيقاع تركيز رائع الأسبوع الماضي. حافظ على الزخم.</string>
+    <string name="weekly_report_insight_good">تتقدم بثبات. ادفع خطوة إضافية هذا الأسبوع.</string>
+    <string name="weekly_report_insight_start">جلسة قصيرة اليوم تكفي لإعادة بناء إيقاعك.</string>
+    <string name="weekly_report_next_goal">هدف هذا الأسبوع: %d دقيقة</string>
+    <string name="weekly_report_action_start">بدء الهدف (%d د)</string>
+    <string name="weekly_report_action_later">لاحقًا</string>
+
+    <string name="daily_quests_title">مهام يومية</string>
+    <string name="quest_complete_sessions">أكمل %d جلسات</string>
+    <string name="quest_focus_minutes">ركّز %d دقيقة</string>
+    <string name="quest_deep_session">ركّز %d دقيقة في جلسة واحدة</string>
+    <string name="quest_claim">استلام المكافأة</string>
+    <string name="quest_claimed">تم الاستلام</string>
+    <string name="quest_reward_seeds">المكافأة: +%d بذرة</string>
+
+    <string name="weekly_challenge_progress">الجلسة %1$d/%2$d — الدقيقة %3$d/%4$d</string>
+    <string name="weekly_reward_seeds">المكافأة الأسبوعية: +%d بذرة</string>
+    <string name="weekly_reward_claim">استلام المكافأة الأسبوعية</string>
+    <string name="weekly_reward_claimed">تم استلام المكافأة الأسبوعية</string>
+
+    <string name="seed_balance">محفظة البذور</string>
+    <string name="seed_balance_short">%d بذرة</string>
+    <string name="freeze_tokens">رموز التجميد</string>
+    <string name="freeze_tokens_short">%d رمز</string>
+    <string name="use_streak_freeze">استخدام تجميد السلسلة</string>
+
+    <string name="last_session">الجلسة الأخيرة</string>
+    <string name="last_minute">الدقيقة الأخيرة</string>
+    <string name="minutes_remaining">%d دقيقة متبقية</string>
+
+    <string name="this_week">هذا الأسبوع</string>
+    <string name="recent_sessions">الجلسات الأخيرة</string>
+    <string name="duration_minutes_short">%d د</string>
+    <string name="no_data_title">لا توجد بيانات بعد</string>
+    <string name="no_data_desc">ستظهر الإحصائيات هنا بعد إكمال أول جلسة.</string>
+
+    <string name="day_mon_short">اثن</string>
+    <string name="day_tue_short">ثلا</string>
+    <string name="day_wed_short">أرب</string>
+    <string name="day_thu_short">خمي</string>
+    <string name="day_fri_short">جمع</string>
+    <string name="day_sat_short">سبت</string>
+    <string name="day_sun_short">أحد</string>
+
+    <string name="shop_subtitle">وسّع مجموعتك</string>
+    <string name="ad_banner_label">إعلان لدعمنا</string>
+    <string name="ad_rewards_title">مركز المكافآت</string>
+    <string name="ad_rewards_desc">شاهد إعلانًا قصيرًا لكسب مكافآت إضافية.</string>
+    <string name="ad_consent_pending_title">في انتظار الموافقة على الإعلانات</string>
+    <string name="ad_consent_pending_body">ستتوفر مساحات الإعلانات بمجرد تسجيل موافقتك.</string>
+    <string name="ad_reward_quest_reroll_action">شاهد إعلانًا • تجديد مهمة واحدة</string>
+    <string name="ad_reward_quest_reroll_done">تم استخدام تجديد المهمة اليوم</string>
+    <string name="ad_reward_next_session_boost_action">شاهد إعلانًا • الجلسة القادمة 2x بذور</string>
+    <string name="ad_reward_next_session_boost_ready">مكافأة 2x بذور جاهزة</string>
+    <string name="ad_reward_seeds_action">شاهد إعلانًا • +%d بذرة</string>
+    <string name="ad_reward_freeze_action">شاهد إعلانًا • +%d تجميد</string>
+    <string name="premium_title">بريميوم</string>
+    <string name="premium_desc">نباتات إضافية، تجربة بلا إعلانات وإحصائيات متقدمة.</string>
+    <string name="premium_locked_hint">زُر تبويب المتجر للنباتات المميزة.</string>
+    <string name="shop_loading_products">جارٍ تحميل خطط بريميوم…</string>
+    <string name="shop_billing_disconnected">تعذّر الاتصال بـ Google Play.</string>
+    <string name="shop_retry">إعادة المحاولة</string>
+    <string name="shop_premium_active">بريميوم نشط. جميع النباتات المميزة متاحة.</string>
+    <string name="shop_plans_title">خطط بريميوم</string>
+    <string name="shop_buy_now">اشترِ الآن</string>
+    <string name="shop_current_plan">نشط</string>
+    <string name="shop_restore">استعادة المشتريات</string>
+    <string name="plan_monthly">شهري</string>
+    <string name="plan_yearly">سنوي</string>
+    <string name="plan_lifetime">مدى الحياة</string>
+
+    <string name="free_badge">مجاني</string>
+    <string name="premium_badge">بريميوم</string>
+    <string name="unlocked_badge">مفتوح</string>
+
+    <string name="reminder_title">وقت التركيز</string>
+    <string name="reminder_body">حافظ على إيقاعك بجلسة قصيرة.</string>
+
+    <string name="action_ok">حسنًا</string>
+
+    <string name="status_quest_claimed">+%d بذرة مكتسبة.</string>
+    <string name="status_quest_claim_failed">تعذّر استلام مكافأة المهمة.</string>
+    <string name="status_freeze_used">تم استخدام تجميد السلسلة. السلسلة محمية.</string>
+    <string name="status_freeze_failed">تعذّر استخدام رمز التجميد.</string>
+    <string name="status_weekly_reward_claimed">تم استلام المكافأة الأسبوعية: +%d بذرة.</string>
+    <string name="status_weekly_reward_already_claimed">المكافأة الأسبوعية مُستلمة بالفعل.</string>
+    <string name="status_collection_reward_unavailable">هذه المكافأة غير متوفرة حاليًا.</string>
+    <string name="status_collection_reward_claimed">تم استلام مكافأة %1$s: +%2$d بذرة.</string>
+    <string name="status_collection_reward_already_claimed">مكافأة المجموعة هذه مُستلمة بالفعل.</string>
+    <string name="status_ad_reward_seeds">مكافأة الإعلان: +%d بذرة.</string>
+    <string name="status_ad_reward_freeze">مكافأة الإعلان: +%d رمز تجميد.</string>
+    <string name="status_ad_not_ready">الإعلان غير جاهز بعد. حاول مرة أخرى قريبًا.</string>
+    <string name="status_quest_reroll_already_used">لقد استخدمت تجديد المهمة اليوم.</string>
+    <string name="status_quest_reroll_unavailable">لا توجد مهام متاحة للتجديد حاليًا.</string>
+    <string name="status_quest_rerolled">تم تجديد المهمة. المكافأة الجديدة: +%d بذرة.</string>
+    <string name="status_next_session_boost_armed">جاهز. جلستك الناجحة القادمة ستمنحك 2x بذور.</string>
+    <string name="status_next_session_boost_already_active">مكافأة 2x بذور نشطة بالفعل.</string>
+    <string name="status_session_revived">تم إحياء الجلسة. واصل.</string>
+    <string name="status_session_revive_unavailable">الإحياء غير متاح لهذه الجلسة.</string>
+    <string name="session_revive_with_ad">شاهد إعلانًا وأحيِ الجلسة</string>
+    <string name="session_revive_now">إحياء الجلسة</string>
+    <string name="session_reward_loading">جارٍ حساب مكافأة الجلسة…</string>
+    <string name="session_reward_seeds">مكافأة الجلسة: +%d بذرة</string>
+    <string name="session_reward_seeds_boosted">مكافأة الجلسة: +%1$d بذرة (مكافأة 2x، عادي %2$d)</string>
+    <string name="paywall_title">FocusFarm Premium</string>
+    <string name="paywall_subtitle">واصل رحلة التركيز</string>
+    <string name="paywall_feature_1">الوصول إلى كل النباتات المميزة</string>
+    <string name="paywall_feature_2">تجربة بلا إعلانات</string>
+    <string name="paywall_feature_3">إحصاءات متقدمة</string>
+    <string name="paywall_feature_4">سمات حديقة خاصة</string>
+    <string name="paywall_feature_5">حقوق freeze غير محدودة</string>
+    <string name="paywall_feature_6">أرباح seeds مضاعفة 2x</string>
+    <string name="paywall_trial_button">جرّب مجانًا - 3 أيام</string>
+    <string name="paywall_restore">استعادة المشتريات</string>
+    <string name="paywall_disclaimer">بعد التجربة المجانية لمدة 3 أيام، يتم تحصيل رسوم الخطة المحددة تلقائيًا. يمكنك الإلغاء في أي وقت.</string>
+    <string name="paywall_close">إغلاق</string>
+    <string name="paywall_recommended">موصى به</string>
+    <string name="paywall_error_purchase_failed">فشل الشراء</string>
+    <string name="paywall_error_restore_failed">فشلت الاستعادة</string>
+</resources>

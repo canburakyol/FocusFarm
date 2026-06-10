@@ -50,6 +50,9 @@ private class FakeSessionDao : SessionDao {
     override fun getRecentSessions(limit: Int): Flow<List<SessionEntity>> =
         state.map { it.sortedByDescending { item -> item.completedAt }.take(limit) }
 
+    override suspend fun getRecentSessionsSnapshot(limit: Int): List<SessionEntity> =
+        state.value.sortedByDescending { item -> item.completedAt }.take(limit)
+
     override fun getSessionCount(): Flow<Int> =
         state.map { it.size }
 
