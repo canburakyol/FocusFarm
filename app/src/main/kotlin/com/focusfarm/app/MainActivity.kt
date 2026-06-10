@@ -15,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
 import com.focusfarm.app.data.auth.AuthManager
 import com.focusfarm.app.data.repository.ReferralManager
 import com.focusfarm.app.monetization.ConsentManager
@@ -23,7 +24,6 @@ import com.focusfarm.app.ui.navigation.AppNavigation
 import com.focusfarm.app.ui.theme.FocusFarmTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
         maybeRequestNotificationPermission()
         handleDeepLink(intent)
 
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             authManager.signInAnonymouslyIfNeeded()
         }
     }
@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun handleReferralLink(referralCode: String) {
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch {
             telemetry.logEvent(
                 "deep_link_referral_opened",
                 mapOf("referral_code" to referralCode),

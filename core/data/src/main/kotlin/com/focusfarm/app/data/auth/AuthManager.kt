@@ -2,9 +2,11 @@ package com.focusfarm.app.data.auth
 
 import com.focusfarm.app.data.local.AppDatabase
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,7 +39,9 @@ class AuthManager @Inject constructor(
         return try {
             user.delete().await()
             // Local Room DB temizliği
-            db.clearAllTables()
+            withContext(Dispatchers.IO) {
+                db.clearAllTables()
+            }
             true
         } catch (e: Exception) {
             false

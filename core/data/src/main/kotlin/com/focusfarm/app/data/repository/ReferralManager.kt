@@ -87,7 +87,10 @@ class ReferralManager @Inject constructor(
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, "FocusFarm ile odaklanarak bahcemi buyutuyorum! Sen de katil: $link")
         }
-        context.startActivity(Intent.createChooser(shareIntent, "Arkadasini Davet Et"))
+        val chooser = Intent.createChooser(shareIntent, "Arkadasini Davet Et").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(chooser)
         telemetry.logEvent("referral_sent", emptyMap())
     }
 
