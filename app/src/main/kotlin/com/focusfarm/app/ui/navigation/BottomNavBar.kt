@@ -9,8 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.focusfarm.core.ui.R
-import com.focusfarm.app.ui.theme.ForestDark
-import com.focusfarm.app.ui.theme.ForestMid
 
 data class NavItem(
     val route: String,
@@ -19,16 +17,16 @@ data class NavItem(
 )
 
 private val NAV_ITEMS = listOf(
-    NavItem(Routes.HOME, R.string.tab_home, "ğŸŒ±"),
-    NavItem(Routes.GARDEN, R.string.tab_garden, "ğŸŒ¿"),
-    NavItem(Routes.STATS, R.string.tab_stats, "ğŸ“Š"),
-    NavItem(Routes.SHOP, R.string.tab_shop, "ğŸŒ¸"),
+    NavItem(Routes.HOME, R.string.tab_home, "🌱"),
+    NavItem(Routes.GARDEN, R.string.tab_garden, "🌿"),
+    NavItem(Routes.STATS, R.string.tab_stats, "📊"),
+    NavItem(Routes.SHOP, R.string.tab_shop, "🌸"),
 )
 
 @Composable
 fun BottomNavBar(currentRoute: String, onNavigate: (String) -> Unit) {
     NavigationBar(
-        containerColor = ForestMid,
+        containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
     ) {
         NAV_ITEMS.forEach { item ->
@@ -52,7 +50,7 @@ fun BottomNavBar(currentRoute: String, onNavigate: (String) -> Unit) {
                 },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
-                    indicatorColor = ForestDark,
+                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
                 ),
             )
         }

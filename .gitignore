@@ -58,3 +58,9 @@ scripts/
 privacy-policy/
 canburakyol.github.io/
 .firebaserc
+
+# Play Store compliance docs/pages must be versioned.
+!PLAY_STORE_DATA_SAFETY.md
+!PLAY_STORE_RELEASE_READINESS.md
+!privacy-policy/
+!privacy-policy/index.html

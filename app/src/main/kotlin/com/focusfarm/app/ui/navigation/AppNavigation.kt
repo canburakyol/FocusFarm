@@ -16,6 +16,7 @@ import com.focusfarm.app.ui.screens.collection.CollectionScreen
 import com.focusfarm.app.ui.screens.garden.GardenScreen
 import com.focusfarm.app.ui.screens.home.HomeScreen
 import com.focusfarm.app.ui.screens.session.SessionScreen
+import com.focusfarm.app.ui.screens.settings.SettingsScreen
 import com.focusfarm.app.ui.screens.shop.ShopScreen
 import com.focusfarm.app.ui.screens.stats.StatsScreen
 
@@ -24,6 +25,7 @@ object Routes {
     const val GARDEN = "garden"
     const val STATS = "stats"
     const val SHOP = "shop"
+    const val SETTINGS = "settings"
     const val COLLECTION = "collection"
     const val SESSION = "session/{plantId}/{minutes}"
 
@@ -66,6 +68,7 @@ fun AppNavigation() {
                     onStartSession = { plantId, minutes ->
                         navController.navigate(Routes.session(plantId, minutes))
                     },
+                    onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                 )
             }
             composable(Routes.GARDEN) {
@@ -75,6 +78,11 @@ fun AppNavigation() {
             }
             composable(Routes.STATS) { StatsScreen() }
             composable(Routes.SHOP) { ShopScreen() }
+            composable(Routes.SETTINGS) {
+                SettingsScreen(
+                    onBack = { navController.popBackStack() },
+                )
+            }
             composable(Routes.COLLECTION) {
                 CollectionScreen(
                     onBack = { navController.popBackStack() },

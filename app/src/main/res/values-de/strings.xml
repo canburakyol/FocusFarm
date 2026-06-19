@@ -219,4 +219,63 @@
     <string name="paywall_recommended">EMPFOHLEN</string>
     <string name="paywall_error_purchase_failed">Kauf fehlgeschlagen</string>
     <string name="paywall_error_restore_failed">Wiederherstellung fehlgeschlagen</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="action_share">Teilen</string>
+    <string name="settings_privacy_preferences">Datenschutzeinstellungen bearbeiten</string>
+    <string name="settings_account_data_title">Konto und Daten</string>
+    <string name="settings_account_delete_body">Wenn du dein Konto loeschst, werden alle Daten auf diesem Geraet und in der Cloud dauerhaft entfernt.</string>
+    <string name="settings_delete_account_button">Mein Konto und meine Daten loeschen</string>
+    <string name="settings_delete_account_title">Konto loeschen?</string>
+    <string name="settings_delete_account_confirm_body">Dein Fortschritt, deine Kaeufe und dein Garten werden dauerhaft geloescht. Das kann nicht rueckgaengig gemacht werden. Bist du sicher?</string>
+    <string name="settings_delete_account_confirm">Ja, loeschen</string>
+    <string name="share_garden_title">Garten teilen</string>
+    <string name="share_garden_preview_content_description">Gartenvorschau</string>
+    <string name="share_garden_message">Ich habe meinen Garten durch Fokus wachsen lassen. Mach mit.</string>
+    <string name="referral_share_text">Ich lasse meinen Garten mit FocusFarm wachsen. Mach mit: %s</string>
+    <string name="referral_share_chooser_title">Freund einladen</string>
+    <string name="paywall_plan_monthly_desc">Wird jeden Monat erneuert</string>
+    <string name="paywall_plan_yearly_desc">Wird jedes Jahr erneuert</string>
+    <string name="paywall_plan_yearly_savings">44%% sparen</string>
+    <string name="paywall_plan_lifetime_desc">Einmal zahlen, fuer immer</string>
+    <string name="paywall_error_connection">Verbindungsfehler: %s</string>
+    <string name="paywall_error_purchase_failed_with_message">Kauf fehlgeschlagen: %s</string>
+    <string name="paywall_error_restore_failed_with_message">Wiederherstellung fehlgeschlagen: %s</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_referral_title">Freundescode verwenden</string>
+    <string name="settings_referral_desc">Gib den Code eines Freundes ein und erhalte 50 Seeds.</string>
+    <string name="settings_referral_label">Code</string>
+    <string name="settings_referral_apply">Anwenden</string>
+    <string name="settings_privacy_title">Datenschutz und Werbung</string>
+    <string name="settings_privacy_desc">Du kannst deine Werbeeinwilligung und Datenschutzoptionen jederzeit verwalten.</string>
+    <string name="settings_privacy_policy_button">Datenschutzerklärung öffnen</string>
+    <string name="referral_error_needs_session">Du musst mindestens 1 Fokus-Sitzung abschließen, um einen Empfehlungscode zu verwenden.</string>
+
+    <!-- Invite Friends Screen -->
+    <string name="referral_title">Freunde einladen</string>
+    <string name="referral_subtitle">Erhalte 50 Seeds für jede Einladung!</string>
+    <string name="referral_your_code">Dein Code</string>
+    <string name="referral_loading">Wird geladen...</string>
+    <string name="referral_friends_joined">%d Freunde beigetreten</string>
+    <string name="referral_how_it_works">So funktioniert es</string>
+    <string name="referral_step_1_title">Code teilen</string>
+    <string name="referral_step_1_desc">Sende deinen Code oder Einladungslink an Freunde</string>
+    <string name="referral_step_2_title">Freund tritt bei</string>
+    <string name="referral_step_2_desc">Dein Freund tritt FocusFarm mit dem Code bei</string>
+    <string name="referral_step_3_title">50 Seeds erhalten</string>
+    <string name="referral_step_3_desc">Du erhältst 50 Seeds für jede erfolgreiche Einladung</string>
+    <string name="action_close">Schließen</string>
+    <string name="referral_share_button">Einladungslink teilen</string>
+
+    <!-- Focus Party Screen -->
+    <string name="party_title">Gemeinsam fokussieren</string>
+    <string name="party_subtitle">Fokussiere dich gleichzeitig mit Freunden und wachst gemeinsam!</string>
+    <string name="party_card_title">Party erstellen oder beitreten</string>
+    <string name="party_create_button">Neue Party erstellen</string>
+    <string name="party_join_button">Mit Code beitreten</string>
+    <string name="party_code_label">Party-Code: %s</string>
+    <string name="party_leave_button">Verlassen</string>
+    <string name="party_members_count">%1$d/%2$d Mitglieder</string>
+    <string name="party_start_session_button">Sitzung starten (%d Min.)</string>
 </resources>

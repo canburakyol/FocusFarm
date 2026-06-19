@@ -1,9 +1,12 @@
 package com.focusfarm.app.monetization
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.focusfarm.app.data.billing.PremiumBillingManager
+import com.focusfarm.core.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +36,7 @@ data class PaywallState(
 @HiltViewModel
 class PaywallViewModel @Inject constructor(
     private val billingManager: PremiumBillingManager,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PaywallState())
@@ -53,23 +57,23 @@ class PaywallViewModel @Inject constructor(
                 availablePlans = listOf(
                     PaywallPlan(
                         id = "premium_monthly",
-                        title = "Aylik",
-                        description = "Her ay yenilenir",
+                        title = context.getString(R.string.plan_monthly),
+                        description = context.getString(R.string.paywall_plan_monthly_desc),
                         price = "29,99 TL",
                         isRecommended = false,
                     ),
                     PaywallPlan(
                         id = "premium_yearly",
-                        title = "Yillik",
-                        description = "Her yil yenilenir",
+                        title = context.getString(R.string.plan_yearly),
+                        description = context.getString(R.string.paywall_plan_yearly_desc),
                         price = "199,99 TL",
                         isRecommended = true,
-                        savings = "%44 tasarruf",
+                        savings = context.getString(R.string.paywall_plan_yearly_savings),
                     ),
                     PaywallPlan(
                         id = "premium_lifetime",
-                        title = "Omur Boyu",
-                        description = "Tek odeme, sonsuza kadar",
+                        title = context.getString(R.string.plan_lifetime),
+                        description = context.getString(R.string.paywall_plan_lifetime_desc),
                         price = "499,99 TL",
                         isRecommended = false,
                     ),
@@ -91,7 +95,10 @@ class PaywallViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "Baglanti hatasi: ${e.message}",
+                        errorMessage = context.getString(
+                            R.string.paywall_error_connection,
+                            e.message.orEmpty(),
+                        ),
                     )
                 }
             }
@@ -112,7 +119,10 @@ class PaywallViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "Satin alma basarisiz: ${e.message}",
+                        errorMessage = context.getString(
+                            R.string.paywall_error_purchase_failed_with_message,
+                            e.message.orEmpty(),
+                        ),
                     )
                 }
             }
@@ -125,7 +135,12 @@ class PaywallViewModel @Inject constructor(
                 billingManager.restorePurchases()
             } catch (e: Exception) {
                 _state.update {
-                    it.copy(errorMessage = "Geri yukleme basarisiz: ${e.message}")
+                    it.copy(
+                        errorMessage = context.getString(
+                            R.string.paywall_error_restore_failed_with_message,
+                            e.message.orEmpty(),
+                        ),
+                    )
                 }
             }
         }

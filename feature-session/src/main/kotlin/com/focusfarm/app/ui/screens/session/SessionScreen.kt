@@ -42,11 +42,6 @@ import com.focusfarm.app.domain.PlantCatalog
 import com.focusfarm.app.ui.components.FocusBackdrop
 import com.focusfarm.app.ui.components.PlantDisplay
 import com.focusfarm.app.ui.components.TimerDisplay
-import com.focusfarm.app.ui.theme.Amber
-import com.focusfarm.app.ui.theme.CreamDim
-import com.focusfarm.app.ui.theme.Danger
-import com.focusfarm.app.ui.theme.ForestDark
-import com.focusfarm.app.ui.theme.ForestMid
 import com.focusfarm.core.ui.R
 
 @Composable
@@ -121,7 +116,7 @@ fun SessionScreen(
                     viewModel.abandon()
                     onBack()
                 }) {
-                    Text(stringResource(R.string.abandon_confirm), color = Danger)
+                    Text(stringResource(R.string.abandon_confirm), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
@@ -157,7 +152,7 @@ private fun FinalizingScreen(
             Text(
                 stringResource(R.string.session_finalizing_body),
                 style = MaterialTheme.typography.bodyLarge,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
 
@@ -166,14 +161,17 @@ private fun FinalizingScreen(
                 Text(
                     text = errorMessage,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
                 )
                 Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = onRetry,
                     shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
                 ) {
                     Text(stringResource(R.string.session_finalizing_retry))
                 }
@@ -195,7 +193,7 @@ private fun RunningScreen(state: SessionUiState, onAbandon: () -> Unit) {
             Text(
                 stringResource(R.string.focus_session),
                 style = MaterialTheme.typography.labelSmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 letterSpacing = 2.sp,
             )
             Spacer(Modifier.height(4.dp))
@@ -219,18 +217,18 @@ private fun RunningScreen(state: SessionUiState, onAbandon: () -> Unit) {
             Text(
                 stringResource(R.string.focus_tip),
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(24.dp))
 
             TextButton(
                 onClick = onAbandon,
                 modifier = Modifier
-                    .border(1.dp, Danger.copy(alpha = 0.5f), RoundedCornerShape(50)),
+                    .border(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f), RoundedCornerShape(50)),
             ) {
                 Text(
                     stringResource(R.string.give_up),
-                    color = Danger,
+                    color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
@@ -268,7 +266,7 @@ private fun KilledScreen(
             Text(
                 stringResource(R.string.plant_died_desc),
                 style = MaterialTheme.typography.bodyLarge,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(20.dp))
@@ -276,7 +274,10 @@ private fun KilledScreen(
                 Button(
                     onClick = onRevive,
                     shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
@@ -294,23 +295,23 @@ private fun KilledScreen(
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodySmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
                 Spacer(Modifier.height(4.dp))
                 TextButton(onClick = onDismissMessage) {
-                    Text(stringResource(R.string.action_ok), color = CreamDim)
+                    Text(stringResource(R.string.action_ok), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 
             Spacer(Modifier.height(8.dp))
             TextButton(
                 onClick = onBack,
-                modifier = Modifier.border(1.dp, CreamDim, RoundedCornerShape(50)),
+                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(50)),
             ) {
                 Text(
                     stringResource(R.string.go_home),
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
                 )
             }
@@ -345,7 +346,7 @@ private fun CompletedScreen(
             Text(
                 stringResource(R.string.focused_minutes, state.targetMinutes),
                 style = MaterialTheme.typography.bodyLarge,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(8.dp))
@@ -364,7 +365,7 @@ private fun CompletedScreen(
                     stringResource(R.string.session_reward_loading)
                 },
                 style = MaterialTheme.typography.bodySmall,
-                color = Amber,
+                color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
             )
 
@@ -386,7 +387,10 @@ private fun CompletedScreen(
                 onClick = { onSaveReflection(reflection) },
                 enabled = state.completedSessionId != null,
                 shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = ForestMid, contentColor = CreamDim),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
             ) {
                 Text(stringResource(R.string.session_reflection_save))
             }
@@ -396,7 +400,7 @@ private fun CompletedScreen(
                 Text(
                     text = stringResource(R.string.session_reflection_saved),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -405,7 +409,10 @@ private fun CompletedScreen(
             Button(
                 onClick = onBack,
                 shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
             ) {
                 Text(
                     stringResource(R.string.go_garden),

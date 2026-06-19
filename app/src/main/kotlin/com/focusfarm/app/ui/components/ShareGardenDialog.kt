@@ -20,8 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import android.graphics.Bitmap
+import com.focusfarm.app.R
 
 @Composable
 fun ShareGardenDialog(
@@ -41,21 +43,21 @@ fun ShareGardenDialog(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "Bahceni Paylas",
+                text = stringResource(R.string.share_garden_title),
                 style = MaterialTheme.typography.headlineLarge,
                 color = Color(0xFFE4B156),
             )
 
             Image(
                 bitmap = bitmap.asImageBitmap(),
-                contentDescription = "Garden preview",
+                contentDescription = stringResource(R.string.share_garden_preview_content_description),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(400.dp),
             )
 
             Text(
-                text = "Odaklanarak bahcemi buyuttum! Sen de katil.",
+                text = stringResource(R.string.share_garden_message),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFFD8C9AF),
             )
@@ -68,7 +70,7 @@ fun ShareGardenDialog(
                     onClick = onDismiss,
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("Iptal")
+                    Text(stringResource(R.string.action_cancel))
                 }
 
                 Button(
@@ -76,7 +78,7 @@ fun ShareGardenDialog(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE4B156)),
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("Paylas", color = Color(0xFF0F1712))
+                    Text(stringResource(R.string.action_share), color = Color(0xFF0F1712))
                 }
             }
         }

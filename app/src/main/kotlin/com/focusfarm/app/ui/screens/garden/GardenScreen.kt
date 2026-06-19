@@ -28,9 +28,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,10 +48,6 @@ import com.focusfarm.app.domain.PlantCatalog
 import com.focusfarm.app.domain.ShareGardenUseCase
 import com.focusfarm.app.ui.components.FocusBackdrop
 import com.focusfarm.app.ui.components.ShareGardenDialog
-import com.focusfarm.app.ui.theme.Amber
-import com.focusfarm.app.ui.theme.CreamDim
-import com.focusfarm.app.ui.theme.ForestDark
-import com.focusfarm.app.ui.theme.ForestMid
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.app.ui.theme.plantAccentColor
 import java.text.SimpleDateFormat
@@ -116,14 +112,14 @@ fun GardenScreen(
                     TextButton(onClick = onOpenCollection) {
                         Text(
                             text = stringResource(R.string.collection_book),
-                            color = CreamDim,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelSmall,
                         )
                     }
                     TextButton(onClick = { showShareDialog = true }) {
                         Text(
-                            text = "Paylas",
-                            color = Amber,
+                            text = stringResource(R.string.action_share),
+                            color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.labelSmall,
                         )
                     }
@@ -170,11 +166,11 @@ fun GardenScreen(
 @Composable
 private fun PlantCard(session: FocusSession) {
     val plant = PlantCatalog.getById(session.plantId)
-    val accent = plant?.let { plantAccentColor(it.id) } ?: Amber
+    val accent = plant?.let { plantAccentColor(it.id) } ?: MaterialTheme.colorScheme.primary
     val dateFormat = remember { SimpleDateFormat("d MMM", Locale.getDefault()) }
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.border(1.5.dp, accent.copy(alpha = 0.25f), RoundedCornerShape(20.dp)),
     ) {
@@ -200,9 +196,9 @@ private fun PlantCard(session: FocusSession) {
                 stringResource(R.string.duration_minutes_short, session.durationMinutes),
                 fontFamily = TimerFontFamily,
                 fontSize = 12.sp,
-                color = Amber,
+                color = MaterialTheme.colorScheme.primary,
             )
-            Text(dateFormat.format(Date(session.completedAt)), style = MaterialTheme.typography.labelSmall, color = CreamDim, fontSize = 10.sp)
+            Text(dateFormat.format(Date(session.completedAt)), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
         }
     }
 }
@@ -210,13 +206,13 @@ private fun PlantCard(session: FocusSession) {
 @Composable
 private fun StatChip(value: String, label: String, modifier: Modifier = Modifier) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp),
         modifier = modifier,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(12.dp).fillMaxWidth()) {
-            Text(value, fontFamily = TimerFontFamily, fontSize = 18.sp, color = Amber)
-            Text(label, style = MaterialTheme.typography.labelSmall, color = CreamDim)
+            Text(value, fontFamily = TimerFontFamily, fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
+            Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -232,7 +228,7 @@ private fun EmptyGarden() {
         Spacer(Modifier.height(16.dp))
         Text(stringResource(R.string.empty_garden_title), style = MaterialTheme.typography.headlineLarge, textAlign = TextAlign.Center)
         Spacer(Modifier.height(8.dp))
-        Text(stringResource(R.string.empty_garden_desc), style = MaterialTheme.typography.bodyMedium, color = CreamDim, textAlign = TextAlign.Center)
+        Text(stringResource(R.string.empty_garden_desc), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
     }
 }
 

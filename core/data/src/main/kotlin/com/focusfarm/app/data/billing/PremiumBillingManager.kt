@@ -14,6 +14,7 @@ import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
 import com.focusfarm.app.telemetry.AppTelemetry
+import com.focusfarm.core.ui.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -109,14 +110,14 @@ class PremiumBillingManager @Inject constructor(
 
     fun launchPurchase(activity: Activity, plan: PremiumPlan) {
         if (!billingClient.isReady) {
-            _state.update { it.copy(message = "Satın alma servisi henüz hazır değil.") }
+            _state.update { it.copy(message = context.getString(R.string.billing_ready_error)) }
             start()
             return
         }
 
         val cached = cachedProducts[plan]
         if (cached == null) {
-            _state.update { it.copy(message = "Bu plan şu an yüklenemedi, tekrar dene.") }
+            _state.update { it.copy(message = context.getString(R.string.billing_load_error)) }
             refresh()
             return
         }
@@ -150,7 +151,7 @@ class PremiumBillingManager @Inject constructor(
     fun purchase(planId: String) {
         val plan = PremiumPlan.entries.find { it.productId == planId } ?: return
         // Activity gerektirir, bu method PaywallScreen'den activity ile cagrilmali
-        _state.update { it.copy(message = "Satin alma icin activity gerekli") }
+        _state.update { it.copy(message = context.getString(R.string.billing_activity_required)) }
     }
 
     suspend fun restorePurchases() {
@@ -169,11 +170,11 @@ class PremiumBillingManager @Inject constructor(
             BillingClient.BillingResponseCode.OK -> {
                 handlePurchases(purchases.orEmpty())
                 trackSuccessfulPurchases(purchases.orEmpty())
-                _state.update { it.copy(message = "Satın alma başarılı. Premium aktif edildi.") }
+                _state.update { it.copy(message = context.getString(R.string.billing_purchase_success)) }
             }
 
             BillingClient.BillingResponseCode.USER_CANCELED -> {
-                _state.update { it.copy(message = "Satın alma iptal edildi.") }
+                _state.update { it.copy(message = context.getString(R.string.billing_purchase_cancelled)) }
             }
 
             else -> {
@@ -374,6 +375,20 @@ class PremiumBillingManager @Inject constructor(
             val containsPremium = purchase.products.any { PremiumPlan.fromProductId(it) != null }
             if (!containsPremium) return@forEach
 
+            // SOTA: Kriptografik imza doğrulaması yap (Güvenlik Koruması)
+            val isVerified = SecuritySignatureVerifier.isSignatureValid(
+                context = context,
+                signedData = purchase.originalJson,
+                signature = purchase.signature
+            )
+            if (!isVerified) {
+                telemetry.recordNonFatal(
+                    tag = "billing_signature_failed",
+                    message = "Signature verification failed for products: ${purchase.products}"
+                )
+                return@forEach
+            }
+
             when (purchase.purchaseState) {
                 Purchase.PurchaseState.PURCHASED -> {
                     unlocked = true
@@ -394,11 +409,44 @@ class PremiumBillingManager @Inject constructor(
             it.copy(
                 isPremiumUnlocked = unlocked,
                 message = if (hasPending) {
-                    "Satın alma işlemin tamamlanınca Premium aktif olacak."
+                    context.getString(R.string.billing_pending_activation)
                 } else {
                     it.message
                 },
             )
+        }
+    }
+
+    // SOTA: Yerel ödeme imza doğrulama yardımcısı
+    private object SecuritySignatureVerifier {
+        private const val BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzFocusFarmPlaceholderKey"
+
+        fun verifyPurchase(publicKey: String, signedData: String, signature: String): Boolean {
+            if (signedData.isEmpty() || signature.isEmpty() || publicKey.isEmpty()) {
+                return false
+            }
+            return try {
+                val keyBytes = android.util.Base64.decode(publicKey, android.util.Base64.DEFAULT)
+                val keySpec = java.security.spec.X509EncodedKeySpec(keyBytes)
+                val keyFactory = java.security.KeyFactory.getInstance("RSA")
+                val key = keyFactory.generatePublic(keySpec)
+
+                val sig = java.security.Signature.getInstance("SHA1withRSA")
+                sig.initVerify(key)
+                sig.update(signedData.toByteArray())
+                sig.verify(android.util.Base64.decode(signature, android.util.Base64.DEFAULT))
+            } catch (e: Exception) {
+                false
+            }
+        }
+
+        fun isSignatureValid(context: Context, signedData: String, signature: String): Boolean {
+            val isDebuggable = (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+            if (isDebuggable && (BASE64_PUBLIC_KEY.isEmpty() || BASE64_PUBLIC_KEY.contains("Placeholder"))) {
+                // Hata ayıklama derlemelerinde ve varsayılan anahtarla test etmeye izin ver
+                return true
+            }
+            return verifyPurchase(BASE64_PUBLIC_KEY, signedData, signature)
         }
     }
 
@@ -437,16 +485,16 @@ class PremiumBillingManager @Inject constructor(
         if (debugMessage.isNotBlank()) return debugMessage
         return when (responseCode) {
             BillingClient.BillingResponseCode.NETWORK_ERROR ->
-                "Ağ hatası oluştu. Tekrar dene."
+                context.getString(R.string.billing_net_error)
             BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE ->
-                "Google Play servisine ulaşılamıyor."
+                context.getString(R.string.billing_service_unavailable)
             BillingClient.BillingResponseCode.BILLING_UNAVAILABLE ->
-                "Cihazında faturalandırma kullanılamıyor."
+                context.getString(R.string.billing_unavailable)
             BillingClient.BillingResponseCode.ITEM_UNAVAILABLE ->
-                "Bu ürün şu anda kullanılamıyor."
+                context.getString(R.string.billing_item_unavailable)
             BillingClient.BillingResponseCode.USER_CANCELED ->
-                "Satın alma iptal edildi."
-            else -> "Satın alma işlemi tamamlanamadı."
+                context.getString(R.string.billing_purchase_cancelled)
+            else -> context.getString(R.string.billing_purchase_failed)
         }
     }
 }

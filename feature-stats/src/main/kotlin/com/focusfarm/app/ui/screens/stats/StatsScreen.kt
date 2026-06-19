@@ -38,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,11 +55,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.data.local.ReflectionHistoryItem
 import com.focusfarm.app.domain.FocusSession
 import com.focusfarm.app.ui.components.FocusBackdrop
-import com.focusfarm.app.ui.theme.Amber
-import com.focusfarm.app.ui.theme.CreamDim
-import com.focusfarm.app.ui.theme.ForestDark
-import com.focusfarm.app.ui.theme.ForestLight
-import com.focusfarm.app.ui.theme.ForestMid
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.core.ui.R
 import kotlinx.coroutines.launch
@@ -108,7 +105,7 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings",
-                        tint = Amber
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -129,19 +126,19 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Card(colors = CardDefaults.cardColors(containerColor = ForestMid), shape = RoundedCornerShape(20.dp)) {
+        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp)) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     weeklyChallenge.seasonTitle,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.SemiBold,
                 )
                 Spacer(Modifier.height(6.dp))
                 Text(
                     weeklyChallenge.seasonSubtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(6.dp))
                 Text(
@@ -153,7 +150,7 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
                         weeklyChallenge.targetMinutes,
                     ),
                     style = MaterialTheme.typography.bodySmall,
-                    color = if (weeklyChallenge.isCompleted) Amber else CreamDim,
+                    color = if (weeklyChallenge.isCompleted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(8.dp))
                 ProgressTrack(weeklyChallenge.overallRatio)
@@ -161,22 +158,22 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
                 Text(
                     text = stringResource(R.string.weekly_reward_seeds, weeklyChallenge.rewardSeeds),
                     style = MaterialTheme.typography.labelSmall,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                 )
                 if (isWeeklyRewardClaimed) {
                     Text(
                         text = stringResource(R.string.weekly_reward_claimed),
                         style = MaterialTheme.typography.labelSmall,
-                        color = CreamDim,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
         }
 
         // Weekly bar chart
-        Card(colors = CardDefaults.cardColors(containerColor = ForestMid), shape = RoundedCornerShape(20.dp)) {
+        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp)) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(stringResource(R.string.this_week), style = MaterialTheme.typography.bodyMedium, color = CreamDim, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(R.string.this_week), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
                 Spacer(Modifier.height(16.dp))
                 WeeklyChart(weeklySessions)
             }
@@ -184,31 +181,31 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
 
         // Recent sessions
         if (recentSessions.isNotEmpty()) {
-            Card(colors = CardDefaults.cardColors(containerColor = ForestMid), shape = RoundedCornerShape(20.dp)) {
+            Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp)) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(stringResource(R.string.recent_sessions), style = MaterialTheme.typography.bodyMedium, color = CreamDim, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.recent_sessions), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
                     Spacer(Modifier.height(8.dp))
                     recentSessions.forEach { session ->
                         SessionRow(session)
-                        HorizontalDivider(color = ForestLight, modifier = Modifier.padding(vertical = 4.dp))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 4.dp))
                     }
                 }
             }
         }
 
         if (reflectionHistory.isNotEmpty()) {
-            Card(colors = CardDefaults.cardColors(containerColor = ForestMid), shape = RoundedCornerShape(20.dp)) {
+            Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp)) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         stringResource(R.string.reflection_history_title),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = CreamDim,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.SemiBold,
                     )
                     Spacer(Modifier.height(8.dp))
                     reflectionHistory.forEach { item ->
                         ReflectionRow(item)
-                        HorizontalDivider(color = ForestLight, modifier = Modifier.padding(vertical = 4.dp))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 4.dp))
                     }
                 }
             }
@@ -223,7 +220,7 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
                 Spacer(Modifier.height(16.dp))
                 Text(stringResource(R.string.no_data_title), style = MaterialTheme.typography.headlineLarge, textAlign = TextAlign.Center)
                 Spacer(Modifier.height(8.dp))
-                Text(stringResource(R.string.no_data_desc), style = MaterialTheme.typography.bodyMedium, color = CreamDim, textAlign = TextAlign.Center)
+                Text(stringResource(R.string.no_data_desc), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
             }
         }
 
@@ -274,7 +271,7 @@ private fun WeeklyChart(sessions: List<FocusSession>) {
             val isToday = index == todayIndex
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
                 if (minutes > 0) {
-                    Text("$minutes", fontFamily = TimerFontFamily, fontSize = 9.sp, color = CreamDim)
+                    Text("$minutes", fontFamily = TimerFontFamily, fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.height(2.dp))
                 }
                 Spacer(Modifier.weight(1f))
@@ -283,13 +280,13 @@ private fun WeeklyChart(sessions: List<FocusSession>) {
                         .width(22.dp)
                         .height(barHeight)
                         .clip(RoundedCornerShape(4.dp))
-                        .background(if (isToday) Amber else ForestLight),
+                        .background(if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     dayLabels[index],
                     style = MaterialTheme.typography.labelSmall,
-                    color = if (isToday) Amber else CreamDim,
+                    color = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
                     fontSize = 11.sp,
                 )
@@ -309,23 +306,23 @@ private fun SessionRow(session: FocusSession) {
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(session.plantName, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-            Text(dateFormat.format(Date(session.completedAt)), style = MaterialTheme.typography.bodySmall, color = CreamDim)
+            Text(dateFormat.format(Date(session.completedAt)), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Text(
             stringResource(R.string.duration_minutes_short, session.durationMinutes),
             fontFamily = TimerFontFamily,
             fontSize = 13.sp,
-            color = Amber,
+            color = MaterialTheme.colorScheme.primary,
         )
     }
 }
 
 @Composable
 private fun SummaryCard(value: String, label: String, modifier: Modifier = Modifier) {
-    Card(colors = CardDefaults.cardColors(containerColor = ForestMid), shape = RoundedCornerShape(20.dp), modifier = modifier) {
+    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp), modifier = modifier) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(12.dp).fillMaxWidth()) {
-            Text(value, fontFamily = TimerFontFamily, fontSize = 22.sp, color = Amber, fontWeight = FontWeight.Bold)
-            Text(label, style = MaterialTheme.typography.labelSmall, color = CreamDim, textAlign = TextAlign.Center)
+            Text(value, fontFamily = TimerFontFamily, fontSize = 22.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+            Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
         }
     }
 }
@@ -345,13 +342,13 @@ private fun ReflectionRow(item: ReflectionHistoryItem) {
             Text(
                 "${item.plantName} - ${stringResource(R.string.duration_minutes_short, item.durationMinutes)}",
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.weight(1f))
             Text(
                 dateFormat.format(Date(item.completedAt)),
                 style = MaterialTheme.typography.labelSmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         Text(
@@ -368,14 +365,14 @@ private fun ProgressTrack(progress: Float) {
             .fillMaxWidth()
             .height(6.dp)
             .clip(RoundedCornerShape(4.dp))
-            .background(ForestLight),
+            .background(MaterialTheme.colorScheme.outlineVariant),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(progress.coerceIn(0f, 1f))
                 .height(6.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Amber),
+                .background(MaterialTheme.colorScheme.primary),
         )
     }
 }
@@ -401,12 +398,12 @@ private fun SettingsDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Ayarlar",
-                color = Amber,
+                text = stringResource(R.string.settings_title),
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleLarge
             )
         },
-        containerColor = ForestMid,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(28.dp),
         text = {
             Column(
@@ -415,7 +412,7 @@ private fun SettingsDialog(
             ) {
                 // SECTION 1: Enter Referral Code
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = ForestDark),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(
@@ -423,14 +420,14 @@ private fun SettingsDialog(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Arkadaş Kodu Kullan",
-                            color = Amber,
+                            text = stringResource(R.string.settings_referral_title),
+                            color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Bir arkadaşının kodunu girerek 50 Seed kazan.",
-                            color = CreamDim,
+                            text = stringResource(R.string.settings_referral_desc),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall
                         )
 
@@ -442,12 +439,12 @@ private fun SettingsDialog(
                             OutlinedTextField(
                                 value = referralInput,
                                 onValueChange = { referralInput = it.uppercase() },
-                                label = { Text("Kod", color = CreamDim) },
+                                label = { Text(stringResource(R.string.settings_referral_label), color = MaterialTheme.colorScheme.onSurfaceVariant) },
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = Amber,
-                                    unfocusedBorderColor = ForestLight,
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                                    focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                    unfocusedTextColor = MaterialTheme.colorScheme.onBackground
                                 ),
                                 singleLine = true,
                                 modifier = Modifier.weight(1f)
@@ -469,15 +466,18 @@ private fun SettingsDialog(
                                     }
                                 },
                                 enabled = referralInput.isNotBlank() && !isReferralLoading && !referralState.isLoading,
-                                colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark)
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                )
                             ) {
                                 if (isReferralLoading || referralState.isLoading) {
                                     CircularProgressIndicator(
-                                        color = ForestDark,
+                                        color = MaterialTheme.colorScheme.onPrimary,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 } else {
-                                    Text("Uygula")
+                                    Text(stringResource(R.string.settings_referral_apply))
                                 }
                             }
                         }
@@ -493,7 +493,7 @@ private fun SettingsDialog(
 
                 // SECTION 2: GDPR Consent Management
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = ForestDark),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(
@@ -501,14 +501,14 @@ private fun SettingsDialog(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Gizlilik ve Reklamlar",
-                            color = Amber,
+                            text = stringResource(R.string.settings_privacy_title),
+                            color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Reklam rızanızı ve gizlilik seçeneklerinizi dilediğiniz zaman düzenleyebilirsiniz.",
-                            color = CreamDim,
+                            text = stringResource(R.string.settings_privacy_desc),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall
                         )
 
@@ -518,17 +518,33 @@ private fun SettingsDialog(
                                     viewModel.showPrivacyOptions(act) { /* onDismiss */ }
                                 }
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            ),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Gizlilik Tercihlerini Düzenle")
+                            Text(stringResource(R.string.settings_privacy_preferences))
+                        }
+
+                        TextButton(
+                            onClick = {
+                                val browserIntent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(PRIVACY_POLICY_URL),
+                                )
+                                context.startActivity(browserIntent)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(stringResource(R.string.settings_privacy_policy_button))
                         }
                     }
                 }
 
                 // SECTION 3: Account Deletion (Google Play Compliance)
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = ForestDark),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(
@@ -536,23 +552,26 @@ private fun SettingsDialog(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Hesap ve Veriler",
-                            color = Color(0xFFD56241),
+                            text = stringResource(R.string.settings_account_data_title),
+                            color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Hesabınızı sildiğinizde cihazdaki ve buluttaki tüm verileriniz kalıcı olarak temizlenir.",
-                            color = CreamDim,
+                            text = stringResource(R.string.settings_account_delete_body),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall
                         )
 
                         Button(
                             onClick = { showDeleteConfirmation = true },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD56241), contentColor = Color.White),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.error,
+                                contentColor = MaterialTheme.colorScheme.onError
+                            ),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Hesabımı ve Verilerimi Sil")
+                            Text(stringResource(R.string.settings_delete_account_button))
                         }
                     }
                 }
@@ -560,7 +579,7 @@ private fun SettingsDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Kapat", color = Amber)
+                Text(stringResource(R.string.paywall_close), color = MaterialTheme.colorScheme.primary)
             }
         }
     )
@@ -568,12 +587,12 @@ private fun SettingsDialog(
     if (showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = { if (!isDeleting) showDeleteConfirmation = false },
-            title = { Text("Hesabı Sil?", color = Color(0xFFD56241)) },
-            containerColor = ForestDark,
+            title = { Text(stringResource(R.string.settings_delete_account_title), color = MaterialTheme.colorScheme.error) },
+            containerColor = MaterialTheme.colorScheme.background,
             text = {
                 Text(
-                    text = "Tüm ilerlemeniz, satın almalarınız ve bahçeniz kalıcı olarak silinecektir. Bu işlem geri alınamaz. Emin misiniz?",
-                    color = CreamDim
+                    text = stringResource(R.string.settings_delete_account_confirm_body),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             confirmButton = {
@@ -593,9 +612,9 @@ private fun SettingsDialog(
                     enabled = !isDeleting
                 ) {
                     if (isDeleting) {
-                        CircularProgressIndicator(color = Color(0xFFD56241), modifier = Modifier.size(20.dp))
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.error, modifier = Modifier.size(20.dp))
                     } else {
-                        Text("Evet, Sil", color = Color(0xFFD56241))
+                        Text(stringResource(R.string.settings_delete_account_confirm), color = MaterialTheme.colorScheme.error)
                     }
                 }
             },
@@ -604,10 +623,11 @@ private fun SettingsDialog(
                     onClick = { showDeleteConfirmation = false },
                     enabled = !isDeleting
                 ) {
-                    Text("İptal", color = CreamDim)
+                    Text(stringResource(R.string.action_cancel), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         )
     }
 }
 
+private const val PRIVACY_POLICY_URL = "https://canburakyol.github.io/focusfarm-privacy/"

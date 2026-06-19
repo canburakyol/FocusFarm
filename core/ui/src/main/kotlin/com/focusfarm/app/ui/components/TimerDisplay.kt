@@ -22,9 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.focusfarm.core.ui.R
-import com.focusfarm.app.ui.theme.Amber
-import com.focusfarm.app.ui.theme.CreamDim
-import com.focusfarm.app.ui.theme.ForestLight
 import com.focusfarm.app.ui.theme.TimerFontFamily
 
 @Composable
@@ -65,7 +62,7 @@ fun TimerDisplay(
                 stringResource(R.string.minutes_remaining, minutesLeft)
             },
             style = MaterialTheme.typography.bodyMedium,
-            color = CreamDim,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         // Progress bar
@@ -74,14 +71,14 @@ fun TimerDisplay(
                 .width(200.dp)
                 .height(4.dp)
                 .clip(RoundedCornerShape(2.dp))
-                .background(ForestLight),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(progress)
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(Amber),
+                    .background(MaterialTheme.colorScheme.primary),
             )
         }
     }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="PluralsCandidate">
     <string name="app_name">Focus Farm</string>
 
@@ -182,6 +182,8 @@
     <string name="reminder_body">Kısa bir oturumla ritmini koru.</string>
 
     <string name="action_ok">Tamam</string>
+    <string name="action_cancel">İptal</string>
+    <string name="action_share">Paylaş</string>
 
     <string name="status_quest_claimed">+%d seed kazanıldı.</string>
     <string name="status_quest_claim_failed">Görev ödülü alınamadı.</string>
@@ -208,19 +210,90 @@
     <string name="session_reward_seeds">Oturum ödülü: +%d seed</string>
     <string name="session_reward_seeds_boosted">Oturum ödülü: +%1$d seed (2x bonus, normal %2$d)</string>
 
+    <string name="settings_privacy_preferences">Gizlilik Tercihlerini Düzenle</string>
+    <string name="settings_privacy_policy_button">Gizlilik Politikasını Aç</string>
+    <string name="settings_account_data_title">Hesap ve Veriler</string>
+    <string name="settings_account_delete_body">Hesabınızı sildiğinizde cihazdaki ve buluttaki tüm verileriniz kalıcı olarak temizlenir.</string>
+    <string name="settings_delete_account_button">Hesabımı ve Verilerimi Sil</string>
+    <string name="settings_delete_account_title">Hesabı Sil?</string>
+    <string name="settings_delete_account_confirm_body">Tüm ilerlemeniz, satın almalarınız ve bahçeniz kalıcı olarak silinecektir. Bu işlem geri alınamaz. Emin misiniz?</string>
+    <string name="settings_delete_account_confirm">Evet, Sil</string>
+    <string name="share_garden_title">Bahçeni Paylaş</string>
+    <string name="share_garden_preview_content_description">Bahçe önizlemesi</string>
+    <string name="share_garden_message">Odaklanarak bahçemi büyüttüm! Sen de katıl.</string>
+    <string name="referral_share_text">FocusFarm ile odaklanarak bahçemi büyütüyorum! Sen de katıl: %s</string>
+    <string name="referral_share_chooser_title">Arkadaşını Davet Et</string>
+
     <string name="paywall_title">FocusFarm Premium</string>
-    <string name="paywall_subtitle">Odak yolculugunu zirveye tasi</string>
-    <string name="paywall_feature_1">Tum premium bitkilere erisim</string>
-    <string name="paywall_feature_2">Reklamsiz deneyim</string>
-    <string name="paywall_feature_3">Gelimis istatistikler</string>
-    <string name="paywall_feature_4">Ozel bahce temalari</string>
-    <string name="paywall_feature_5">Sonsuz freeze hakki</string>
-    <string name="paywall_feature_6">2x seed kazanci</string>
-    <string name="paywall_trial_button">Ucretsiz Dene - 3 Gun</string>
-    <string name="paywall_restore">Satin Alimlari Geri Yuke</string>
-    <string name="paywall_disclaimer">3 gun ucretsiz deneme sonrasi otomatik olarak secilen plan ucretlendirilir. Istedigin zaman iptal edebilirsin.</string>
+    <string name="paywall_subtitle">Odak yolculuğunu zirveye taşı</string>
+    <string name="paywall_feature_1">Tüm premium bitkilere erişim</string>
+    <string name="paywall_feature_2">Reklamsız deneyim</string>
+    <string name="paywall_feature_3">Gelişmiş istatistikler</string>
+    <string name="paywall_feature_4">Özel bahçe temaları</string>
+    <string name="paywall_feature_5">Sonsuz freeze hakkı</string>
+    <string name="paywall_feature_6">2x seed kazancı</string>
+    <string name="paywall_trial_button">Ücretsiz Dene - 3 Gün</string>
+    <string name="paywall_restore">Satın Alımları Geri Yükle</string>
+    <string name="paywall_disclaimer">3 gün ücretsiz deneme sonrası otomatik olarak seçilen plan ücretlendirilir. İstediğin zaman iptal edebilirsin.</string>
     <string name="paywall_close">Kapat</string>
     <string name="paywall_recommended">ONERILEN</string>
     <string name="paywall_error_purchase_failed">Satin alma basarisiz</string>
     <string name="paywall_error_restore_failed">Geri yukleme basarisiz</string>
+    <string name="paywall_plan_monthly_desc">Her ay yenilenir</string>
+    <string name="paywall_plan_yearly_desc">Her yıl yenilenir</string>
+    <string name="paywall_plan_yearly_savings">%%44 tasarruf</string>
+    <string name="paywall_plan_lifetime_desc">Tek ödeme, sonsuza kadar</string>
+    <string name="paywall_error_connection">Bağlantı hatası: %s</string>
+    <string name="paywall_error_purchase_failed_with_message">Satın alma başarısız: %s</string>
+    <string name="paywall_error_restore_failed_with_message">Geri yükleme başarısız: %s</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_referral_title">Arkadaş Kodu Kullan</string>
+    <string name="settings_referral_desc">Bir arkadaşının kodunu girerek 50 Seed kazan.</string>
+    <string name="settings_referral_label">Kod</string>
+    <string name="settings_referral_apply">Uygula</string>
+    <string name="settings_privacy_title">Gizlilik ve Reklamlar</string>
+    <string name="settings_privacy_desc">Reklam rızanızı ve gizlilik seçeneklerinizi dilediğiniz zaman düzenleyebilirsiniz.</string>
+    <string name="referral_error_needs_session">Referral kodunu kullanabilmek için en az 1 odak oturumu tamamlamış olmalısın.</string>
+
+    <!-- Invite Friends Screen -->
+    <string name="referral_title">Arkadaşlarını Davet Et</string>
+    <string name="referral_subtitle">Her davet için 50 seed kazan!</string>
+    <string name="referral_your_code">Senin Kodun</string>
+    <string name="referral_loading">Yükleniyor...</string>
+    <string name="referral_friends_joined">%d arkadaş katıldı</string>
+    <string name="referral_how_it_works">Nasıl Çalışır?</string>
+    <string name="referral_step_1_title">Kodunu Paylaş</string>
+    <string name="referral_step_1_desc">Arkadaşlarına kodunu veya davet linkini gönder</string>
+    <string name="referral_step_2_title">Arkadaşin Katılır</string>
+    <string name="referral_step_2_desc">Arkadaşın kodu kullanarak FocusFarm\'a katılır</string>
+    <string name="referral_step_3_title">50 Seed Kazan</string>
+    <string name="referral_step_3_desc">Her başarılı davet için 50 seed kazanırsın</string>
+    <string name="action_close">Kapat</string>
+    <string name="referral_share_button">Davet Linkini Paylaş</string>
+
+    <!-- Focus Party Screen -->
+    <string name="party_title">Birlikte Odaklan</string>
+    <string name="party_subtitle">Arkadaşlarınla aynı anda odaklan, birlikte büyüyün!</string>
+    <string name="party_card_title">Parti Oluştur veya Katıl</string>
+    <string name="party_create_button">Yeni Parti Oluştur</string>
+    <string name="party_join_button">Kodla Katıl</string>
+    <string name="party_code_label">Parti Kodu: %s</string>
+    <string name="party_leave_button">Ayrıl</string>
+    <string name="party_members_count">%1$d/%2$d Üye</string>
+    <string name="party_start_session_button">Oturumu Başlat (%d dk)</string>
+
+    <!-- Billing strings -->
+    <string name="billing_ready_error">Satın alma servisi henüz hazır değil.</string>
+    <string name="billing_load_error">Bu plan şu an yüklenemedi, tekrar dene.</string>
+    <string name="billing_activity_required">Satın alma için activity gerekli.</string>
+    <string name="billing_purchase_success">Satın alma başarılı. Premium aktif edildi.</string>
+    <string name="billing_purchase_cancelled">Satın alma iptal edildi.</string>
+    <string name="billing_pending_activation">Satın alma işlemin tamamlanınca Premium aktif olacak.</string>
+    <string name="billing_net_error">Ağ hatası oluştu. Tekrar dene.</string>
+    <string name="billing_service_unavailable">Google Play servisine ulaşılamıyor.</string>
+    <string name="billing_unavailable">Cihazında faturalandırma kullanılamıyor.</string>
+    <string name="billing_item_unavailable">Bu ürün şu anda kullanılamıyor.</string>
+    <string name="billing_purchase_failed">Satın alma işlemi tamamlanamadı.</string>
 </resources>

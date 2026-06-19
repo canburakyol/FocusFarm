@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import com.focusfarm.app.ui.theme.Amber
-import com.focusfarm.app.ui.theme.ForestDark
-import com.focusfarm.app.ui.theme.ForestLight
-import com.focusfarm.app.ui.theme.ForestMid
+import com.focusfarm.app.ui.theme.CozyAccent
+import com.focusfarm.app.ui.theme.CozyBackground
+import com.focusfarm.app.ui.theme.CozySuccess
+import com.focusfarm.app.ui.theme.CozySurface
 
 @Composable
 fun FocusBackdrop(
@@ -25,22 +25,23 @@ fun FocusBackdrop(
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
-                        Color(0xFF0C1511),
-                        ForestDark,
-                        ForestMid,
+                        Color(0xFFFCFAF5), // Çok açık fildişi
+                        CozyBackground,
+                        CozySurface,
                     ),
                     start = Offset(0f, 0f),
                     end = Offset(1400f, 2200f),
                 ),
             ),
     ) {
+        // Sol üst sıcak terracotta parıltısı
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            Amber.copy(alpha = 0.14f),
+                            CozyAccent.copy(alpha = 0.08f),
                             Color.Transparent,
                         ),
                         center = Offset(180f, 120f),
@@ -48,13 +49,14 @@ fun FocusBackdrop(
                     ),
                 ),
         )
+        // Sağ alt pastel adaçayı yeşili parıltısı
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            ForestLight.copy(alpha = 0.18f),
+                            CozySuccess.copy(alpha = 0.08f),
                             Color.Transparent,
                         ),
                         center = Offset(1020f, 1820f),

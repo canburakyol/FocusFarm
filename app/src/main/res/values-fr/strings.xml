@@ -219,4 +219,63 @@
     <string name="paywall_recommended">RECOMMANDE</string>
     <string name="paywall_error_purchase_failed">Achat echoue</string>
     <string name="paywall_error_restore_failed">Restauration echouee</string>
+    <string name="action_cancel">Annuler</string>
+    <string name="action_share">Partager</string>
+    <string name="settings_privacy_preferences">Modifier les preferences de confidentialite</string>
+    <string name="settings_account_data_title">Compte et donnees</string>
+    <string name="settings_account_delete_body">Lorsque tu supprimes ton compte, toutes les donnees de cet appareil et du cloud sont supprimees definitivement.</string>
+    <string name="settings_delete_account_button">Supprimer mon compte et mes donnees</string>
+    <string name="settings_delete_account_title">Supprimer le compte ?</string>
+    <string name="settings_delete_account_confirm_body">Toute ta progression, tes achats et ton jardin seront supprimes definitivement. Cette action est irreversible. Es-tu sur ?</string>
+    <string name="settings_delete_account_confirm">Oui, supprimer</string>
+    <string name="share_garden_title">Partager le jardin</string>
+    <string name="share_garden_preview_content_description">Apercu du jardin</string>
+    <string name="share_garden_message">J ai fait grandir mon jardin en me concentrant. Rejoins-moi.</string>
+    <string name="referral_share_text">Je fais grandir mon jardin avec FocusFarm. Rejoins-moi : %s</string>
+    <string name="referral_share_chooser_title">Inviter un ami</string>
+    <string name="paywall_plan_monthly_desc">Renouvellement mensuel</string>
+    <string name="paywall_plan_yearly_desc">Renouvellement annuel</string>
+    <string name="paywall_plan_yearly_savings">44%% d economie</string>
+    <string name="paywall_plan_lifetime_desc">Un paiement, pour toujours</string>
+    <string name="paywall_error_connection">Erreur de connexion : %s</string>
+    <string name="paywall_error_purchase_failed_with_message">Achat echoue : %s</string>
+    <string name="paywall_error_restore_failed_with_message">Restauration echouee : %s</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_referral_title">Utiliser un code ami</string>
+    <string name="settings_referral_desc">Saisis le code d’un ami pour gagner 50 Seeds.</string>
+    <string name="settings_referral_label">Code</string>
+    <string name="settings_referral_apply">Appliquer</string>
+    <string name="settings_privacy_title">Confidentialité et publicités</string>
+    <string name="settings_privacy_desc">Tu peux gérer ton consentement publicitaire et tes options de confidentialité à tout moment.</string>
+    <string name="settings_privacy_policy_button">Ouvrir la politique de confidentialité</string>
+    <string name="referral_error_needs_session">Tu dois terminer au moins 1 session de concentration pour utiliser un code de parrainage.</string>
+
+    <!-- Invite Friends Screen -->
+    <string name="referral_title">Inviter des amis</string>
+    <string name="referral_subtitle">Gagne 50 seeds pour chaque invitation.</string>
+    <string name="referral_your_code">Ton code</string>
+    <string name="referral_loading">Chargement...</string>
+    <string name="referral_friends_joined">%d amis ont rejoint</string>
+    <string name="referral_how_it_works">Comment ça marche</string>
+    <string name="referral_step_1_title">Partage ton code</string>
+    <string name="referral_step_1_desc">Envoie ton code ou ton lien d’invitation à tes amis</string>
+    <string name="referral_step_2_title">Ton ami rejoint</string>
+    <string name="referral_step_2_desc">Ton ami rejoint FocusFarm avec le code</string>
+    <string name="referral_step_3_title">Gagne 50 Seeds</string>
+    <string name="referral_step_3_desc">Tu gagnes 50 seeds pour chaque invitation réussie</string>
+    <string name="action_close">Fermer</string>
+    <string name="referral_share_button">Partager le lien d’invitation</string>
+
+    <!-- Focus Party Screen -->
+    <string name="party_title">Se concentrer ensemble</string>
+    <string name="party_subtitle">Concentre-toi en même temps que tes amis et progressez ensemble.</string>
+    <string name="party_card_title">Créer ou rejoindre une party</string>
+    <string name="party_create_button">Créer une nouvelle party</string>
+    <string name="party_join_button">Rejoindre avec un code</string>
+    <string name="party_code_label">Code de la party : %s</string>
+    <string name="party_leave_button">Quitter</string>
+    <string name="party_members_count">%1$d/%2$d membres</string>
+    <string name="party_start_session_button">Démarrer la session (%d min)</string>
 </resources>

@@ -1,4 +1,4 @@
-﻿package com.focusfarm.app.ui.screens.home
+package com.focusfarm.app.ui.screens.home
 
 import android.app.Activity
 import android.content.Context
@@ -48,12 +48,6 @@ import com.focusfarm.app.domain.WeeklyChallengeProgress
 import com.focusfarm.app.monetization.BannerAdSlot
 import com.focusfarm.app.ui.components.FocusBackdrop
 import com.focusfarm.app.ui.components.PlantDisplay
-import com.focusfarm.app.ui.theme.Amber
-import com.focusfarm.app.ui.theme.CreamDim
-import com.focusfarm.app.ui.theme.ForestDark
-import com.focusfarm.app.ui.theme.ForestLight
-import com.focusfarm.app.ui.theme.ForestMid
-import com.focusfarm.app.ui.theme.Success
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.app.ui.theme.plantAccentColor
 import com.focusfarm.core.ui.R
@@ -63,6 +57,7 @@ private val TIMER_OPTIONS = listOf(5, 10, 15, 25, 30, 45, 60)
 @Composable
 fun HomeScreen(
     onStartSession: (plantId: String, minutes: Int) -> Unit,
+    onOpenSettings: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -101,19 +96,32 @@ fun HomeScreen(
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-        Text(
-            text = stringResource(R.string.greeting),
-            style = MaterialTheme.typography.displayMedium,
-        )
-        Text(
-            text = stringResource(R.string.greeting_subtitle),
-            style = MaterialTheme.typography.bodyLarge,
-            color = CreamDim,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.greeting),
+                    style = MaterialTheme.typography.displayMedium,
+                )
+                Text(
+                    text = stringResource(R.string.greeting_subtitle),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            TextButton(onClick = onOpenSettings) {
+                Text(
+                    text = stringResource(R.string.settings_title),
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
 
         statusMessage?.let { message ->
             Card(
-                colors = CardDefaults.cardColors(containerColor = ForestMid),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(16.dp),
             ) {
                 Row(
@@ -125,11 +133,11 @@ fun HomeScreen(
                     Text(
                         text = message,
                         style = MaterialTheme.typography.bodySmall,
-                        color = CreamDim,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f),
                     )
                     TextButton(onClick = viewModel::dismissMessage) {
-                        Text(stringResource(R.string.action_ok), color = Amber)
+                        Text(stringResource(R.string.action_ok), color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
@@ -219,14 +227,14 @@ fun HomeScreen(
 
         recentSession?.let { session ->
             Card(
-                colors = CardDefaults.cardColors(containerColor = ForestMid),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(20.dp),
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = stringResource(R.string.last_session),
                         style = MaterialTheme.typography.labelSmall,
-                        color = CreamDim,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -237,7 +245,7 @@ fun HomeScreen(
                             Text(
                                 stringResource(R.string.focused_minutes, session.durationMinutes),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Amber,
+                                color = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
@@ -248,7 +256,7 @@ fun HomeScreen(
         Text(
             text = stringResource(R.string.select_plant),
             style = MaterialTheme.typography.labelSmall,
-            color = CreamDim,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(
             modifier = Modifier.horizontalScroll(rememberScrollState()),
@@ -262,10 +270,10 @@ fun HomeScreen(
                     modifier = Modifier
                         .width(96.dp)
                         .clip(RoundedCornerShape(20.dp))
-                        .background(if (isSelected) accentColor.copy(0.15f) else ForestMid)
+                        .background(if (isSelected) accentColor.copy(0.15f) else MaterialTheme.colorScheme.surface)
                         .border(
                             1.5.dp,
-                            if (isSelected) accentColor else ForestLight,
+                            if (isSelected) accentColor else MaterialTheme.colorScheme.outlineVariant,
                             RoundedCornerShape(20.dp),
                         )
                         .clickable { viewModel.selectPlant(plant) }
@@ -282,7 +290,7 @@ fun HomeScreen(
                     Text(
                         stringResource(R.string.min_session, plant.minMinutes),
                         style = MaterialTheme.typography.labelSmall,
-                        color = CreamDim,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 10.sp,
                     )
                 }
@@ -292,14 +300,14 @@ fun HomeScreen(
             Text(
                 text = stringResource(R.string.premium_locked_hint),
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim.copy(alpha = 0.85f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
             )
         }
 
         Text(
             text = stringResource(R.string.select_duration),
             style = MaterialTheme.typography.labelSmall,
-            color = CreamDim,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             TIMER_OPTIONS.chunked(3).forEach { rowOptions ->
@@ -310,8 +318,8 @@ fun HomeScreen(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(50))
-                                .background(if (isSelected) Amber else ForestMid)
-                                .border(1.dp, if (isSelected) Amber else ForestLight, RoundedCornerShape(50))
+                                .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
+                                .border(1.5.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(50))
                                 .clickable(enabled = !isDisabled) { viewModel.selectMinutes(min) }
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                             contentAlignment = Alignment.Center,
@@ -321,9 +329,9 @@ fun HomeScreen(
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                 color = when {
-                                    isSelected -> ForestDark
-                                    isDisabled -> CreamDim.copy(alpha = 0.3f)
-                                    else -> CreamDim
+                                    isSelected -> MaterialTheme.colorScheme.onPrimary
+                                    isDisabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
                                 },
                             )
                         }
@@ -333,7 +341,7 @@ fun HomeScreen(
         }
 
         Card(
-            colors = CardDefaults.cardColors(containerColor = ForestMid),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(20.dp),
         ) {
             Column(
@@ -349,7 +357,7 @@ fun HomeScreen(
                 Text(
                     selectedPlant.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
             }
@@ -361,7 +369,7 @@ fun HomeScreen(
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(50),
-            colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
         ) {
             Text(
                 stringResource(R.string.start_focus),
@@ -373,7 +381,7 @@ fun HomeScreen(
         Text(
             stringResource(R.string.app_leave_warning),
             style = MaterialTheme.typography.bodySmall,
-            color = CreamDim.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -402,7 +410,7 @@ private fun HomeStatCard(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
         modifier = modifier,
     ) {
@@ -416,12 +424,12 @@ private fun HomeStatCard(
                 text = value,
                 fontFamily = TimerFontFamily,
                 style = MaterialTheme.typography.titleLarge,
-                color = Amber,
+                color = MaterialTheme.colorScheme.primary,
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
         }
@@ -439,7 +447,7 @@ private fun RewardedAdBonusCard(
     onNextSessionBoost: () -> Unit,
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(
@@ -449,26 +457,26 @@ private fun RewardedAdBonusCard(
             Text(
                 text = stringResource(R.string.ad_rewards_title),
                 style = MaterialTheme.typography.bodyMedium,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
                 text = stringResource(R.string.ad_rewards_desc),
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             if (!isConsentReady) {
                 Text(
                     text = stringResource(R.string.ad_consent_pending_body),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
             Button(
                 onClick = onQuestReroll,
                 enabled = canUseQuestRerollAd,
                 shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
@@ -483,7 +491,7 @@ private fun RewardedAdBonusCard(
                 onClick = onNextSessionBoost,
                 enabled = canActivateNextSessionSeedBoost,
                 shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = ForestLight, contentColor = CreamDim),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary, contentColor = MaterialTheme.colorScheme.onSecondary),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
@@ -501,7 +509,7 @@ private fun RewardedAdBonusCard(
 @Composable
 private fun AdBannerCard() {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(
@@ -511,7 +519,7 @@ private fun AdBannerCard() {
             Text(
                 text = stringResource(R.string.ad_banner_label),
                 style = MaterialTheme.typography.labelSmall,
-                color = CreamDim.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
             AdMobBanner(
@@ -534,7 +542,7 @@ private fun AdMobBanner(modifier: Modifier = Modifier) {
 @Composable
 private fun ConsentPendingCard() {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(
@@ -544,13 +552,13 @@ private fun ConsentPendingCard() {
             Text(
                 text = stringResource(R.string.ad_consent_pending_title),
                 style = MaterialTheme.typography.bodyMedium,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
                 text = stringResource(R.string.ad_consent_pending_body),
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -564,7 +572,7 @@ private fun WeeklyPersonalReportDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = ForestMid,
+        containerColor = MaterialTheme.colorScheme.surface,
         title = {
             Text(
                 text = stringResource(R.string.weekly_report_title),
@@ -576,7 +584,7 @@ private fun WeeklyPersonalReportDialog(
                 Text(
                     text = stringResource(R.string.weekly_report_subtitle, report.weekLabel),
                     style = MaterialTheme.typography.bodySmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     ReportMetric(
@@ -609,22 +617,22 @@ private fun WeeklyPersonalReportDialog(
                         report.bestDayMinutes,
                     ),
                     style = MaterialTheme.typography.bodySmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     text = stringResource(R.string.weekly_report_insight_label),
                     style = MaterialTheme.typography.labelSmall,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                 )
                 Text(
                     text = report.insight,
                     style = MaterialTheme.typography.bodySmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     text = stringResource(R.string.weekly_report_next_goal, report.nextGoalMinutes),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -632,7 +640,7 @@ private fun WeeklyPersonalReportDialog(
         confirmButton = {
             Button(
                 onClick = { onStartWeekPlan(report.suggestedSessionMinutes) },
-                colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
                 shape = RoundedCornerShape(50),
             ) {
                 Text(stringResource(R.string.weekly_report_action_start, report.suggestedSessionMinutes))
@@ -642,7 +650,7 @@ private fun WeeklyPersonalReportDialog(
             TextButton(onClick = onDismiss) {
                 Text(
                     text = stringResource(R.string.weekly_report_action_later),
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         },
@@ -656,7 +664,7 @@ private fun ReportMetric(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestLight.copy(alpha = 0.45f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
         shape = RoundedCornerShape(14.dp),
         modifier = modifier,
     ) {
@@ -669,13 +677,13 @@ private fun ReportMetric(
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,
-                color = Amber,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
         }
@@ -690,20 +698,20 @@ private fun WeeklyChallengeCard(
     onClaimReward: () -> Unit,
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
                 text = challenge.seasonTitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
                 text = challenge.seasonSubtitle,
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             ProgressTrack(challenge.overallRatio)
             Text(
@@ -715,18 +723,18 @@ private fun WeeklyChallengeCard(
                     challenge.targetMinutes,
                 ),
                 style = MaterialTheme.typography.bodySmall,
-                color = if (challenge.isCompleted) Success else CreamDim,
+                color = if (challenge.isCompleted) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium,
             )
             Text(
                 text = stringResource(R.string.weekly_reward_seeds, challenge.rewardSeeds),
                 style = MaterialTheme.typography.labelSmall,
-                color = Amber,
+                color = MaterialTheme.colorScheme.primary,
             )
             when {
                 canClaimReward -> {
                     TextButton(onClick = onClaimReward) {
-                        Text(stringResource(R.string.weekly_reward_claim), color = Amber)
+                        Text(stringResource(R.string.weekly_reward_claim), color = MaterialTheme.colorScheme.primary)
                     }
                 }
 
@@ -734,7 +742,7 @@ private fun WeeklyChallengeCard(
                     Text(
                         text = stringResource(R.string.weekly_reward_claimed),
                         style = MaterialTheme.typography.labelSmall,
-                        color = Success,
+                        color = MaterialTheme.colorScheme.tertiary,
                     )
                 }
             }
@@ -748,7 +756,7 @@ private fun DailyPlanCard(
     onStartPlan: (Int) -> Unit,
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(
@@ -758,13 +766,13 @@ private fun DailyPlanCard(
             Text(
                 text = stringResource(R.string.daily_plan_title),
                 style = MaterialTheme.typography.bodyMedium,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
                 text = stringResource(R.string.daily_plan_subtitle),
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             ProgressTrack(plan.progressRatio)
             Text(
@@ -776,14 +784,14 @@ private fun DailyPlanCard(
                     plan.targetMinutes,
                 ),
                 style = MaterialTheme.typography.bodySmall,
-                color = if (plan.isCompleted) Success else CreamDim,
+                color = if (plan.isCompleted) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium,
             )
             if (!plan.isCompleted) {
                 Button(
                     onClick = { onStartPlan(plan.suggestedSessionMinutes) },
                     shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(stringResource(R.string.daily_plan_action_start, plan.suggestedSessionMinutes))
@@ -796,7 +804,7 @@ private fun DailyPlanCard(
 @Composable
 private fun PersonalGoalCard(goalText: String) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(
@@ -806,13 +814,13 @@ private fun PersonalGoalCard(goalText: String) {
             Text(
                 text = stringResource(R.string.personal_goal_title),
                 style = MaterialTheme.typography.bodyMedium,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
                 text = goalText,
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -824,9 +832,9 @@ private fun EngagementNudgeCard(
     onAction: () -> Unit,
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid.copy(alpha = 0.95f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)),
         shape = RoundedCornerShape(20.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Amber.copy(alpha = 0.35f)),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -835,7 +843,7 @@ private fun EngagementNudgeCard(
             Text(
                 text = stringResource(R.string.engagement_nudge_title),
                 style = MaterialTheme.typography.labelSmall,
-                color = Amber,
+                color = MaterialTheme.colorScheme.primary,
             )
             Text(
                 text = nudge.title,
@@ -845,12 +853,12 @@ private fun EngagementNudgeCard(
             Text(
                 text = nudge.message,
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Button(
                 onClick = onAction,
                 shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = Amber, contentColor = ForestDark),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(nudge.actionLabel)
@@ -865,14 +873,14 @@ private fun DailyQuestsCard(
     onClaim: (DailyQuestType) -> Unit,
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(
                 text = stringResource(R.string.daily_quests_title),
                 style = MaterialTheme.typography.bodyMedium,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
             )
             quests.forEach { quest ->
@@ -907,7 +915,7 @@ private fun QuestRow(
                 Text(
                     text = stringResource(R.string.quest_reward_seeds, quest.quest.rewardSeeds),
                     style = MaterialTheme.typography.labelSmall,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -916,13 +924,13 @@ private fun QuestRow(
                     Text(
                         text = stringResource(R.string.quest_claimed),
                         style = MaterialTheme.typography.labelSmall,
-                        color = Success,
+                        color = MaterialTheme.colorScheme.tertiary,
                     )
                 }
 
                 quest.canClaim -> {
                     TextButton(onClick = { onClaim(quest.quest.type) }) {
-                        Text(stringResource(R.string.quest_claim), color = Amber)
+                        Text(stringResource(R.string.quest_claim), color = MaterialTheme.colorScheme.primary)
                     }
                 }
 
@@ -930,7 +938,7 @@ private fun QuestRow(
                     Text(
                         text = "${quest.quest.progress}/${quest.quest.target}",
                         style = MaterialTheme.typography.labelSmall,
-                        color = CreamDim,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -946,14 +954,14 @@ private fun ProgressTrack(progress: Float) {
             .fillMaxWidth()
             .height(6.dp)
             .clip(RoundedCornerShape(4.dp))
-            .background(ForestLight),
+            .background(MaterialTheme.colorScheme.outlineVariant),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth(progress.coerceIn(0f, 1f))
                 .height(6.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Amber),
+                .background(MaterialTheme.colorScheme.primary),
         )
     }
 }
@@ -964,9 +972,9 @@ private fun StreakFreezeCard(
     onUseFreeze: () -> Unit,
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Amber.copy(alpha = 0.35f)),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -975,13 +983,13 @@ private fun StreakFreezeCard(
             Text(
                 text = "Seri Koruma ❄️",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Amber,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
                 text = "Bugün odaklanamazsan serini korumak icin freeze hakkini kullanabilirsin.",
                 style = MaterialTheme.typography.bodySmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -991,14 +999,14 @@ private fun StreakFreezeCard(
                 Text(
                     text = "Kalan hak: $freezeTokens",
                     style = MaterialTheme.typography.labelSmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Button(
                     onClick = onUseFreeze,
                     shape = RoundedCornerShape(50),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Amber,
-                        contentColor = ForestDark,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
                     ),
                 ) {
                     Text(
@@ -1016,4 +1024,3 @@ private tailrec fun Context.findActivity(): Activity? = when (this) {
     is ContextWrapper -> baseContext.findActivity()
     else -> null
 }
-

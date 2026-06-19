@@ -219,4 +219,63 @@
     <string name="paywall_recommended">RECOMMENDED</string>
     <string name="paywall_error_purchase_failed">Purchase failed</string>
     <string name="paywall_error_restore_failed">Restore failed</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_share">Share</string>
+    <string name="settings_privacy_preferences">Edit privacy preferences</string>
+    <string name="settings_privacy_policy_button">Open privacy policy</string>
+    <string name="settings_account_data_title">Account and data</string>
+    <string name="settings_account_delete_body">When you delete your account, all data on this device and in the cloud is permanently removed.</string>
+    <string name="settings_delete_account_button">Delete my account and data</string>
+    <string name="settings_delete_account_title">Delete account?</string>
+    <string name="settings_delete_account_confirm_body">All your progress, purchases, and garden will be permanently deleted. This cannot be undone. Are you sure?</string>
+    <string name="settings_delete_account_confirm">Yes, delete</string>
+    <string name="share_garden_title">Share your garden</string>
+    <string name="share_garden_preview_content_description">Garden preview</string>
+    <string name="share_garden_message">I grew my garden by focusing. Join me.</string>
+    <string name="referral_share_text">I am growing my garden with FocusFarm. Join me: %s</string>
+    <string name="referral_share_chooser_title">Invite a friend</string>
+    <string name="paywall_plan_monthly_desc">Renews every month</string>
+    <string name="paywall_plan_yearly_desc">Renews every year</string>
+    <string name="paywall_plan_yearly_savings">44%% savings</string>
+    <string name="paywall_plan_lifetime_desc">One payment, forever</string>
+    <string name="paywall_error_connection">Connection error: %s</string>
+    <string name="paywall_error_purchase_failed_with_message">Purchase failed: %s</string>
+    <string name="paywall_error_restore_failed_with_message">Restore failed: %s</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_referral_title">Use Friend Code</string>
+    <string name="settings_referral_desc">Enter a friend\'s code to earn 50 Seeds.</string>
+    <string name="settings_referral_label">Code</string>
+    <string name="settings_referral_apply">Apply</string>
+    <string name="settings_privacy_title">Privacy and Ads</string>
+    <string name="settings_privacy_desc">You can manage your ad consent and privacy options at any time.</string>
+    <string name="referral_error_needs_session">You must complete at least 1 focus session to use a referral code.</string>
+
+    <!-- Invite Friends Screen -->
+    <string name="referral_title">Invite Friends</string>
+    <string name="referral_subtitle">Earn 50 seeds for each invite!</string>
+    <string name="referral_your_code">Your Code</string>
+    <string name="referral_loading">Loading...</string>
+    <string name="referral_friends_joined">%d friends joined</string>
+    <string name="referral_how_it_works">How It Works</string>
+    <string name="referral_step_1_title">Share Your Code</string>
+    <string name="referral_step_1_desc">Send your code or invite link to friends</string>
+    <string name="referral_step_2_title">Friend Joins</string>
+    <string name="referral_step_2_desc">Your friend joins FocusFarm using the code</string>
+    <string name="referral_step_3_title">Earn 50 Seeds</string>
+    <string name="referral_step_3_desc">You earn 50 seeds for every successful invite</string>
+    <string name="action_close">Close</string>
+    <string name="referral_share_button">Share Invite Link</string>
+
+    <!-- Focus Party Screen -->
+    <string name="party_title">Focus Together</string>
+    <string name="party_subtitle">Focus at the same time with your friends, grow together!</string>
+    <string name="party_card_title">Create or Join a Party</string>
+    <string name="party_create_button">Create New Party</string>
+    <string name="party_join_button">Join with Code</string>
+    <string name="party_code_label">Party Code: %s</string>
+    <string name="party_leave_button">Leave</string>
+    <string name="party_members_count">%1$d/%2$d Members</string>
+    <string name="party_start_session_button">Start Session (%d min)</string>
 </resources>

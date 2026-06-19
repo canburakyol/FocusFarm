@@ -30,12 +30,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.focusfarm.core.ui.R
 
 @Composable
 fun PaywallScreen(
@@ -58,7 +60,7 @@ fun PaywallScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "FocusFarm Premium",
+                text = stringResource(R.string.paywall_title),
                 style = MaterialTheme.typography.displayMedium,
                 color = androidx.compose.ui.graphics.Color(0xFFE4B156),
                 textAlign = TextAlign.Center,
@@ -67,7 +69,7 @@ fun PaywallScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Odak yolculugunu zirveye tasi",
+                text = stringResource(R.string.paywall_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = androidx.compose.ui.graphics.Color(0xFFD8C9AF),
                 textAlign = TextAlign.Center,
@@ -108,7 +110,7 @@ fun PaywallScreen(
                     ),
                 ) {
                     Text(
-                        text = "Ucretsiz Dene - 3 Gun",
+                        text = stringResource(R.string.paywall_trial_button),
                         style = MaterialTheme.typography.labelLarge,
                         fontSize = 18.sp,
                     )
@@ -118,7 +120,7 @@ fun PaywallScreen(
 
                 TextButton(onClick = viewModel::restorePurchases) {
                     Text(
-                        text = "Satin Alimlari Geri Yuke",
+                        text = stringResource(R.string.paywall_restore),
                         color = androidx.compose.ui.graphics.Color(0xFFD8C9AF),
                     )
                 }
@@ -154,7 +156,7 @@ fun PaywallScreen(
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "3 gun ucretsiz deneme sonrasi otomatik olarak secilen plan ucretlendirilir. Istedigin zaman iptal edebilirsin.",
+                text = stringResource(R.string.paywall_disclaimer),
                 style = MaterialTheme.typography.labelSmall,
                 color = androidx.compose.ui.graphics.Color(0xFFD8C9AF).copy(alpha = 0.6f),
                 textAlign = TextAlign.Center,
@@ -168,7 +170,7 @@ fun PaywallScreen(
                 .padding(16.dp),
         ) {
             Text(
-                text = "Kapat",
+                text = stringResource(R.string.paywall_close),
                 color = androidx.compose.ui.graphics.Color(0xFFD8C9AF),
             )
         }
@@ -178,12 +180,12 @@ fun PaywallScreen(
 @Composable
 private fun PremiumFeaturesList() {
     val features = listOf(
-        "Tum premium bitkilere erisim",
-        "Reklamsiz deneyim",
-        "Gelimis istatistikler",
-        "Ozel bahce temalari",
-        "Sonsuz freeze hakki",
-        "2x seed kazanci",
+        stringResource(R.string.paywall_feature_1),
+        stringResource(R.string.paywall_feature_2),
+        stringResource(R.string.paywall_feature_3),
+        stringResource(R.string.paywall_feature_4),
+        stringResource(R.string.paywall_feature_5),
+        stringResource(R.string.paywall_feature_6),
     )
 
     Column(
@@ -270,7 +272,7 @@ private fun PlanSelector(
                                             .padding(horizontal = 8.dp, vertical = 4.dp),
                                     ) {
                                         Text(
-                                            text = "ONERILEN",
+                                            text = stringResource(R.string.paywall_recommended),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = androidx.compose.ui.graphics.Color(0xFF0F1712),
                                             fontWeight = FontWeight.Bold,

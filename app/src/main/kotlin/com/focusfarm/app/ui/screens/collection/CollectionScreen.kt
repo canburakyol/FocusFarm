@@ -1,4 +1,4 @@
-﻿package com.focusfarm.app.ui.screens.collection
+package com.focusfarm.app.ui.screens.collection
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,11 +34,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.R
 import com.focusfarm.app.ui.components.FocusBackdrop
-import com.focusfarm.app.ui.theme.Amber
-import com.focusfarm.app.ui.theme.CreamDim
-import com.focusfarm.app.ui.theme.ForestDark
-import com.focusfarm.app.ui.theme.ForestMid
-import com.focusfarm.app.ui.theme.Success
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -64,19 +59,19 @@ fun CollectionScreen(
         ) {
             Text(stringResource(R.string.collection_book), style = MaterialTheme.typography.displayMedium)
             TextButton(onClick = onBack) {
-                Text(stringResource(R.string.go_back), color = CreamDim)
+                Text(stringResource(R.string.go_back), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
         Spacer(Modifier.height(6.dp))
         Text(
             text = stringResource(R.string.collection_subtitle),
             style = MaterialTheme.typography.bodySmall,
-            color = CreamDim,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         statusMessage?.let { message ->
             Spacer(Modifier.height(8.dp))
             Card(
-                colors = CardDefaults.cardColors(containerColor = ForestMid),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -89,11 +84,11 @@ fun CollectionScreen(
                     Text(
                         text = message,
                         style = MaterialTheme.typography.bodySmall,
-                        color = CreamDim,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f),
                     )
                     TextButton(onClick = viewModel::dismissMessage) {
-                        Text(stringResource(R.string.action_ok), color = Amber)
+                        Text(stringResource(R.string.action_ok), color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
@@ -128,13 +123,13 @@ private fun CollectionPlantCard(
         else -> stringResource(R.string.collection_not_discovered)
     }
     val statusColor = when {
-        !item.isPremiumAccessUnlocked -> CreamDim
-        item.isDiscovered -> Success
-        else -> CreamDim
+        !item.isPremiumAccessUnlocked -> MaterialTheme.colorScheme.onSurfaceVariant
+        item.isDiscovered -> MaterialTheme.colorScheme.tertiary
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(18.dp),
     ) {
         Column(
@@ -167,14 +162,14 @@ private fun CollectionPlantCard(
                         dateFormat.format(Date(item.lastCompletedAt)),
                     ),
                     style = MaterialTheme.typography.labelSmall,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Medium,
                 )
             } else {
                 Text(
                     text = item.plant.description,
                     style = MaterialTheme.typography.labelSmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                 )
@@ -183,7 +178,7 @@ private fun CollectionPlantCard(
             Text(
                 text = stringResource(R.string.collection_reward_seeds, item.rewardSeeds),
                 style = MaterialTheme.typography.labelSmall,
-                color = Amber,
+                color = MaterialTheme.colorScheme.primary,
             )
 
             when {
@@ -192,8 +187,8 @@ private fun CollectionPlantCard(
                         onClick = onClaimReward,
                         shape = RoundedCornerShape(50),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Amber,
-                            contentColor = ForestDark,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
                     ) {
                         Text(stringResource(R.string.collection_claim_reward))
@@ -204,7 +199,7 @@ private fun CollectionPlantCard(
                     Text(
                         text = stringResource(R.string.collection_reward_claimed),
                         style = MaterialTheme.typography.labelSmall,
-                        color = Success,
+                        color = MaterialTheme.colorScheme.tertiary,
                         fontWeight = FontWeight.SemiBold,
                     )
                 }

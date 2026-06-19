@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
 
     private fun handleDeepLink(intent: Intent?) {
         val data: Uri? = intent?.data
-        if (data == null) return
+        if (data == null || !data.isHierarchical) return
 
         when (data.host) {
             "focusfarm.app" -> {
@@ -92,7 +92,10 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             telemetry.logEvent(
                 "deep_link_referral_opened",
-                mapOf("referral_code" to referralCode),
+                mapOf(
+                    "referral_code_present" to "true",
+                    "referral_code_length" to referralCode.length.toString(),
+                ),
             )
 
             val result = referralManager.verifyReferral(referralCode)

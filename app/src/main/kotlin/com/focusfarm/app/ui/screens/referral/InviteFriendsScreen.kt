@@ -27,12 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.data.repository.ReferralManager
+import com.focusfarm.core.ui.R
 
 @Composable
 fun InviteFriendsScreen(
@@ -53,7 +55,7 @@ fun InviteFriendsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Arkadaslarini Davet Et",
+                text = stringResource(R.string.referral_title),
                 style = MaterialTheme.typography.displayMedium,
                 color = Color(0xFFE4B156),
                 textAlign = TextAlign.Center,
@@ -62,7 +64,7 @@ fun InviteFriendsScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Her davet icin 50 seed kazan!",
+                text = stringResource(R.string.referral_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color(0xFFD8C9AF),
                 textAlign = TextAlign.Center,
@@ -80,7 +82,7 @@ fun InviteFriendsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = "Senin Kodun",
+                        text = stringResource(R.string.referral_your_code),
                         style = MaterialTheme.typography.labelSmall,
                         color = Color(0xFFD8C9AF),
                     )
@@ -101,7 +103,7 @@ fun InviteFriendsScreen(
                                 .padding(horizontal = 24.dp, vertical = 12.dp),
                         ) {
                             Text(
-                                text = state.referralCode.ifEmpty { "Yukleniyor..." },
+                                text = state.referralCode.ifEmpty { stringResource(R.string.referral_loading) },
                                 style = MaterialTheme.typography.headlineLarge,
                                 color = Color(0xFFE4B156),
                                 fontWeight = FontWeight.Bold,
@@ -113,7 +115,7 @@ fun InviteFriendsScreen(
                     Spacer(Modifier.height(16.dp))
 
                     Text(
-                        text = "${state.referredCount} arkadas katildi",
+                        text = stringResource(R.string.referral_friends_joined, state.referredCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF71C37C),
                     )
@@ -132,7 +134,7 @@ fun InviteFriendsScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Text(
-                        text = "Nasil Calisir?",
+                        text = stringResource(R.string.referral_how_it_works),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color(0xFFE4B156),
                         fontWeight = FontWeight.SemiBold,
@@ -140,20 +142,20 @@ fun InviteFriendsScreen(
 
                     ReferralStep(
                         number = "1",
-                        title = "Kodunu Paylas",
-                        description = "Arkadaslarina kodunu veya davet linkini gonder",
+                        title = stringResource(R.string.referral_step_1_title),
+                        description = stringResource(R.string.referral_step_1_desc),
                     )
 
                     ReferralStep(
                         number = "2",
-                        title = "Arkadasin Katilir",
-                        description = "Arkadasin kodu kullanarak FocusFarm'a katilir",
+                        title = stringResource(R.string.referral_step_2_title),
+                        description = stringResource(R.string.referral_step_2_desc),
                     )
 
                     ReferralStep(
                         number = "3",
-                        title = "50 Seed Kazan",
-                        description = "Her basarili davet icin 50 seed kazanirsin",
+                        title = stringResource(R.string.referral_step_3_title),
+                        description = stringResource(R.string.referral_step_3_desc),
                     )
                 }
             }
@@ -179,7 +181,7 @@ fun InviteFriendsScreen(
                             modifier = Modifier.weight(1f),
                         )
                         TextButton(onClick = referralManager::dismissError) {
-                            Text("Tamam", color = Color(0xFFE4B156))
+                            Text(stringResource(R.string.action_ok), color = Color(0xFFE4B156))
                         }
                     }
                 }
@@ -206,7 +208,7 @@ fun InviteFriendsScreen(
                     )
                 } else {
                     Text(
-                        text = "Davet Linkini Paylas",
+                        text = stringResource(R.string.referral_share_button),
                         style = MaterialTheme.typography.labelLarge,
                         fontSize = 18.sp,
                     )
@@ -221,7 +223,7 @@ fun InviteFriendsScreen(
                 .padding(16.dp),
         ) {
             Text(
-                text = "Kapat",
+                text = stringResource(R.string.action_close),
                 color = Color(0xFFD8C9AF),
             )
         }

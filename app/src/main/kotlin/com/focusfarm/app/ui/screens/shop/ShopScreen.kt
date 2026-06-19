@@ -1,4 +1,4 @@
-﻿package com.focusfarm.app.ui.screens.shop
+package com.focusfarm.app.ui.screens.shop
 
 import android.app.Activity
 import android.content.Context
@@ -44,11 +44,6 @@ import com.focusfarm.app.data.billing.PremiumPlan
 import com.focusfarm.app.domain.Plant
 import com.focusfarm.app.domain.PlantCatalog
 import com.focusfarm.app.ui.components.FocusBackdrop
-import com.focusfarm.app.ui.theme.Amber
-import com.focusfarm.app.ui.theme.CreamDim
-import com.focusfarm.app.ui.theme.ForestDark
-import com.focusfarm.app.ui.theme.ForestMid
-import com.focusfarm.app.ui.theme.Success
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.app.ui.theme.plantAccentColor
 
@@ -68,12 +63,12 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
             Text(
                 stringResource(R.string.shop_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
         Card(
-            colors = CardDefaults.cardColors(containerColor = Amber.copy(alpha = 0.85f)),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)),
             shape = RoundedCornerShape(20.dp),
             modifier = Modifier
                 .padding(horizontal = 24.dp)
@@ -87,13 +82,13 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
                     Text(
                         stringResource(R.string.premium_title),
                         style = MaterialTheme.typography.titleMedium,
-                        color = ForestDark,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         stringResource(R.string.premium_desc),
                         style = MaterialTheme.typography.bodySmall,
-                        color = ForestDark.copy(alpha = 0.8f),
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
                     )
                 }
                 Text(
@@ -104,7 +99,7 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
                     },
                     fontFamily = TimerFontFamily,
                     fontSize = 16.sp,
-                    color = ForestDark,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -114,7 +109,7 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
             Text(
                 text = stringResource(R.string.shop_premium_active),
                 style = MaterialTheme.typography.bodySmall,
-                color = Success,
+                color = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
             )
         }
@@ -125,7 +120,7 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
             Text(
                 text = stringResource(R.string.shop_plans_title),
                 style = MaterialTheme.typography.labelSmall,
-                color = CreamDim,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
@@ -149,7 +144,7 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
                             )
                         }
                     TextButton(onClick = { viewModel.refresh() }) {
-                        Text(stringResource(R.string.shop_restore), color = CreamDim)
+                        Text(stringResource(R.string.shop_restore), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -158,7 +153,7 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
                 Text(
                     text = stringResource(R.string.shop_loading_products),
                     style = MaterialTheme.typography.bodySmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
                 )
             }
@@ -168,11 +163,11 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
                     Text(
                         text = stringResource(R.string.shop_billing_disconnected),
                         style = MaterialTheme.typography.bodySmall,
-                        color = CreamDim,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Spacer(Modifier.height(6.dp))
                     TextButton(onClick = { viewModel.refresh() }) {
-                        Text(stringResource(R.string.shop_retry), color = Amber)
+                        Text(stringResource(R.string.shop_retry), color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
@@ -180,7 +175,7 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
 
         billingState.message?.let { message ->
             Card(
-                colors = CardDefaults.cardColors(containerColor = ForestMid),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
@@ -193,11 +188,11 @@ fun ShopScreen(viewModel: ShopViewModel = hiltViewModel()) {
                     Text(
                         text = message,
                         style = MaterialTheme.typography.bodySmall,
-                        color = CreamDim,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f),
                     )
                     TextButton(onClick = { viewModel.clearMessage() }) {
-                        Text(stringResource(R.string.action_ok), color = Amber)
+                        Text(stringResource(R.string.action_ok), color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
@@ -227,7 +222,7 @@ private fun OfferCard(
     onBuy: () -> Unit,
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -245,7 +240,7 @@ private fun OfferCard(
                 Text(
                     text = offer.description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
@@ -255,7 +250,7 @@ private fun OfferCard(
                 Text(
                     text = offer.price,
                     style = MaterialTheme.typography.titleMedium,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
                 )
                 Spacer(Modifier.height(6.dp))
@@ -263,8 +258,8 @@ private fun OfferCard(
                     onClick = onBuy,
                     enabled = !isPremiumUnlocked,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Amber,
-                        contentColor = ForestDark,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
                     ),
                     shape = RoundedCornerShape(50),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
@@ -290,7 +285,7 @@ private fun ShopPlantCard(
 ) {
     val accentColor = plantAccentColor(plant.id)
     Card(
-        colors = CardDefaults.cardColors(containerColor = ForestMid),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -312,12 +307,12 @@ private fun ShopPlantCard(
                 Text(
                     plant.description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = CreamDim,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     stringResource(R.string.min_session, plant.minMinutes),
                     style = MaterialTheme.typography.labelSmall,
-                    color = Amber,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -326,9 +321,9 @@ private fun ShopPlantCard(
                     .clip(RoundedCornerShape(12.dp))
                     .background(
                         when {
-                            plant.isPremium && isPremiumUnlocked -> Success.copy(alpha = 0.15f)
+                            plant.isPremium && isPremiumUnlocked -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f)
                             plant.isPremium -> accentColor.copy(alpha = 0.15f)
-                            else -> Success.copy(alpha = 0.15f)
+                            else -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f)
                         }
                     )
                     .padding(horizontal = 8.dp, vertical = 4.dp),
@@ -341,9 +336,9 @@ private fun ShopPlantCard(
                     },
                     style = MaterialTheme.typography.labelSmall,
                     color = when {
-                        plant.isPremium && isPremiumUnlocked -> Success
+                        plant.isPremium && isPremiumUnlocked -> MaterialTheme.colorScheme.tertiary
                         plant.isPremium -> accentColor
-                        else -> Success
+                        else -> MaterialTheme.colorScheme.tertiary
                     },
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 11.sp,

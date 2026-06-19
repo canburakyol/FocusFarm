@@ -119,10 +119,28 @@ class ShareGardenUseCase {
                 putExtra(Intent.EXTRA_TEXT, "FocusFarm ile bahcemi buyutuyorum! Sen de odaklanarak kendi bahceni yetistir.")
             }
 
-            context.startActivity(Intent.createChooser(shareIntent, "Bahceni Paylas"))
+            val chooser = Intent.createChooser(shareIntent, "Bahceni Paylas")
+            val activity = context.findActivity()
+            if (activity != null) {
+                activity.startActivity(chooser)
+            } else {
+                chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(chooser)
+            }
             true
         } catch (e: Exception) {
             false
         }
+    }
+
+    private fun Context.findActivity(): android.app.Activity? {
+        var context = this
+        while (context is android.content.ContextWrapper) {
+            if (context is android.app.Activity) {
+                return context
+            }
+            context = context.baseContext
+        }
+        return null
     }
 }

@@ -13,6 +13,15 @@ exports.verifyReferral = functions.https.onCall(async (data, context) => {
     );
   }
 
+  // Anonim hesapların referral kullanmasını engelle
+  const signInProvider = context.auth.token.firebase.sign_in_provider;
+  if (signInProvider === 'anonymous') {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'Anonim hesaplar davet kodlarını kullanamaz. Lütfen önce hesabınızı kalıcı bir hesapla bağlayın (Google veya E-posta).'
+    );
+  }
+
   const { referralCode } = data;
   const currentUserId = context.auth.uid;
 

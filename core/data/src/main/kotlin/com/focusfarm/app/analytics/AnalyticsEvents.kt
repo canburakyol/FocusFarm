@@ -63,7 +63,8 @@ object AnalyticsEvents {
         const val REFERRAL_REWARD_GRANTED = "referral_reward_granted"
 
         fun referralReceivedParams(referralCode: String): Map<String, String> = mapOf(
-            "referral_code" to referralCode,
+            "referral_code_present" to referralCode.isNotBlank().toString(),
+            "referral_code_length" to referralCode.length.toString(),
         )
 
         fun referralRewardGrantedParams(seeds: Int): Map<String, String> = mapOf(

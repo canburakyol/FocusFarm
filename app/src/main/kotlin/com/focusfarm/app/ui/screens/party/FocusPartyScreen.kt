@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.party.FocusPartyManager
 import com.focusfarm.app.party.PartyMember
+import com.focusfarm.core.ui.R
 
 @Composable
 fun FocusPartyScreen(
@@ -57,7 +59,7 @@ fun FocusPartyScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Birlikte Odaklan",
+                text = stringResource(R.string.party_title),
                 style = MaterialTheme.typography.displayMedium,
                 color = Color(0xFFE4B156),
                 textAlign = TextAlign.Center,
@@ -66,7 +68,7 @@ fun FocusPartyScreen(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Arkadaslarinla ayni anda odaklan, birlikte buyuyun!",
+                text = stringResource(R.string.party_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Color(0xFFD8C9AF),
                 textAlign = TextAlign.Center,
@@ -95,7 +97,7 @@ fun FocusPartyScreen(
                 .padding(16.dp),
         ) {
             Text(
-                text = "Kapat",
+                text = stringResource(R.string.action_close),
                 color = Color(0xFFD8C9AF),
             )
         }
@@ -118,7 +120,7 @@ private fun PartyCreationCard(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "Parti Olustur veya Katil",
+                text = stringResource(R.string.party_card_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color(0xFFE4B156),
                 fontWeight = FontWeight.SemiBold,
@@ -133,7 +135,7 @@ private fun PartyCreationCard(
                     contentColor = Color(0xFF0F1712),
                 ),
             ) {
-                Text("Yeni Parti Olustur")
+                Text(stringResource(R.string.party_create_button))
             }
 
             Button(
@@ -145,7 +147,7 @@ private fun PartyCreationCard(
                     contentColor = Color(0xFFF6EFDD),
                 ),
             ) {
-                Text("Kodla Katil")
+                Text(stringResource(R.string.party_join_button))
             }
         }
     }
@@ -172,18 +174,18 @@ private fun PartyLobbyCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Parti Kodu: ${state.partyId}",
+                    text = stringResource(R.string.party_code_label, state.partyId ?: ""),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color(0xFFE4B156),
                     fontWeight = FontWeight.Bold,
                 )
                 TextButton(onClick = onLeaveParty) {
-                    Text("Ayril", color = Color(0xFFD56241))
+                    Text(stringResource(R.string.party_leave_button), color = Color(0xFFD56241))
                 }
             }
 
             Text(
-                text = "${state.members.size}/${state.maxMembers} Uyе",
+                text = stringResource(R.string.party_members_count, state.members.size, state.maxMembers),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color(0xFFD8C9AF),
             )
@@ -208,7 +210,7 @@ private fun PartyLobbyCard(
                     contentColor = Color(0xFF0F1712),
                 ),
             ) {
-                Text("Oturumu Baslat (${state.sessionDurationMinutes} dk)")
+                Text(stringResource(R.string.party_start_session_button, state.sessionDurationMinutes))
             }
         }
     }

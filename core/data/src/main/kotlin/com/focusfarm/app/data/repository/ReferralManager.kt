@@ -3,7 +3,9 @@ package com.focusfarm.app.data.repository
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.focusfarm.app.data.local.SessionDao
 import com.focusfarm.app.telemetry.AppTelemetry
+import com.focusfarm.core.ui.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.FirebaseFunctionsException
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -38,6 +41,7 @@ class ReferralManager @Inject constructor(
     private val telemetry: AppTelemetry,
     private val functions: FirebaseFunctions,
     private val auth: FirebaseAuth,
+    private val sessionDao: SessionDao,
 ) {
 
     private val _state = MutableStateFlow(ReferralState())
@@ -85,9 +89,12 @@ class ReferralManager @Inject constructor(
 
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, "FocusFarm ile odaklanarak bahcemi buyutuyorum! Sen de katil: $link")
+            putExtra(Intent.EXTRA_TEXT, context.getString(R.string.referral_share_text, link))
         }
-        val chooser = Intent.createChooser(shareIntent, "Arkadasini Davet Et").apply {
+        val chooser = Intent.createChooser(
+            shareIntent,
+            context.getString(R.string.referral_share_chooser_title),
+        ).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(chooser)
@@ -100,7 +107,20 @@ class ReferralManager @Inject constructor(
             if (user == null) {
                 return ReferralResult(
                     success = false,
-                    message = "Kullanıcı giriş yapmamış.",
+                    message = context.getString(R.string.status_session_revive_unavailable), // Or any other unauth message
+                )
+            }
+
+            // Client-side self-referral/abuse protection: must have completed at least 1 session
+            val sessionCount = try {
+                sessionDao.getSessionCount().first()
+            } catch (e: Exception) {
+                0
+            }
+            if (sessionCount == 0) {
+                return ReferralResult(
+                    success = false,
+                    message = context.getString(R.string.referral_error_needs_session),
                 )
             }
 

@@ -219,4 +219,63 @@
     <string name="paywall_recommended">موصى به</string>
     <string name="paywall_error_purchase_failed">فشل الشراء</string>
     <string name="paywall_error_restore_failed">فشلت الاستعادة</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_share">مشاركة</string>
+    <string name="settings_privacy_preferences">تعديل تفضيلات الخصوصية</string>
+    <string name="settings_account_data_title">الحساب والبيانات</string>
+    <string name="settings_account_delete_body">عند حذف حسابك، تتم إزالة كل البيانات على هذا الجهاز وفي السحابة بشكل دائم.</string>
+    <string name="settings_delete_account_button">حذف حسابي وبياناتي</string>
+    <string name="settings_delete_account_title">حذف الحساب؟</string>
+    <string name="settings_delete_account_confirm_body">سيتم حذف كل تقدمك ومشترياتك وحديقتك بشكل دائم. لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد؟</string>
+    <string name="settings_delete_account_confirm">نعم، احذف</string>
+    <string name="share_garden_title">مشاركة الحديقة</string>
+    <string name="share_garden_preview_content_description">معاينة الحديقة</string>
+    <string name="share_garden_message">كبرت حديقتي بالتركيز. انضم إلي.</string>
+    <string name="referral_share_text">أنا أكبر حديقتي مع FocusFarm. انضم إلي: %s</string>
+    <string name="referral_share_chooser_title">دعوة صديق</string>
+    <string name="paywall_plan_monthly_desc">يتجدد كل شهر</string>
+    <string name="paywall_plan_yearly_desc">يتجدد كل سنة</string>
+    <string name="paywall_plan_yearly_savings">توفير 44%%</string>
+    <string name="paywall_plan_lifetime_desc">دفعة واحدة، إلى الأبد</string>
+    <string name="paywall_error_connection">خطأ في الاتصال: %s</string>
+    <string name="paywall_error_purchase_failed_with_message">فشل الشراء: %s</string>
+    <string name="paywall_error_restore_failed_with_message">فشلت الاستعادة: %s</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_referral_title">استخدام كود صديق</string>
+    <string name="settings_referral_desc">أدخل كود صديق لتحصل على 50 Seed.</string>
+    <string name="settings_referral_label">الكود</string>
+    <string name="settings_referral_apply">تطبيق</string>
+    <string name="settings_privacy_title">الخصوصية والإعلانات</string>
+    <string name="settings_privacy_desc">يمكنك إدارة موافقة الإعلانات وخيارات الخصوصية في أي وقت.</string>
+    <string name="settings_privacy_policy_button">فتح سياسة الخصوصية</string>
+    <string name="referral_error_needs_session">يجب إكمال جلسة تركيز واحدة على الأقل لاستخدام كود الإحالة.</string>
+
+    <!-- Invite Friends Screen -->
+    <string name="referral_title">دعوة الأصدقاء</string>
+    <string name="referral_subtitle">اكسب 50 seed لكل دعوة.</string>
+    <string name="referral_your_code">كودك</string>
+    <string name="referral_loading">جار التحميل...</string>
+    <string name="referral_friends_joined">انضم %d أصدقاء</string>
+    <string name="referral_how_it_works">كيف يعمل؟</string>
+    <string name="referral_step_1_title">شارك كودك</string>
+    <string name="referral_step_1_desc">أرسل كودك أو رابط الدعوة إلى أصدقائك</string>
+    <string name="referral_step_2_title">ينضم صديقك</string>
+    <string name="referral_step_2_desc">ينضم صديقك إلى FocusFarm باستخدام الكود</string>
+    <string name="referral_step_3_title">اكسب 50 Seeds</string>
+    <string name="referral_step_3_desc">تكسب 50 seed لكل دعوة ناجحة</string>
+    <string name="action_close">إغلاق</string>
+    <string name="referral_share_button">مشاركة رابط الدعوة</string>
+
+    <!-- Focus Party Screen -->
+    <string name="party_title">التركيز معاً</string>
+    <string name="party_subtitle">ركز في نفس الوقت مع أصدقائك وانموا معاً.</string>
+    <string name="party_card_title">إنشاء party أو الانضمام إليها</string>
+    <string name="party_create_button">إنشاء party جديدة</string>
+    <string name="party_join_button">الانضمام بكود</string>
+    <string name="party_code_label">كود party: %s</string>
+    <string name="party_leave_button">مغادرة</string>
+    <string name="party_members_count">%1$d/%2$d عضو</string>
+    <string name="party_start_session_button">بدء الجلسة (%d دقيقة)</string>
 </resources>
