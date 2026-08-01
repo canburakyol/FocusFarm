@@ -38,6 +38,7 @@ import com.focusfarm.app.domain.FocusTag
 import com.focusfarm.app.domain.FocusSessionType
 import com.focusfarm.app.domain.AmbienceSound
 import com.focusfarm.app.domain.PlantCatalog
+import com.focusfarm.app.domain.Plant
 import com.focusfarm.app.ui.components.FocusBackdrop
 import com.focusfarm.app.ui.components.PlantDisplay
 import com.focusfarm.core.ui.R
@@ -85,6 +86,11 @@ internal fun HomeContent(
     modifier: Modifier = Modifier,
 ) {
     val selectedPlant = PlantCatalog.getById(state.selectedPlantId) ?: PlantCatalog.FREE.first()
+    val focusPlan = HomeFocusPlan.from(
+        plantName = selectedPlant.name,
+        minutes = state.selectedMinutes,
+        sessionType = state.sessionType,
+    )
     val scrollState = rememberScrollState()
 
     FocusBackdrop {
@@ -128,6 +134,12 @@ internal fun HomeContent(
                         Text("⚙️", fontSize = 24.sp)
                     }
                 }
+
+                FocusPlanHero(
+                    plan = focusPlan,
+                    plant = selectedPlant,
+                    selectedTag = state.selectedTag,
+                )
 
                 // 1. Dashboard Widget (Goal Progress, Seed Balance & Streak)
                 DashboardWidget(
@@ -439,9 +451,69 @@ internal fun HomeContent(
                 ),
             ) {
                 Text(
-                    text = if (state.sessionType == FocusSessionType.STOPWATCH) "Kronometreyi Başlat" else "Odaklanmayı Başlat",
+                    text = focusPlan.startLabel,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FocusPlanHero(
+    plan: HomeFocusPlan,
+    plant: Plant,
+    selectedTag: FocusTag,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.52f),
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(82.dp)
+                    .clip(RoundedCornerShape(22.dp))
+                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                PlantDisplay(
+                    plant = plant,
+                    stage = GrowthStage.GROWING,
+                    breathing = true,
+                    size = 66.dp,
+                )
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "BUGÜNÜN ODAĞI",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.8.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = plan.headline,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+                Spacer(Modifier.height(3.dp))
+                Text(
+                    text = "${selectedTag.icon()} ${selectedTag.label()} • ${plan.detail}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.78f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
