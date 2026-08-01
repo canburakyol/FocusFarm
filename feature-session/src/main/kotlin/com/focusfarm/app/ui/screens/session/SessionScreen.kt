@@ -210,11 +210,14 @@ private fun PausedScreen(
     onResume: () -> Unit,
     onAbandon: () -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.screenWidthDp > configuration.screenHeightDp
     FocusBackdrop {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .then(if (isLandscape) Modifier.verticalScroll(rememberScrollState()) else Modifier)
+                .padding(horizontal = 24.dp, vertical = if (isLandscape) 12.dp else 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(Modifier.height(20.dp))
@@ -230,9 +233,9 @@ private fun PausedScreen(
                 color = MaterialTheme.colorScheme.onErrorContainer,
             )
 
-            Spacer(Modifier.weight(1f))
-            SessionProgressDial(state)
-            Spacer(Modifier.weight(1f))
+            Spacer(if (isLandscape) Modifier.height(8.dp) else Modifier.weight(1f))
+            SessionProgressDial(state, compact = isLandscape)
+            Spacer(if (isLandscape) Modifier.height(8.dp) else Modifier.weight(1f))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
