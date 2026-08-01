@@ -76,6 +76,7 @@ data class SessionUiState(
     val completedSessionId: Long? = null,
     val reflectionSaved: Boolean = false,
     val rewardSeedsGranted: Int = 0,
+    val rewardBaseSeeds: Int = 0,
     val rewardBoosted: Boolean = false,
     val completionErrorMessage: String? = null,
     val evaluation: SessionDifficulty? = null,
@@ -762,6 +763,7 @@ class SessionViewModel @Inject constructor(
                     sessionState = SessionState.COMPLETED,
                     completedSessionId = result.sessionId,
                     rewardSeedsGranted = result.grantedSeeds,
+                    rewardBaseSeeds = result.baseSeeds,
                     rewardBoosted = result.wasBoosted,
                     completionErrorMessage = null,
                 )

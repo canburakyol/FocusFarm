@@ -448,6 +448,56 @@ private fun SessionProgressDial(state: SessionUiState) {
 }
 
 @Composable
+private fun HarvestRewardCard(
+    grantedSeeds: Int,
+    baseSeeds: Int,
+    wasBoosted: Boolean,
+) {
+    val reward = SessionRewardPresentation.from(grantedSeeds, baseSeeds, wasBoosted)
+    val isLoading = grantedSeeds <= 0
+    val cardColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.78f)
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(cardColor, RoundedCornerShape(24.dp))
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = if (isLoading) "Hasat hazırlanıyor" else "Hasat tamamlandı",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = if (isLoading) "…" else "+${reward.totalSeeds} Seed",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        if (!isLoading) {
+            Spacer(Modifier.height(6.dp))
+            if (reward.hasBonus) {
+                Text(
+                    text = "${reward.baseSeeds} odak ödülü + ${reward.bonusSeeds} aktif güçlendirme",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    textAlign = TextAlign.Center,
+                )
+            } else {
+                Text(
+                    text = "Bu hasat bahçene ve Seed bakiyene eklendi.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun KilledScreen(
     canRevive: Boolean,
     statusMessage: String?,
@@ -552,24 +602,11 @@ private fun CompletedScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = if (state.rewardSeedsGranted > 0) {
-                    if (state.rewardBoosted) {
-                        stringResource(
-                            R.string.session_reward_seeds_boosted,
-                            state.rewardSeedsGranted,
-                            state.rewardSeedsGranted / 2,
-                        )
-                    } else {
-                        stringResource(R.string.session_reward_seeds, state.rewardSeedsGranted)
-                    }
-                } else {
-                    stringResource(R.string.session_reward_loading)
-                },
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center,
+            Spacer(Modifier.height(16.dp))
+            HarvestRewardCard(
+                grantedSeeds = state.rewardSeedsGranted,
+                baseSeeds = state.rewardBaseSeeds,
+                wasBoosted = state.rewardBoosted,
             )
 
             Spacer(Modifier.height(20.dp))
