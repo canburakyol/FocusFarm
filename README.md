@@ -30,6 +30,21 @@
 
 ---
 
+## 🎨 Tasarım Yönü (gelecek tasarım iterasyonu için)
+
+FocusFarm; **sakin, sıcak ve botanik** bir odak deneyimi olarak gelişecek. Bu yön, bağımsız bir FocusFarm kimliği oluşturur; başka bir ürünün görsel varlıklarını veya metinlerini taklit etmez.
+
+- **Krem arka plan:** Ekranlara nefes alan, sakin bir taban sağlar.
+- **Mint yüzeyler:** Kartlar ve bahçe atmosferi için kullanılır.
+- **Koyu emerald:** Ana CTA, seçili durum ve kritik ilerleme için ayrılmıştır.
+- **Filiz yeşili:** Bitki büyümesi, başarı ve küçük ödül vurgularında kullanılır; geniş alanlı açık yazılı buton rengi değildir.
+- **Seed/altın vurgusu:** Ekonomi ve nadir ödüller için ölçülü, anlamlı bir vurgu olarak eklenecektir.
+- **Terracotta/kırmızı:** Yalnızca solma, oturumu bırakma ve hata gibi risk durumlarında görünür.
+- **Hiyerarşi:** İlk bakışta tek odak planı ve tek ana aksiyon görünür olmalı; ayarlar ve ikincil bilgiler geri planda kalmalıdır.
+- **Koruma:** Tema üzerindeki kritik metin/aksiyon renk çiftleri WCAG AA kontrast testleriyle korunur.
+
+---
+
 ## 🛠️ Teknoloji Yığını
 
 Bu uygulama, en güncel Android geliştirme standartları ve kütüphaneleri kullanılarak geliştirilmiştir:
