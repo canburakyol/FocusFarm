@@ -23,6 +23,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -46,6 +47,7 @@ import com.focusfarm.app.R
 import com.focusfarm.app.domain.GardenEntry
 import com.focusfarm.app.domain.GardenFilter
 import com.focusfarm.app.domain.GardenPlantState
+import com.focusfarm.app.domain.GardenGoalPresentation
 import com.focusfarm.app.domain.PlantSpeciesCatalog
 import com.focusfarm.app.domain.ShareGardenUseCase
 import com.focusfarm.app.domain.FocusSession
@@ -72,6 +74,8 @@ fun GardenScreen(
     val hideWithered by viewModel.hideWithered.collectAsStateWithLifecycle()
     val totalMinutes by viewModel.totalMinutes.collectAsStateWithLifecycle()
     val streakDays by viewModel.streakDays.collectAsStateWithLifecycle()
+    val seedBalance by viewModel.seedBalance.collectAsStateWithLifecycle()
+    val unlockedPlantIds by viewModel.unlockedPlantIds.collectAsStateWithLifecycle()
     val totalHours = totalMinutes / 60
     val remainingMins = totalMinutes % 60
 
@@ -147,6 +151,14 @@ fun GardenScreen(
                         modifier = Modifier.weight(1f),
                     )
                 }
+                Spacer(Modifier.height(10.dp))
+                GardenGoalCard(
+                    goal = GardenGoalPresentation.from(
+                        hasPlants = gardenEntries.isNotEmpty(),
+                        seedBalance = seedBalance,
+                        unlockedPlantIds = unlockedPlantIds,
+                    ),
+                )
             }
 
             Spacer(Modifier.height(8.dp))
@@ -219,6 +231,44 @@ fun GardenScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun GardenGoalCard(goal: GardenGoalPresentation) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f),
+        ),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "BAHÇE HEDEFİ",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = goal.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = goal.detail,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f),
+            )
+            Spacer(Modifier.height(10.dp))
+            LinearProgressIndicator(
+                progress = { goal.progress },
+                modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(20.dp)),
+                color = MaterialTheme.colorScheme.secondary,
+                trackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f),
+            )
         }
     }
 }
