@@ -411,6 +411,7 @@ private fun SessionProgressDial(state: SessionUiState) {
     }
     
     val secondsToFormat = if (state.sessionType == FocusSessionType.STOPWATCH) state.elapsedSeconds else state.remainingSeconds
+    val milestone = SessionGrowthMilestone.from(progress)
     val hours = secondsToFormat / 3600
     val minutes = (secondsToFormat % 3600) / 60
     val seconds = secondsToFormat % 60
@@ -436,12 +437,24 @@ private fun SessionProgressDial(state: SessionUiState) {
                 letterSpacing = 2.sp,
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             PlantDisplay(
                 plant = state.plant,
-                stage = state.growthStage,
-                size = 92.dp,
+                stage = milestone.stage,
+                size = 104.dp,
                 breathing = state.sessionState == SessionState.RUNNING,
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = milestone.title,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Text(
+                text = milestone.detail,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
             )
         }
     }
