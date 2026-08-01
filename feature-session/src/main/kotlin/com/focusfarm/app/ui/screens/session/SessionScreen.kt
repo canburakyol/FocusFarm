@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -273,11 +276,14 @@ private fun RunningScreen(
     onCompleteStopwatch: () -> Unit,
     onSelectAmbience: (AmbienceSound) -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.screenWidthDp > configuration.screenHeightDp
     FocusBackdrop {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .then(if (isLandscape) Modifier.verticalScroll(rememberScrollState()) else Modifier)
+                .padding(horizontal = 24.dp, vertical = if (isLandscape) 12.dp else 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(Modifier.height(20.dp))
@@ -293,9 +299,9 @@ private fun RunningScreen(
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
 
-            Spacer(Modifier.weight(1f))
-            SessionProgressDial(state)
-            Spacer(Modifier.weight(1f))
+            Spacer(if (isLandscape) Modifier.height(8.dp) else Modifier.weight(1f))
+            SessionProgressDial(state, compact = isLandscape)
+            Spacer(if (isLandscape) Modifier.height(8.dp) else Modifier.weight(1f))
 
             Text(
                 stringResource(R.string.focus_tip),
@@ -402,7 +408,10 @@ private fun FocusTag.label(): String = when (this) {
 }
 
 @Composable
-private fun SessionProgressDial(state: SessionUiState) {
+private fun SessionProgressDial(
+    state: SessionUiState,
+    compact: Boolean = false,
+) {
     val totalSeconds = (state.targetMinutes * 60).coerceAtLeast(1)
     val progress = if (state.sessionType == FocusSessionType.STOPWATCH) {
         (state.elapsedSeconds.toFloat() / totalSeconds.toFloat()).coerceIn(0f, 1f)
@@ -412,11 +421,14 @@ private fun SessionProgressDial(state: SessionUiState) {
     
     val secondsToFormat = if (state.sessionType == FocusSessionType.STOPWATCH) state.elapsedSeconds else state.remainingSeconds
     val milestone = SessionGrowthMilestone.from(progress)
+    val dialSize = if (compact) 220.dp else 292.dp
+    val timerFontSize = if (compact) 42.sp else 52.sp
+    val plantSize = if (compact) 72.dp else 104.dp
     val hours = secondsToFormat / 3600
     val minutes = (secondsToFormat % 3600) / 60
     val seconds = secondsToFormat % 60
 
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(292.dp)) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(dialSize)) {
         CircularProgressIndicator(
             progress = { progress },
             modifier = Modifier.fillMaxSize(),
@@ -433,7 +445,7 @@ private fun SessionProgressDial(state: SessionUiState) {
                 },
                 fontFamily = TimerFontFamily,
                 fontWeight = FontWeight.Medium,
-                fontSize = 52.sp,
+                fontSize = timerFontSize,
                 letterSpacing = 2.sp,
                 color = MaterialTheme.colorScheme.onBackground,
             )
@@ -441,7 +453,7 @@ private fun SessionProgressDial(state: SessionUiState) {
             PlantDisplay(
                 plant = state.plant,
                 stage = milestone.stage,
-                size = 104.dp,
+                size = plantSize,
                 breathing = state.sessionState == SessionState.RUNNING,
             )
             Spacer(Modifier.height(6.dp))
