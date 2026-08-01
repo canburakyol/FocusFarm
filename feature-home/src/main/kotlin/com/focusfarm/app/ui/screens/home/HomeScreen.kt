@@ -141,6 +141,8 @@ internal fun HomeContent(
                     selectedTag = state.selectedTag,
                 )
 
+                HomeRetentionNudgeCard(state.retentionNudge)
+
                 // 1. Dashboard Widget (Goal Progress, Seed Balance & Streak)
                 DashboardWidget(
                     todayFocusMinutes = state.todayFocusMinutes,
@@ -454,6 +456,45 @@ internal fun HomeContent(
                     text = focusPlan.startLabel,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeRetentionNudgeCard(nudge: HomeRetentionNudge) {
+    val colors = MaterialTheme.colorScheme
+    val (containerColor, contentColor, icon) = when (nudge.tone) {
+        HomeRetentionNudge.Tone.URGENT -> Triple(colors.errorContainer, colors.onErrorContainer, "🔥")
+        HomeRetentionNudge.Tone.PROGRESS -> Triple(colors.secondaryContainer, colors.onSecondaryContainer, "🌿")
+        HomeRetentionNudge.Tone.CELEBRATE -> Triple(colors.primaryContainer, colors.onPrimaryContainer, "✦")
+        HomeRetentionNudge.Tone.WELCOME -> Triple(colors.surfaceVariant, colors.onSurfaceVariant, "🌱")
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = containerColor.copy(alpha = 0.72f)),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 13.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(icon, fontSize = 24.sp)
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = nudge.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = contentColor,
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = nudge.detail,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = contentColor.copy(alpha = 0.82f),
                 )
             }
         }
