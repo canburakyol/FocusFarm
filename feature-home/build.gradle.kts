@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.focusfarm.feature.home"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 26
