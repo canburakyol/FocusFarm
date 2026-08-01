@@ -10,20 +10,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.focusfarm.app.domain.GrowthStage
 import com.focusfarm.app.domain.Plant
-import com.focusfarm.app.domain.PlantCatalog
+import com.focusfarm.app.domain.GardenPlantState
 import com.focusfarm.app.ui.theme.plantAccentColor
 
 @Composable
@@ -34,8 +31,6 @@ fun PlantDisplay(
     size: Dp = 140.dp,
     breathing: Boolean = false,
 ) {
-    val emoji = PlantCatalog.getStageEmoji(plant, stage)
-    val fontSize = (size.value * 0.5f).sp
     val accentColor = plantAccentColor(plant.id)
 
     val scaleAnim by animateFloatAsState(
@@ -68,20 +63,11 @@ fun PlantDisplay(
             .background(accentColor.copy(alpha = 0.12f)),
         contentAlignment = Alignment.Center,
     ) {
-        // Show premium illustration for mature stage (Stage 4) if available
-        if (stage == GrowthStage.FULL && plant.illustrationName.isNotEmpty()) {
-            // In a real app, this would use PainterResource(id = R.drawable.name)
-            // or a local WebP asset. For this demonstration, we use the premium text layout.
-            Text(
-                text = emoji,
-                fontSize = fontSize,
-                modifier = Modifier.scale(1.3f) // Visual indicator of premium asset
-            )
-        } else {
-            Text(
-                text = emoji,
-                fontSize = fontSize,
-            )
-        }
+        PlantVectorRenderer(
+            plantId = plant.id,
+            stage = stage,
+            state = GardenPlantState.BLOOMED,
+            size = size * 0.7f
+        )
     }
 }

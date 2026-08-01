@@ -1,1026 +1,787 @@
 package com.focusfarm.app.ui.screens.home
 
 import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.focusfarm.app.domain.DailyQuestType
 import com.focusfarm.app.domain.GrowthStage
-import com.focusfarm.app.domain.WeeklyChallengeProgress
-import com.focusfarm.app.monetization.BannerAdSlot
+import com.focusfarm.app.domain.FocusTag
+import com.focusfarm.app.domain.FocusSessionType
+import com.focusfarm.app.domain.AmbienceSound
+import com.focusfarm.app.domain.PlantCatalog
 import com.focusfarm.app.ui.components.FocusBackdrop
 import com.focusfarm.app.ui.components.PlantDisplay
-import com.focusfarm.app.ui.theme.TimerFontFamily
-import com.focusfarm.app.ui.theme.plantAccentColor
 import com.focusfarm.core.ui.R
-
-private val TIMER_OPTIONS = listOf(5, 10, 15, 25, 30, 45, 60)
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(
-    onStartSession: (plantId: String, minutes: Int) -> Unit,
+    onStartSession: (sessionId: String, plantId: String, minutes: Int) -> Unit,
+    onRecoverSession: (sessionId: String) -> Unit,
     onOpenSettings: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val activity = remember(context) { context.findActivity() }
-    val selectedPlant by viewModel.selectedPlant.collectAsStateWithLifecycle()
-    val selectedMinutes by viewModel.selectedMinutes.collectAsStateWithLifecycle()
-    val availablePlants by viewModel.availablePlants.collectAsStateWithLifecycle()
-    val isPremiumUnlocked by viewModel.isPremiumUnlocked.collectAsStateWithLifecycle()
-    val recentSession by viewModel.recentSession.collectAsStateWithLifecycle()
-    val streakDays by viewModel.streakDays.collectAsStateWithLifecycle()
-    val todayMinutes by viewModel.todayMinutes.collectAsStateWithLifecycle()
-    val dailyQuests by viewModel.dailyQuests.collectAsStateWithLifecycle()
-    val weeklyChallenge by viewModel.weeklyChallenge.collectAsStateWithLifecycle()
-    val canClaimWeeklyReward by viewModel.canClaimWeeklyReward.collectAsStateWithLifecycle()
-    val isWeeklyRewardClaimed by viewModel.isWeeklyRewardClaimed.collectAsStateWithLifecycle()
-    val seedBalance by viewModel.seedBalance.collectAsStateWithLifecycle()
-    val freezeTokens by viewModel.freezeTokens.collectAsStateWithLifecycle()
-    val canUseFreeze by viewModel.canUseFreeze.collectAsStateWithLifecycle()
-    val canUseQuestRerollAd by viewModel.canUseQuestRerollAd.collectAsStateWithLifecycle()
-    val isQuestRerollUsedToday by viewModel.isQuestRerollUsedToday.collectAsStateWithLifecycle()
-    val canActivateNextSessionSeedBoost by viewModel.canActivateNextSessionSeedBoost.collectAsStateWithLifecycle()
-    val isNextSessionSeedBoostActive by viewModel.isNextSessionSeedBoostActive.collectAsStateWithLifecycle()
-    val canShowAds by viewModel.canShowAds.collectAsStateWithLifecycle()
-    val statusMessage by viewModel.statusMessage.collectAsStateWithLifecycle()
-    val dailyPlan by viewModel.dailyPlan.collectAsStateWithLifecycle()
-    val personalGoalText by viewModel.personalGoalText.collectAsStateWithLifecycle()
-    val engagementNudge by viewModel.engagementNudge.collectAsStateWithLifecycle()
-    val weeklyReport by viewModel.weeklyReport.collectAsStateWithLifecycle()
-    val isWeeklyReportVisible by viewModel.isWeeklyReportVisible.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) {
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                is HomeEffect.OpenSession -> onStartSession(effect.sessionId, effect.plantId, effect.minutes)
+                is HomeEffect.ResumeSession -> onRecoverSession(effect.sessionId)
+                is HomeEffect.ShowRecovery -> onRecoverSession(effect.sessionId)
+                is HomeEffect.FinalizeSession -> onRecoverSession(effect.sessionId)
+                is HomeEffect.MissionClaimed -> {
+                    Toast.makeText(context, "Görev ödülü alındı: +${effect.rewardSeeds} Seed! 🪙", Toast.LENGTH_LONG).show()
+                }
+                is HomeEffect.ShowError -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    HomeContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+        onOpenSettings = onOpenSettings,
+    )
+}
+
+@Composable
+internal fun HomeContent(
+    state: HomeUiState,
+    onIntent: (HomeIntent) -> Unit,
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val selectedPlant = PlantCatalog.getById(state.selectedPlantId) ?: PlantCatalog.FREE.first()
+    val scrollState = rememberScrollState()
 
     FocusBackdrop {
-        Column(
-            modifier = Modifier
+        Box(
+            modifier = modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.greeting),
-                    style = MaterialTheme.typography.displayMedium,
-                )
-                Text(
-                    text = stringResource(R.string.greeting_subtitle),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            TextButton(onClick = onOpenSettings) {
-                Text(
-                    text = stringResource(R.string.settings_title),
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-        }
-
-        statusMessage?.let { message ->
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = message,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(1f),
-                    )
-                    TextButton(onClick = viewModel::dismissMessage) {
-                        Text(stringResource(R.string.action_ok), color = MaterialTheme.colorScheme.primary)
-                    }
-                }
-            }
-        }
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            HomeStatCard(
-                value = stringResource(R.string.streak_days_short, streakDays),
-                label = stringResource(R.string.current_streak),
-                modifier = Modifier.weight(1f),
-            )
-            HomeStatCard(
-                value = stringResource(R.string.total_focus_minutes, todayMinutes),
-                label = stringResource(R.string.today_focus),
-                modifier = Modifier.weight(1f),
-            )
-        }
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            HomeStatCard(
-                value = stringResource(R.string.seed_balance_short, seedBalance),
-                label = stringResource(R.string.seed_balance),
-                modifier = Modifier.weight(1f),
-            )
-            HomeStatCard(
-                value = stringResource(R.string.freeze_tokens_short, freezeTokens),
-                label = stringResource(R.string.freeze_tokens),
-                modifier = Modifier.weight(1f),
-            )
-        }
-
-        if (!isPremiumUnlocked && activity != null) {
-            RewardedAdBonusCard(
-                canUseQuestRerollAd = canUseQuestRerollAd && canShowAds,
-                isQuestRerollUsedToday = isQuestRerollUsedToday,
-                canActivateNextSessionSeedBoost = canActivateNextSessionSeedBoost && canShowAds,
-                isNextSessionSeedBoostActive = isNextSessionSeedBoostActive,
-                isConsentReady = canShowAds,
-                onQuestReroll = { viewModel.rerollDailyQuest(activity) },
-                onNextSessionBoost = { viewModel.activateNextSessionSeedBoost(activity) },
-            )
-        }
-
-        if (!isPremiumUnlocked && canShowAds) {
-            AdBannerCard()
-        } else if (!isPremiumUnlocked) {
-            ConsentPendingCard()
-        }
-
-        DailyPlanCard(
-            plan = dailyPlan,
-            onStartPlan = { minutes ->
-                viewModel.applySuggestedMinutes(minutes)
-                onStartSession(selectedPlant.id, minutes)
-            },
-        )
-
-        PersonalGoalCard(goalText = personalGoalText)
-
-        engagementNudge?.let { nudge ->
-            EngagementNudgeCard(
-                nudge = nudge,
-                onAction = {
-                    viewModel.applySuggestedMinutes(nudge.actionMinutes)
-                    onStartSession(selectedPlant.id, nudge.actionMinutes)
-                },
-            )
-        }
-
-        if (canUseFreeze) {
-            StreakFreezeCard(
-                freezeTokens = freezeTokens,
-                onUseFreeze = viewModel::useStreakFreeze,
-            )
-        }
-
-        WeeklyChallengeCard(
-            challenge = weeklyChallenge,
-            canClaimReward = canClaimWeeklyReward,
-            isRewardClaimed = isWeeklyRewardClaimed,
-            onClaimReward = viewModel::claimWeeklyReward,
-        )
-        DailyQuestsCard(
-            quests = dailyQuests,
-            onClaim = viewModel::claimQuest,
-        )
-
-        recentSession?.let { session ->
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                shape = RoundedCornerShape(20.dp),
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = stringResource(R.string.last_session),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(session.plantEmoji, fontSize = 32.sp)
-                        Spacer(Modifier.width(16.dp))
-                        Column {
-                            Text(session.plantName, style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                stringResource(R.string.focused_minutes, session.durationMinutes),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        Text(
-            text = stringResource(R.string.select_plant),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            availablePlants.forEach { plant ->
-                val isSelected = selectedPlant.id == plant.id
-                val accentColor = plantAccentColor(plant.id)
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .width(96.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(if (isSelected) accentColor.copy(0.15f) else MaterialTheme.colorScheme.surface)
-                        .border(
-                            1.5.dp,
-                            if (isSelected) accentColor else MaterialTheme.colorScheme.outlineVariant,
-                            RoundedCornerShape(20.dp),
-                        )
-                        .clickable { viewModel.selectPlant(plant) }
-                        .padding(vertical = 16.dp, horizontal = 8.dp),
-                ) {
-                    PlantDisplay(plant = plant, stage = GrowthStage.FULL, size = 56.dp)
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        plant.name,
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(
-                        stringResource(R.string.min_session, plant.minMinutes),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 10.sp,
-                    )
-                }
-            }
-        }
-        if (!isPremiumUnlocked) {
-            Text(
-                text = stringResource(R.string.premium_locked_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
-            )
-        }
-
-        Text(
-            text = stringResource(R.string.select_duration),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            TIMER_OPTIONS.chunked(3).forEach { rowOptions ->
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    rowOptions.forEach { min ->
-                        val isSelected = selectedMinutes == min
-                        val isDisabled = min < selectedPlant.minMinutes
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(50))
-                                .background(if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface)
-                                .border(1.5.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(50))
-                                .clickable(enabled = !isDisabled) { viewModel.selectMinutes(min) }
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                stringResource(R.string.minutes_short, min),
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                color = when {
-                                    isSelected -> MaterialTheme.colorScheme.onPrimary
-                                    isDisabled -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
-                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                                },
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
+                .padding(horizontal = 20.dp, vertical = 10.dp),
         ) {
             Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .padding(bottom = 80.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                PlantDisplay(plant = selectedPlant, stage = GrowthStage.GROWING, breathing = true)
-                Spacer(Modifier.height(24.dp))
-                Text(selectedPlant.name, style = MaterialTheme.typography.headlineLarge)
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    selectedPlant.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-
-        Button(
-            onClick = { onStartSession(selectedPlant.id, selectedMinutes) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(50),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
-        ) {
-            Text(
-                stringResource(R.string.start_focus),
-                style = MaterialTheme.typography.labelLarge,
-                fontSize = 18.sp,
-            )
-        }
-
-        Text(
-            stringResource(R.string.app_leave_warning),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-            Spacer(Modifier.height(24.dp))
-        }
-
-        if (isWeeklyReportVisible && weeklyReport != null) {
-            WeeklyPersonalReportDialog(
-                report = weeklyReport!!,
-                onDismiss = viewModel::dismissWeeklyReport,
-                onStartWeekPlan = { minutes ->
-                    viewModel.dismissWeeklyReport()
-                    viewModel.applySuggestedMinutes(minutes)
-                    onStartSession(selectedPlant.id, minutes)
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun HomeStatCard(
-    value: String,
-    label: String,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp),
-        modifier = modifier,
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 8.dp),
-        ) {
-            Text(
-                text = value,
-                fontFamily = TimerFontFamily,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-        }
-    }
-}
-
-@Composable
-private fun RewardedAdBonusCard(
-    canUseQuestRerollAd: Boolean,
-    isQuestRerollUsedToday: Boolean,
-    canActivateNextSessionSeedBoost: Boolean,
-    isNextSessionSeedBoostActive: Boolean,
-    isConsentReady: Boolean,
-    onQuestReroll: () -> Unit,
-    onNextSessionBoost: () -> Unit,
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.ad_rewards_title),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                text = stringResource(R.string.ad_rewards_desc),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            if (!isConsentReady) {
-                Text(
-                    text = stringResource(R.string.ad_consent_pending_body),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-            Button(
-                onClick = onQuestReroll,
-                enabled = canUseQuestRerollAd,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    if (isQuestRerollUsedToday) {
-                        stringResource(R.string.ad_reward_quest_reroll_done)
-                    } else {
-                        stringResource(R.string.ad_reward_quest_reroll_action)
-                    },
-                )
-            }
-            Button(
-                onClick = onNextSessionBoost,
-                enabled = canActivateNextSessionSeedBoost,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary, contentColor = MaterialTheme.colorScheme.onSecondary),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    if (isNextSessionSeedBoostActive) {
-                        stringResource(R.string.ad_reward_next_session_boost_ready)
-                    } else {
-                        stringResource(R.string.ad_reward_next_session_boost_action)
-                    },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun AdBannerCard() {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.ad_banner_label),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                modifier = Modifier.padding(horizontal = 8.dp),
-            )
-            AdMobBanner(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun AdMobBanner(modifier: Modifier = Modifier) {
-    BannerAdSlot(
-        enabled = true,
-        modifier = modifier,
-    )
-}
-
-@Composable
-private fun ConsentPendingCard() {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.ad_consent_pending_title),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                text = stringResource(R.string.ad_consent_pending_body),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-@Composable
-private fun WeeklyPersonalReportDialog(
-    report: WeeklyReportUiState,
-    onDismiss: () -> Unit,
-    onStartWeekPlan: (Int) -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        title = {
-            Text(
-                text = stringResource(R.string.weekly_report_title),
-                style = MaterialTheme.typography.titleLarge,
-            )
-        },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(
-                    text = stringResource(R.string.weekly_report_subtitle, report.weekLabel),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ReportMetric(
-                        label = stringResource(R.string.weekly_report_stat_sessions),
-                        value = report.totalSessions.toString(),
-                        modifier = Modifier.weight(1f),
-                    )
-                    ReportMetric(
-                        label = stringResource(R.string.weekly_report_stat_minutes),
-                        value = "${report.totalMinutes} dk",
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ReportMetric(
-                        label = stringResource(R.string.weekly_report_stat_average),
-                        value = "${report.averageSessionMinutes} dk",
-                        modifier = Modifier.weight(1f),
-                    )
-                    ReportMetric(
-                        label = stringResource(R.string.weekly_report_stat_longest),
-                        value = "${report.longestSessionMinutes} dk",
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-                Text(
-                    text = stringResource(
-                        R.string.weekly_report_best_day,
-                        report.bestDayLabel,
-                        report.bestDayMinutes,
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = stringResource(R.string.weekly_report_insight_label),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Text(
-                    text = report.insight,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = stringResource(R.string.weekly_report_next_goal, report.nextGoalMinutes),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onStartWeekPlan(report.suggestedSessionMinutes) },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
-                shape = RoundedCornerShape(50),
-            ) {
-                Text(stringResource(R.string.weekly_report_action_start, report.suggestedSessionMinutes))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(
-                    text = stringResource(R.string.weekly_report_action_later),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        },
-    )
-}
-
-@Composable
-private fun ReportMetric(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
-        shape = RoundedCornerShape(14.dp),
-        modifier = modifier,
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 10.dp),
-        ) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-        }
-    }
-}
-
-@Composable
-private fun WeeklyChallengeCard(
-    challenge: WeeklyChallengeProgress,
-    canClaimReward: Boolean,
-    isRewardClaimed: Boolean,
-    onClaimReward: () -> Unit,
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                text = challenge.seasonTitle,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                text = challenge.seasonSubtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            ProgressTrack(challenge.overallRatio)
-            Text(
-                text = stringResource(
-                    R.string.weekly_challenge_progress,
-                    challenge.currentSessions,
-                    challenge.targetSessions,
-                    challenge.currentMinutes,
-                    challenge.targetMinutes,
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = if (challenge.isCompleted) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.Medium,
-            )
-            Text(
-                text = stringResource(R.string.weekly_reward_seeds, challenge.rewardSeeds),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            when {
-                canClaimReward -> {
-                    TextButton(onClick = onClaimReward) {
-                        Text(stringResource(R.string.weekly_reward_claim), color = MaterialTheme.colorScheme.primary)
-                    }
-                }
-
-                isRewardClaimed -> {
-                    Text(
-                        text = stringResource(R.string.weekly_reward_claimed),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.tertiary,
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun DailyPlanCard(
-    plan: DailyPlanUiState,
-    onStartPlan: (Int) -> Unit,
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.daily_plan_title),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                text = stringResource(R.string.daily_plan_subtitle),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            ProgressTrack(plan.progressRatio)
-            Text(
-                text = stringResource(
-                    R.string.daily_plan_progress,
-                    plan.completedSessions,
-                    plan.targetSessions,
-                    plan.completedMinutes,
-                    plan.targetMinutes,
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = if (plan.isCompleted) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.Medium,
-            )
-            if (!plan.isCompleted) {
-                Button(
-                    onClick = { onStartPlan(plan.suggestedSessionMinutes) },
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
+                // Top Title & Settings Icon
+                Row(
                     modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(stringResource(R.string.daily_plan_action_start, plan.suggestedSessionMinutes))
-                }
-            }
-        }
-    }
-}
+                    Column {
+                        Text(
+                            text = "Focus Farm",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Black,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                        Text(
+                            text = "Tohumunu büyüt, bahçeni yeşert.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
 
-@Composable
-private fun PersonalGoalCard(goalText: String) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.personal_goal_title),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                text = goalText,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-@Composable
-private fun EngagementNudgeCard(
-    nudge: EngagementNudgeUiState,
-    onAction: () -> Unit,
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)),
-        shape = RoundedCornerShape(20.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.engagement_nudge_title),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = nudge.title,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                text = nudge.message,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Button(
-                onClick = onAction,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(nudge.actionLabel)
-            }
-        }
-    }
-}
-
-@Composable
-private fun DailyQuestsCard(
-    quests: List<DailyQuestUiState>,
-    onClaim: (DailyQuestType) -> Unit,
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-    ) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(
-                text = stringResource(R.string.daily_quests_title),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.SemiBold,
-            )
-            quests.forEach { quest ->
-                QuestRow(
-                    quest = quest,
-                    onClaim = onClaim,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun QuestRow(
-    quest: DailyQuestUiState,
-    onClaim: (DailyQuestType) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = when (quest.quest.type) {
-                        DailyQuestType.COMPLETE_SESSIONS ->
-                            stringResource(R.string.quest_complete_sessions, quest.quest.target)
-                        DailyQuestType.FOCUS_MINUTES ->
-                            stringResource(R.string.quest_focus_minutes, quest.quest.target)
-                        DailyQuestType.DEEP_SESSION ->
-                            stringResource(R.string.quest_deep_session, quest.quest.target)
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                Text(
-                    text = stringResource(R.string.quest_reward_seeds, quest.quest.rewardSeeds),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-
-            when {
-                quest.isClaimed -> {
-                    Text(
-                        text = stringResource(R.string.quest_claimed),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.tertiary,
-                    )
-                }
-
-                quest.canClaim -> {
-                    TextButton(onClick = { onClaim(quest.quest.type) }) {
-                        Text(stringResource(R.string.quest_claim), color = MaterialTheme.colorScheme.primary)
+                    IconButton(
+                        onClick = onOpenSettings,
+                        modifier = Modifier.minimumInteractiveComponentSize()
+                    ) {
+                        Text("⚙️", fontSize = 24.sp)
                     }
                 }
 
-                else -> {
+                // 1. Dashboard Widget (Goal Progress, Seed Balance & Streak)
+                DashboardWidget(
+                    todayFocusMinutes = state.todayFocusMinutes,
+                    dailyGoalMinutes = state.dailyGoalMinutes,
+                    seedBalance = state.seedBalance,
+                    currentStreak = state.currentStreak
+                )
+
+                // 2. Today's Grown Plants
+                TodayGrownPlantsWidget(state.todayGrownPlants)
+
+                // 3. Active Missions Widget
+                ActiveMissionsWidget(
+                    missions = state.activeMissions,
+                    onClaim = { onIntent(HomeIntent.ClaimMission(it)) }
+                )
+
+                DailySeedBonusWidget(state = state, onIntent = onIntent)
+
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+
+                // 4. Timer/Focus Setup Section
+                Text(
+                    text = "Odaklanmayı Başlat",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Central Plant display
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(160.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+                ) {
+                    PlantDisplay(
+                        plant = selectedPlant,
+                        stage = GrowthStage.GROWING,
+                        breathing = true,
+                        size = 130.dp,
+                    )
+                }
+
+                // Scrollable Plant Selector
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Text(
-                        text = "${quest.quest.progress}/${quest.quest.target}",
-                        style = MaterialTheme.typography.labelSmall,
+                        text = "Yetiştirilecek Bitki",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        items(state.availablePlants) { plant ->
+                            val isSelected = plant.id == state.selectedPlantId
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                    )
+                                    .border(
+                                        width = if (isSelected) 2.dp else 1.dp,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                                        shape = CircleShape
+                                    )
+                                    .clickable { onIntent(HomeIntent.SelectPlant(plant.id)) }
+                                    .semantics {
+                                        contentDescription = "${plant.name} seç"
+                                    }
+                            ) {
+                                Text(plant.emoji, fontSize = 26.sp)
+                            }
+                        }
+                    }
                 }
-            }
-        }
-        ProgressTrack(quest.quest.progressRatio)
-    }
-}
 
-@Composable
-private fun ProgressTrack(progress: Float) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(6.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(MaterialTheme.colorScheme.outlineVariant),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(progress.coerceIn(0f, 1f))
-                .height(6.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .background(MaterialTheme.colorScheme.primary),
-        )
-    }
-}
-
-@Composable
-private fun StreakFreezeCard(
-    freezeTokens: Int,
-    onUseFreeze: () -> Unit,
-) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = "Seri Koruma ❄️",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                text = "Bugün odaklanamazsan serini korumak icin freeze hakkini kullanabilirsin.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "Kalan hak: $freezeTokens",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Button(
-                    onClick = onUseFreeze,
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
+                // Session Type Selector
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.use_streak_freeze),
+                        text = "Oturum Modu",
                         style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(FocusSessionType.entries) { type ->
+                            val isSelected = state.sessionType == type
+                            val label = when (type) {
+                                FocusSessionType.COUNTDOWN -> "Geri Sayım"
+                                FocusSessionType.STOPWATCH -> "Kronometre"
+                                FocusSessionType.POMODORO -> "Pomodoro"
+                                FocusSessionType.SHORT_BREAK -> "Kısa Mola"
+                                FocusSessionType.LONG_BREAK -> "Uzun Mola"
+                            }
+                            FilterChip(
+                                selected = isSelected,
+                                onClick = { onIntent(HomeIntent.SelectSessionType(type)) },
+                                label = { Text(label) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                ),
+                                shape = RoundedCornerShape(16.dp),
+                                modifier = Modifier.minimumInteractiveComponentSize()
+                            )
+                        }
+                    }
+                }
+
+                // Duration Selector
+                if (state.sessionType != FocusSessionType.STOPWATCH) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Süre Seçimi: ${state.selectedMinutes} dakika",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Slider(
+                            value = state.selectedMinutes.toFloat(),
+                            onValueChange = { onIntent(HomeIntent.SelectDuration(it.toInt())) },
+                            valueRange = 5f..180f,
+                            steps = 35,
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            state.quickDurations.forEach { minutes ->
+                                val selected = state.selectedMinutes == minutes
+                                FilterChip(
+                                    selected = selected,
+                                    onClick = { onIntent(HomeIntent.SelectDuration(minutes)) },
+                                    label = {
+                                        Text(
+                                            text = stringResource(R.string.minutes_short, minutes),
+                                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                                        )
+                                    },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.72f),
+                                        selectedContainerColor = MaterialTheme.colorScheme.secondary,
+                                        selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
+                                    ),
+                                    shape = RoundedCornerShape(18.dp),
+                                    modifier = Modifier.minimumInteractiveComponentSize()
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
+                    ) {
+                        Text(
+                            text = "⏱️ Kronometre modunda oturum süresi sınırı yoktur.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(16.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                // Tags Selector
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Oturum Etiketi",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(state.availableTags) { tag ->
+                            val selected = state.selectedTag == tag
+                            FilterChip(
+                                selected = selected,
+                                onClick = { onIntent(HomeIntent.SelectTag(tag)) },
+                                label = { Text("${tag.icon()} ${tag.label()}") },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.58f),
+                                    selectedContainerColor = MaterialTheme.colorScheme.secondary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
+                                ),
+                                shape = RoundedCornerShape(18.dp),
+                                modifier = Modifier.minimumInteractiveComponentSize()
+                            )
+                        }
+                    }
+                }
+
+                // Strict Mode Toggle
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Derin Odaklanma (Strict Focus)",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                text = "Uygulamadan ayrılırsan bitkin solar.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = state.isStrict,
+                            onCheckedChange = { onIntent(HomeIntent.SetStrictFocus(it)) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
+                            ),
+                            modifier = Modifier.minimumInteractiveComponentSize()
+                        )
+                    }
+                }
+
+                // Ambience Sound Selector
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Ambiyans Sesi",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        AmbienceSound.entries.forEach { sound ->
+                            val selected = state.ambienceSound == sound
+                            FilterChip(
+                                selected = selected,
+                                onClick = { onIntent(HomeIntent.SelectAmbience(sound)) },
+                                label = { Text(sound.label()) },
+                                leadingIcon = { Text(sound.icon()) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.58f),
+                                    selectedContainerColor = MaterialTheme.colorScheme.secondary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
+                                ),
+                                shape = RoundedCornerShape(18.dp),
+                                modifier = Modifier.minimumInteractiveComponentSize()
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Fixed Start Focus Button at the bottom
+            Button(
+                onClick = { onIntent(HomeIntent.StartTodaySession) },
+                enabled = !state.isStartingSession,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .widthIn(max = 480.dp),
+                shape = RoundedCornerShape(28.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+            ) {
+                Text(
+                    text = if (state.sessionType == FocusSessionType.STOPWATCH) "Kronometreyi Başlat" else "Odaklanmayı Başlat",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DashboardWidget(
+    todayFocusMinutes: Int,
+    dailyGoalMinutes: Int,
+    seedBalance: Int,
+    currentStreak: Int
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Left: Daily Goal Progress Circle
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.size(80.dp)
+            ) {
+                val progress = if (dailyGoalMinutes > 0) todayFocusMinutes.toFloat() / dailyGoalMinutes else 0f
+                CircularProgressIndicator(
+                    progress = { progress.coerceIn(0f, 1f) },
+                    modifier = Modifier.fillMaxSize(),
+                    strokeWidth = 8.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "$todayFocusMinutes",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "/ $dailyGoalMinutes dk",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontSize = 8.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
+
+            // Right: Wallet & Streak
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // Wallet Row
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.semantics { contentDescription = "$seedBalance tohum var" }
+                ) {
+                    Text("🪙", fontSize = 20.sp)
+                    Column {
+                        Text(
+                            text = "$seedBalance Seed",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Seed Cüzdanı",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                // Streak Row
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.semantics { contentDescription = "Aktif seri $currentStreak gün" }
+                ) {
+                    Text("🔥", fontSize = 20.sp)
+                    Column {
+                        Text(
+                            text = "$currentStreak Günlük Seri",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Ritmini koruyorsun",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
+@Composable
+private fun TodayGrownPlantsWidget(plants: List<TodayGrownPlant>) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = "Bugün Yetiştirilen Bitkiler",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        if (plants.isEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                Text(
+                    text = "Bugün henüz yetiştirilmiş bitki yok. İlk odağını ver ve bir tohum büyüt! 🌱",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(14.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+        } else {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(plants) { plant ->
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        modifier = Modifier.width(130.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(10.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(plant.emoji, fontSize = 28.sp)
+                            Text(
+                                text = plant.name,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = "${plant.durationMinutes} dk",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ActiveMissionsWidget(
+    missions: List<HomeMissionItem>,
+    onClaim: (String) -> Unit
+) {
+    if (missions.isEmpty()) return
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = "Günlük Görevler",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        missions.take(2).forEach { item ->
+            val mission = item.mission
+            val progress = item.progress
+            val currentProgressValue = progress?.currentValue ?: 0
+            val targetValue = mission.goalValue
+            val completed = currentProgressValue >= targetValue
+            val isClaimed = progress?.isClaimed == true
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = getMissionTitle(mission),
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        LinearProgressIndicator(
+                            progress = { (currentProgressValue.toFloat() / targetValue.toFloat()).coerceIn(0f, 1f) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = "$currentProgressValue / $targetValue • +${mission.rewardSeeds} Seed",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    if (completed && !isClaimed) {
+                        Button(
+                            onClick = { onClaim(mission.id) },
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp),
+                            modifier = Modifier.height(32.dp)
+                        ) {
+                            Text("Ödülü Al", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        }
+                    } else if (isClaimed) {
+                        Text(
+                            text = "✓ Alındı",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun getMissionTitle(mission: com.focusfarm.app.domain.Mission): String = when (mission.goalType.name) {
+    "COMPLETE_SESSIONS" -> "${mission.goalValue} odak seansı tamamla"
+    "FOCUS_MINUTES" -> "${mission.goalValue} dakika odaklan"
+    "DEEP_SESSION" -> "Tek seferde ${mission.goalValue} dakika odaklan"
+    else -> "Günlük görevi tamamla"
+}
+
+private fun AmbienceSound.icon(): String = when (this) {
+    AmbienceSound.NONE -> "♪"
+    AmbienceSound.RAIN -> "☂"
+    AmbienceSound.WHITE_NOISE -> "≈"
+}
+
+private fun AmbienceSound.label(): String = when (this) {
+    AmbienceSound.NONE -> "Kapalı"
+    AmbienceSound.RAIN -> "Yağmur"
+    AmbienceSound.WHITE_NOISE -> "Gürültü"
+}
+
+private fun FocusTag.icon(): String = when (this) {
+    FocusTag.WORK -> "💼"
+    FocusTag.STUDY -> "✏️"
+    FocusTag.READING -> "📖"
+    FocusTag.EXERCISE -> "🏃"
+    FocusTag.OTHER -> "●"
+}
+
+private fun FocusTag.label(): String = when (this) {
+    FocusTag.WORK -> "Çalışma"
+    FocusTag.STUDY -> "Ders"
+    FocusTag.READING -> "Okuma"
+    FocusTag.EXERCISE -> "Egzersiz"
+    FocusTag.OTHER -> "Diğer"
+}
+
+@Composable
+private fun DailySeedBonusWidget(
+    state: HomeUiState,
+    onIntent: (HomeIntent) -> Unit
+) {
+    if (state.dailySeedBonusClaimed) return
+
+    val context = LocalContext.current
+    val activity = context as? Activity
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.25f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Günlük Seed Bonusu",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = if (state.isPremium) {
+                        "Premium üye olduğunuz için 50 Seed ödülünüzü doğrudan alabilirsiniz."
+                    } else {
+                        "50 Seed kazanmak için kısa bir reklam izleyin."
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Button(
+                onClick = { onIntent(HomeIntent.ClaimDailySeedBonus(activity)) },
+                shape = RoundedCornerShape(50),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                )
+            ) {
+                Text(
+                    text = if (state.isPremium) "Al (+50)" else "İzle (+50)",
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+        }
+    }
 }

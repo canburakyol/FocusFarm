@@ -1,53 +1,21 @@
 package com.focusfarm.app.data.repository
 
-import com.focusfarm.app.data.local.SessionDao
-import com.focusfarm.app.data.local.SessionEntity
 import com.focusfarm.app.domain.FocusSession
+import com.focusfarm.app.domain.GardenEntry
+import com.focusfarm.app.domain.GardenFilter
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class GardenRepository @Inject constructor(
-    private val sessionDao: SessionDao,
-) {
-    fun getAllSessions(): Flow<List<FocusSession>> =
-        sessionDao.getAllSessions().map { list -> list.map { it.toDomain() } }
+interface GardenRepository {
+    fun getAllSessions(): Flow<List<FocusSession>>
+    fun getRecentSessions(limit: Int = 5): Flow<List<FocusSession>>
+    fun getSessionCount(): Flow<Int>
+    fun getTotalMinutes(): Flow<Int>
+    fun getSessionsSince(startOfWeek: Long): Flow<List<FocusSession>>
+    suspend fun saveSession(session: FocusSession): Long
+    suspend fun getRecentSessionsSnapshot(limit: Int = 5): List<FocusSession>
 
-    fun getRecentSessions(limit: Int = 5): Flow<List<FocusSession>> =
-        sessionDao.getRecentSessions(limit).map { list -> list.map { it.toDomain() } }
-
-    fun getSessionCount(): Flow<Int> =
-        sessionDao.getSessionCount()
-
-    fun getTotalMinutes(): Flow<Int> =
-        sessionDao.getTotalMinutes()
-
-    fun getSessionsSince(startOfWeek: Long): Flow<List<FocusSession>> =
-        sessionDao.getSessionsSince(startOfWeek).map { list -> list.map { it.toDomain() } }
-
-    suspend fun saveSession(session: FocusSession): Long =
-        sessionDao.insert(session.toEntity())
-
-    suspend fun getRecentSessionsSnapshot(limit: Int = 5): List<FocusSession> =
-        sessionDao.getRecentSessionsSnapshot(limit).map { it.toDomain() }
+    fun getGardenEntries(filter: GardenFilter, hideWithered: Boolean): Flow<List<GardenEntry>>
+    suspend fun insertGardenEntry(entry: GardenEntry)
+    fun getBloomedCount(): Flow<Int>
+    fun getTotalGardenCount(): Flow<Int>
 }
-
-private fun SessionEntity.toDomain(): FocusSession = FocusSession(
-    id = id,
-    plantId = plantId,
-    plantName = plantName,
-    plantEmoji = plantEmoji,
-    durationMinutes = durationMinutes,
-    completedAt = completedAt,
-)
-
-private fun FocusSession.toEntity(): SessionEntity = SessionEntity(
-    id = id,
-    plantId = plantId,
-    plantName = plantName,
-    plantEmoji = plantEmoji,
-    durationMinutes = durationMinutes,
-    completedAt = completedAt,
-)

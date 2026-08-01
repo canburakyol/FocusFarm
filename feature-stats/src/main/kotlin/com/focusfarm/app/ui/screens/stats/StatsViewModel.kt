@@ -10,6 +10,13 @@ import com.focusfarm.app.data.repository.ReferralState
 import com.focusfarm.app.data.repository.GardenRepository
 import com.focusfarm.app.data.repository.ProgressRepository
 import com.focusfarm.app.data.repository.ReflectionRepository
+import com.focusfarm.app.data.repository.TimeFilter
+import com.focusfarm.app.data.repository.StatsSummary
+import com.focusfarm.app.data.repository.DailyTrendPoint
+import com.focusfarm.app.data.repository.TagDuration
+import com.focusfarm.app.data.repository.GetStatsSummaryUseCase
+import com.focusfarm.app.data.repository.GetDailyFocusTrendUseCase
+import com.focusfarm.app.data.repository.GetTagDistributionUseCase
 import com.focusfarm.app.domain.FocusSession
 import com.focusfarm.app.domain.FocusProgressEngine
 import com.focusfarm.app.domain.WeeklyChallengeProgress
@@ -22,20 +29,22 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface StatsSettingsActions {
     val referralState: StateFlow<ReferralState>
-
     suspend fun verifyReferral(referralCode: String): ReferralResult
-
     fun showPrivacyOptions(activity: Activity, onDismissed: (errorMessage: String?) -> Unit)
-
     suspend fun deleteAccount(): Boolean
 }
 
@@ -46,14 +55,11 @@ class DefaultStatsSettingsActions @Inject constructor(
     private val referralManager: ReferralManager,
 ) : StatsSettingsActions {
     override val referralState: StateFlow<ReferralState> = referralManager.state
-
     override suspend fun verifyReferral(referralCode: String): ReferralResult =
         referralManager.verifyReferral(referralCode)
-
     override fun showPrivacyOptions(activity: Activity, onDismissed: (errorMessage: String?) -> Unit) {
         consentManager.showPrivacyOptions(activity, onDismissed)
     }
-
     override suspend fun deleteAccount(): Boolean = authManager.deleteAccount()
 }
 
@@ -64,33 +70,63 @@ abstract class StatsSettingsBindings {
     abstract fun bindStatsSettingsActions(impl: DefaultStatsSettingsActions): StatsSettingsActions
 }
 
+sealed interface StatsUiState {
+    object Loading : StatsUiState
+    data class Success(
+        val summary: StatsSummary,
+        val trend: List<DailyTrendPoint>,
+        val tagDistribution: List<TagDuration>
+    ) : StatsUiState
+    object Empty : StatsUiState
+    data class Error(val message: String) : StatsUiState
+}
+
 @HiltViewModel
 class StatsViewModel @Inject constructor(
     repository: GardenRepository,
-    progressRepository: ProgressRepository,
+    private val progressRepository: ProgressRepository,
     reflectionRepository: ReflectionRepository,
     private val clock: Clock,
     private val settingsActions: StatsSettingsActions,
+    private val getStatsSummary: GetStatsSummaryUseCase,
+    private val getDailyFocusTrend: GetDailyFocusTrendUseCase,
+    private val getTagDistribution: GetTagDistributionUseCase,
 ) : ViewModel() {
 
-    val totalMinutes: StateFlow<Int> = repository
-        .getTotalMinutes()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+    private val _selectedFilter = MutableStateFlow(TimeFilter.LAST_7_DAYS)
+    val selectedFilter: StateFlow<TimeFilter> = _selectedFilter.asStateFlow()
 
-    val sessionCount: StateFlow<Int> = repository
-        .getSessionCount()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val uiState: StateFlow<StatsUiState> = _selectedFilter.flatMapLatest { filter ->
+        combine(
+            getStatsSummary(filter),
+            getDailyFocusTrend(filter),
+            getTagDistribution(filter)
+        ) { summary, trend, tagDistribution ->
+            if (summary.successfulSessionCount == 0 && summary.failedSessionCount == 0) {
+                StatsUiState.Empty
+            } else {
+                StatsUiState.Success(
+                    summary = summary,
+                    trend = trend,
+                    tagDistribution = tagDistribution
+                )
+            }
+        }.catch { e ->
+            emit(StatsUiState.Error(e.message ?: "Bilinmeyen bir hata oluştu"))
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), StatsUiState.Loading)
+
+    fun onFilterSelected(filter: TimeFilter) {
+        _selectedFilter.value = filter
+    }
 
     val recentSessions: StateFlow<List<FocusSession>> = repository
         .getRecentSessions(5)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    private val allSessions: StateFlow<List<FocusSession>> = repository
-        .getAllSessions()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    private val freezeDates = progressRepository.observeFreezeDates()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+    private val dailyGoalMinutes = progressRepository.observeDailyGoalMinutes()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 10)
 
     private val currentDate = clock.currentDateFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), clock.today())
@@ -103,47 +139,31 @@ class StatsViewModel @Inject constructor(
             clock.today().atStartOfDay(clock.zoneId).toInstant().toEpochMilli(),
         )
 
-    val streakDays: StateFlow<Int> = combine(allSessions, freezeDates, currentDateAnchorMillis) { sessions, freezes, nowMillis ->
-        FocusProgressEngine.currentStreakDays(
-            sessions = sessions,
-            freezeDates = freezes,
-            nowMillis = nowMillis,
-            zoneId = clock.zoneId,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+    private val startOfWeekMillisFlow = currentDateAnchorMillis
+        .map { FocusProgressEngine.startOfWeekMillis(it, clock.zoneId) }
 
-    private val currentWeekStartMillis = currentDateAnchorMillis
-        .map { nowMillis -> FocusProgressEngine.startOfWeekMillis(nowMillis, clock.zoneId) }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            FocusProgressEngine.startOfWeekMillis(clock.nowMillis(), clock.zoneId),
-        )
-
-    val weeklySessions: StateFlow<List<FocusSession>> = combine(
-        allSessions,
-        currentWeekStartMillis,
-    ) { sessions, weekStart ->
-        sessions
-            .filter { it.completedAt >= weekStart }
-            .sortedBy { it.completedAt }
-    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val weeklySessions: StateFlow<List<FocusSession>> = startOfWeekMillisFlow
+        .flatMapLatest { startOfWeek ->
+            repository.getSessionsSince(startOfWeek)
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val weeklyChallenge: StateFlow<WeeklyChallengeProgress> = combine(
-        allSessions,
-        currentDateAnchorMillis,
-    ) { sessions, nowMillis ->
-        FocusProgressEngine.weeklyChallenge(
-            sessions = sessions,
-            nowMillis = nowMillis,
-            zoneId = clock.zoneId,
-        )
-    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val weeklyChallenge: StateFlow<WeeklyChallengeProgress> = startOfWeekMillisFlow
+        .flatMapLatest { startOfWeek ->
+            repository.getSessionsSince(startOfWeek).map { sessions ->
+                FocusProgressEngine.weeklyChallenge(
+                    sessions = sessions,
+                    nowMillis = clock.nowMillis(),
+                    zoneId = clock.zoneId
+                )
+            }
+        }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            FocusProgressEngine.weeklyChallenge(emptyList(), clock.nowMillis(), clock.zoneId),
+            FocusProgressEngine.weeklyChallenge(emptyList(), clock.nowMillis(), clock.zoneId)
         )
 
     private val claimedWeeklyRewardKeys = progressRepository.observeClaimedWeeklyRewardKeys()

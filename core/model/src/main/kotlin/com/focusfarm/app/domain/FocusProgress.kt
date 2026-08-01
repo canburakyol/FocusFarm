@@ -1,4 +1,4 @@
-﻿package com.focusfarm.app.domain
+package com.focusfarm.app.domain
 
 import java.time.Instant
 import java.time.LocalDate
@@ -67,16 +67,27 @@ object FocusProgressEngine {
         val rewardSeeds: Int,
     )
 
+    fun getActiveDates(
+        sessions: List<FocusSession>,
+        dailyGoalMinutes: Int,
+        freezeDates: Set<LocalDate>,
+        zoneId: ZoneId
+    ): Set<LocalDate> {
+        val sessionsByDate = sessions.groupBy { it.completedAt.toLocalDate(zoneId) }
+        val qualifiedDates = sessionsByDate.filter { (_, daySessions) ->
+            daySessions.sumOf { it.durationMinutes } >= dailyGoalMinutes
+        }.keys
+        return qualifiedDates + freezeDates
+    }
+
     fun currentStreakDays(
         sessions: List<FocusSession>,
+        dailyGoalMinutes: Int,
         freezeDates: Set<LocalDate> = emptySet(),
         nowMillis: Long = System.currentTimeMillis(),
         zoneId: ZoneId = ZoneId.systemDefault(),
     ): Int {
-        val activeDates = sessions
-            .map { it.completedAt.toLocalDate(zoneId) }
-            .plus(freezeDates)
-            .toSet()
+        val activeDates = getActiveDates(sessions, dailyGoalMinutes, freezeDates, zoneId)
         if (activeDates.isEmpty()) return 0
 
         val today = nowMillis.toLocalDate(zoneId)
@@ -93,6 +104,30 @@ object FocusProgressEngine {
             cursor = cursor.minusDays(1)
         }
         return streak
+    }
+
+    fun recoveryProtectionDates(
+        completedRecoveryTimestamps: List<Long>,
+        sessions: List<FocusSession>,
+        dailyGoalMinutes: Int,
+        existingProtectedDates: Set<LocalDate> = emptySet(),
+        zoneId: ZoneId = ZoneId.systemDefault(),
+    ): Set<LocalDate> {
+        val activeDates = getActiveDates(sessions, dailyGoalMinutes, existingProtectedDates, zoneId).toMutableSet()
+        val recoveryDates = completedRecoveryTimestamps
+            .map { it.toLocalDate(zoneId) }
+            .distinct()
+            .sorted()
+        val result = mutableSetOf<LocalDate>()
+        recoveryDates.forEach { recoveryDate ->
+            val missedDate = recoveryDate.minusDays(1)
+            val priorStreakDate = missedDate.minusDays(1)
+            if (activeDates.contains(priorStreakDate)) {
+                result += missedDate
+                activeDates += missedDate
+            }
+        }
+        return result
     }
 
     fun todayMinutes(
@@ -113,7 +148,7 @@ object FocusProgressEngine {
         zoneId: ZoneId = ZoneId.systemDefault(),
     ): Boolean {
         val today = nowMillis.toLocalDate(zoneId)
-        return timestampMillis.toLocalDate(zoneId) == today
+        return timestampMillis.toLocalDate(zoneId).compareTo(today) == 0
     }
 
     fun dailyQuests(
@@ -171,14 +206,12 @@ object FocusProgressEngine {
 
     fun freezeCandidateDate(
         sessions: List<FocusSession>,
+        dailyGoalMinutes: Int,
         freezeDates: Set<LocalDate> = emptySet(),
         nowMillis: Long = System.currentTimeMillis(),
         zoneId: ZoneId = ZoneId.systemDefault(),
     ): LocalDate? {
-        val activeDates = sessions
-            .map { it.completedAt.toLocalDate(zoneId) }
-            .plus(freezeDates)
-            .toSet()
+        val activeDates = getActiveDates(sessions, dailyGoalMinutes, freezeDates, zoneId)
         if (activeDates.isEmpty()) return null
 
         val today = nowMillis.toLocalDate(zoneId)

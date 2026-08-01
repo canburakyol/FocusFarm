@@ -1,4 +1,4 @@
-﻿package com.focusfarm.app.domain
+package com.focusfarm.app.domain
 
 data class Plant(
     val id: String,
@@ -115,6 +115,26 @@ object PlantCatalog {
             stages = listOf("🌱", "🪴", "🌿", "🌳", "🎍"),
             isPremium = true,
             minMinutes = 45,
+        ),
+        Plant(
+            id = "carrot",
+            name = "Havuç",
+            description = "Toprağın altında sabırla büyüyen turuncu tat.",
+            emoji = "🥕",
+            illustrationName = "premium_carrot_asset",
+            stages = listOf("🌱", "🌿", "🌾", "🥕", "🥕"),
+            isPremium = false,
+            minMinutes = 5,
+        ),
+        Plant(
+            id = "lavender",
+            name = "Lavanta",
+            description = "Sakinleştirici kokusuyla zihnini dinlendirir.",
+            emoji = "🪻",
+            illustrationName = "premium_lavender_asset",
+            stages = listOf("🌱", "🌿", "🌾", "🪻", "🪻"),
+            isPremium = false,
+            minMinutes = 20,
         ),
     )
 

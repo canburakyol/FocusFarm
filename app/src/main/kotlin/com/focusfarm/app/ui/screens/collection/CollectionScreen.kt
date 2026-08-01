@@ -1,17 +1,23 @@
 package com.focusfarm.app.ui.screens.collection
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,18 +40,23 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.R
+import com.focusfarm.app.domain.PlantRarity
 import com.focusfarm.app.ui.components.FocusBackdrop
+import com.focusfarm.app.ui.components.PlantDisplay
+import com.focusfarm.app.domain.GrowthStage
+import com.focusfarm.app.domain.PlantCatalog
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @Composable
 fun CollectionScreen(
-    onBack: () -> Unit,
+    onBack: (() -> Unit)? = null,
     viewModel: CollectionViewModel = hiltViewModel(),
 ) {
     val plants by viewModel.collectionPlants.collectAsStateWithLifecycle()
     val statusMessage by viewModel.statusMessage.collectAsStateWithLifecycle()
+    val selectedRarity by viewModel.selectedRarity.collectAsStateWithLifecycle()
 
     FocusBackdrop {
         Column(
@@ -52,59 +64,125 @@ fun CollectionScreen(
                 .fillMaxSize()
                 .padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(stringResource(R.string.collection_book), style = MaterialTheme.typography.displayMedium)
-            TextButton(onClick = onBack) {
-                Text(stringResource(R.string.go_back), color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-        }
-        Spacer(Modifier.height(6.dp))
-        Text(
-            text = stringResource(R.string.collection_subtitle),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        statusMessage?.let { message ->
-            Spacer(Modifier.height(8.dp))
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                shape = RoundedCornerShape(12.dp),
+            Row(
                 modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = message,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(1f),
-                    )
-                    TextButton(onClick = viewModel::dismissMessage) {
-                        Text(stringResource(R.string.action_ok), color = MaterialTheme.colorScheme.primary)
+                Text(stringResource(R.string.collection_book), style = MaterialTheme.typography.displayMedium)
+                if (onBack != null) {
+                    TextButton(onClick = onBack) {
+                        Text(stringResource(R.string.go_back), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
-        }
-        Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = "Keşfettiğin bitkilerle bahçeni renklendir. Ödüllerini toplamayı unutma!",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            statusMessage?.let { message ->
+                Spacer(Modifier.height(8.dp))
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = message,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(1f),
+                        )
+                        TextButton(onClick = viewModel::dismissMessage) {
+                            Text(stringResource(R.string.action_ok), color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+                }
+            }
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+            Spacer(Modifier.height(12.dp))
+
+            // Rarity filters row
+            val rarityOptions = listOf(
+                null to "Tümü",
+                PlantRarity.COMMON to "Common",
+                PlantRarity.UNCOMMON to "Uncommon",
+                PlantRarity.RARE to "Rare",
+                PlantRarity.EPIC to "Epic",
+                PlantRarity.LEGENDARY to "Legendary"
+            )
+
+            LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                items(plants, key = { it.plant.id }) { item ->
-                    CollectionPlantCard(
-                        item = item,
-                        onClaimReward = { viewModel.claimReward(item.plant.id) },
+                items(rarityOptions) { (rarity, title) ->
+                    val isSelected = selectedRarity == rarity
+                    val chipColor = if (isSelected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                    }
+                    val textColor = if (isSelected) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(chipColor)
+                            .clickable { viewModel.filterRarity(rarity) }
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = textColor,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(14.dp))
+
+            if (plants.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Bu nadirlikte bitki bulunamadı.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    items(plants, key = { it.plant.id }) { item ->
+                        CollectionPlantCard(
+                            item = item,
+                            onClaimReward = { viewModel.claimReward(item.plant.id) },
+                        )
+                    }
                 }
             }
         }
@@ -116,96 +194,178 @@ private fun CollectionPlantCard(
     item: CollectionPlantUiState,
     onClaimReward: () -> Unit,
 ) {
-    val dateFormat = remember { SimpleDateFormat("d MMM", Locale.getDefault()) }
+    val dateFormat = remember { SimpleDateFormat("d MMM yyyy", Locale.getDefault()) }
+    val plantObj = remember(item.plant.id) { PlantCatalog.getById(item.plant.id) }
+
     val statusText = when {
-        !item.isPremiumAccessUnlocked -> stringResource(R.string.collection_premium_locked)
-        item.isDiscovered -> stringResource(R.string.collection_discovered_count, item.discoveredCount)
-        else -> stringResource(R.string.collection_not_discovered)
+        !item.isUnlocked -> "Kilitli"
+        item.isDiscovered -> "Yetiştirildi: ${item.grownCount}"
+        else -> "Keşfedilmedi"
     }
+
     val statusColor = when {
-        !item.isPremiumAccessUnlocked -> MaterialTheme.colorScheme.onSurfaceVariant
-        item.isDiscovered -> MaterialTheme.colorScheme.tertiary
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
+        !item.isUnlocked -> MaterialTheme.colorScheme.onSurfaceVariant
+        item.isDiscovered -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.secondary
     }
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (item.isDiscovered) {
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f)
+            } else {
+                MaterialTheme.colorScheme.surface
+            }
+        ),
+        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
+            // Rarity tag
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = item.plant.rarity.name,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontSize = 8.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Plant graphics or Lock
+            Box(
+                modifier = Modifier
+                    .height(84.dp)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (!item.isUnlocked) {
+                    Text("🔒", fontSize = 42.sp)
+                } else if (plantObj != null) {
+                    PlantDisplay(
+                        plant = plantObj,
+                        stage = if (item.isDiscovered) GrowthStage.FULL else GrowthStage.SEED,
+                        size = 76.dp
+                    )
+                } else {
+                    Text("🌱", fontSize = 42.sp)
+                }
+            }
+
+            // Name
             Text(
-                text = if (!item.isPremiumAccessUnlocked) "🔒" else item.plant.emoji,
-                fontSize = 34.sp,
-            )
-            Text(
-                text = item.plant.name,
+                text = item.plant.displayName,
                 style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
             )
+
+            // Status label
             Text(
                 text = statusText,
                 style = MaterialTheme.typography.bodySmall,
                 color = statusColor,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
             )
 
-            if (item.isDiscovered && item.lastCompletedAt != null) {
+            // Unlock conditions or discovery dates
+            if (!item.isUnlocked) {
+                val condition = when {
+                    item.plant.isPremium -> "Premium gerektirir"
+                    item.plant.unlockType == "shop" -> "Mağazadan tohumunu satın al"
+                    else -> "${item.plant.minimumFocusMinutes} dk odak seansı tamamla"
+                }
                 Text(
-                    text = stringResource(
-                        R.string.collection_last_grown,
-                        dateFormat.format(Date(item.lastCompletedAt)),
-                    ),
+                    text = condition,
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    modifier = Modifier.height(28.dp)
                 )
+            } else if (item.isDiscovered && item.firstDiscoveredAt != null) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    modifier = Modifier.height(28.dp)
+                ) {
+                    Text(
+                        text = "İlk Keşif: " + dateFormat.format(Date(item.firstDiscoveredAt)),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 9.sp
+                    )
+                    item.lastCompletedAt?.let { last ->
+                        Text(
+                            text = "Son Seans: " + dateFormat.format(Date(last)),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 9.sp
+                        )
+                    }
+                }
             } else {
                 Text(
-                    text = item.plant.description,
+                    text = "Kilidi açık, bahçende yetiştirerek keşfet!",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
+                    modifier = Modifier.height(28.dp)
                 )
             }
 
+            Spacer(Modifier.height(4.dp))
+
+            // Seed Claim/Reward section
             Text(
-                text = stringResource(R.string.collection_reward_seeds, item.rewardSeeds),
-                style = MaterialTheme.typography.labelSmall,
+                text = "Hediye: 🌱 ${item.rewardSeeds}",
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold
             )
 
             when {
                 item.canClaimReward -> {
                     Button(
                         onClick = onClaimReward,
-                        shape = RoundedCornerShape(50),
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary,
                         ),
+                        contentPadding = PaddingValues(vertical = 4.dp, horizontal = 12.dp),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(stringResource(R.string.collection_claim_reward))
+                        Text("Ödülü Al", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
                 }
 
                 item.isRewardClaimed -> {
                     Text(
-                        text = stringResource(R.string.collection_reward_claimed),
+                        text = "✓ Alındı",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 4.dp)
                     )
+                }
+                
+                else -> {
+                    Spacer(Modifier.height(24.dp))
                 }
             }
         }
     }
 }
-
-

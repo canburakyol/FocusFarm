@@ -3,13 +3,14 @@ package com.focusfarm.app.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
-private val CozyColorScheme = lightColorScheme(
-    primary = CozyAccent,
+private val NatureColorScheme = lightColorScheme(
+    primary = GrowthEmerald,
     onPrimary = CozyBackground,
     primaryContainer = CozySurface,
     onPrimaryContainer = CozyTextPrimary,
-    secondary = CozyTextSecondary,
+    secondary = VividSprout,
     onSecondary = CozyBackground,
     secondaryContainer = CozySurface,
     onSecondaryContainer = CozyTextPrimary,
@@ -29,9 +30,12 @@ private val CozyColorScheme = lightColorScheme(
 
 @Composable
 fun FocusFarmTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = CozyColorScheme,
-        typography = Typography,
-        content = content,
-    )
+    CompositionLocalProvider(LocalSpacing provides Spacing()) {
+        MaterialTheme(
+            colorScheme = NatureColorScheme,
+            typography = Typography,
+            content = content,
+        )
+    }
 }
+

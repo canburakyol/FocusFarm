@@ -7,4 +7,7 @@ data class FocusSession(
     val plantEmoji: String,
     val durationMinutes: Int,
     val completedAt: Long,
+    val selectedTag: FocusTag = FocusTag.OTHER,
+    val status: SessionStatus = SessionStatus.COMPLETED,
+    val failReason: String? = null,
 )

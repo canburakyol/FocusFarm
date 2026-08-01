@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import com.focusfarm.app.telemetry.AppTelemetry
 import com.google.android.gms.ads.MobileAds
+import android.content.pm.ApplicationInfo
+import com.google.android.ump.ConsentDebugSettings
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.FormError
@@ -76,7 +78,17 @@ class UmpConsentManager @Inject constructor(
         }
 
         _state.update { it.copy(isLoading = true, lastErrorMessage = null) }
-        val params = ConsentRequestParameters.Builder().build()
+        
+        val isDebug = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        val paramsBuilder = ConsentRequestParameters.Builder()
+        if (isDebug) {
+            val debugSettings = ConsentDebugSettings.Builder(context)
+                .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+                .build()
+            paramsBuilder.setConsentDebugSettings(debugSettings)
+        }
+        val params = paramsBuilder.build()
+
         consentInformation.requestConsentInfoUpdate(
             activity,
             params,

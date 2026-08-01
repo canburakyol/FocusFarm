@@ -43,13 +43,19 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.R
-import com.focusfarm.app.domain.FocusSession
-import com.focusfarm.app.domain.PlantCatalog
+import com.focusfarm.app.domain.GardenEntry
+import com.focusfarm.app.domain.GardenFilter
+import com.focusfarm.app.domain.GardenPlantState
+import com.focusfarm.app.domain.PlantSpeciesCatalog
 import com.focusfarm.app.domain.ShareGardenUseCase
+import com.focusfarm.app.domain.FocusSession
 import com.focusfarm.app.ui.components.FocusBackdrop
+import com.focusfarm.app.ui.components.PlantVectorRenderer
 import com.focusfarm.app.ui.components.ShareGardenDialog
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.app.ui.theme.plantAccentColor
+import androidx.compose.material3.Checkbox
+import androidx.compose.foundation.clickable
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -61,6 +67,9 @@ fun GardenScreen(
 ) {
     val context = LocalContext.current
     val sessions by viewModel.sessions.collectAsStateWithLifecycle()
+    val gardenEntries by viewModel.gardenEntries.collectAsStateWithLifecycle()
+    val activeFilter by viewModel.activeFilter.collectAsStateWithLifecycle()
+    val hideWithered by viewModel.hideWithered.collectAsStateWithLifecycle()
     val totalMinutes by viewModel.totalMinutes.collectAsStateWithLifecycle()
     val streakDays by viewModel.streakDays.collectAsStateWithLifecycle()
     val totalHours = totalMinutes / 60
@@ -100,49 +109,100 @@ fun GardenScreen(
         Column(
             modifier = Modifier.fillMaxSize().padding(top = 16.dp),
         ) {
-        // Header
-        Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(stringResource(R.string.tab_garden), style = MaterialTheme.typography.displayMedium)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = onOpenCollection) {
-                        Text(
-                            text = stringResource(R.string.collection_book),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall,
-                        )
+            // Header
+            Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(stringResource(R.string.tab_garden), style = MaterialTheme.typography.displayMedium)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        TextButton(onClick = onOpenCollection) {
+                            Text(
+                                text = stringResource(R.string.collection_book),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                        }
+                        TextButton(onClick = { showShareDialog = true }) {
+                            Text(
+                                text = stringResource(R.string.action_share),
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                        }
                     }
-                    TextButton(onClick = { showShareDialog = true }) {
-                        Text(
-                            text = stringResource(R.string.action_share),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.labelSmall,
+                }
+                Spacer(Modifier.height(12.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    StatChip(value = "${gardenEntries.size}", label = stringResource(R.string.total_plants), modifier = Modifier.weight(1f))
+                    StatChip(
+                        value = if (totalHours > 0) {
+                            stringResource(R.string.total_focus_hours_minutes, totalHours, remainingMins)
+                        } else {
+                            stringResource(R.string.total_focus_minutes, totalMinutes)
+                        },
+                        label = stringResource(R.string.total_focus),
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // Filtering and Settings row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    GardenFilter.entries.forEach { filterOption ->
+                        val label = when (filterOption) {
+                            GardenFilter.TODAY -> "Bugün"
+                            GardenFilter.WEEKLY -> "Haftalık"
+                            GardenFilter.MONTHLY -> "Aylık"
+                            GardenFilter.ALL_TIME -> "Tümü"
+                        }
+                        CustomFilterChip(
+                            label = label,
+                            selected = activeFilter == filterOption,
+                            onClick = { viewModel.setFilter(filterOption) }
                         )
                     }
                 }
-            }
-            Spacer(Modifier.height(12.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatChip(value = "${sessions.size}", label = stringResource(R.string.total_plants), modifier = Modifier.weight(1f))
-                StatChip(
-                    value = if (totalHours > 0) {
-                        stringResource(R.string.total_focus_hours_minutes, totalHours, remainingMins)
-                    } else {
-                        stringResource(R.string.total_focus_minutes, totalMinutes)
-                    },
-                    label = stringResource(R.string.total_focus),
-                    modifier = Modifier.weight(1f),
-                )
-            }
-        }
 
-        Spacer(Modifier.height(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable { viewModel.setHideWithered(!hideWithered) }
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Checkbox(
+                        checked = hideWithered,
+                        onCheckedChange = { viewModel.setHideWithered(it) },
+                        modifier = Modifier.scale(0.7f)
+                    )
+                    Text(
+                        text = "Solanları Gizle",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
 
-            if (sessions.isEmpty()) {
+            Spacer(Modifier.height(8.dp))
+
+            if (gardenEntries.isEmpty()) {
                 EmptyGarden()
             } else {
                 LazyVerticalGrid(
@@ -152,10 +212,10 @@ fun GardenScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     items(
-                        items = sessions,
-                        key = { session -> session.id },
-                    ) { session ->
-                        PlantCard(session)
+                        items = gardenEntries,
+                        key = { entry -> entry.id },
+                    ) { entry ->
+                        PlantCard(entry)
                     }
                 }
             }
@@ -164,9 +224,38 @@ fun GardenScreen(
 }
 
 @Composable
-private fun PlantCard(session: FocusSession) {
-    val plant = PlantCatalog.getById(session.plantId)
-    val accent = plant?.let { plantAccentColor(it.id) } ?: MaterialTheme.colorScheme.primary
+private fun CustomFilterChip(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val containerColor = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
+    val contentColor = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+    val borderColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(containerColor)
+            .border(1.dp, borderColor, RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = contentColor,
+            fontSize = 10.sp
+        )
+    }
+}
+
+@Composable
+private fun PlantCard(entry: GardenEntry) {
+    val species = PlantSpeciesCatalog.getById(entry.plantSpeciesId)
+    val accent = species?.let { plantAccentColor(it.id) } ?: MaterialTheme.colorScheme.primary
     val dateFormat = remember { SimpleDateFormat("d MMM", Locale.getDefault()) }
 
     Card(
@@ -183,22 +272,47 @@ private fun PlantCard(session: FocusSession) {
                 Modifier.size(56.dp).clip(CircleShape).background(accent.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center,
             ) {
-                // If it's a mature plant (completed session), show premium scaling
-                val isMature = plant?.illustrationName?.isNotEmpty() == true
-                Text(
-                    text = session.plantEmoji,
-                    fontSize = 30.sp,
-                    modifier = if (isMature) Modifier.scale(1.2f) else Modifier
+                PlantVectorRenderer(
+                    plantId = entry.plantSpeciesId,
+                    stage = entry.growthStage,
+                    state = entry.state,
+                    size = 44.dp
                 )
             }
-            Text(session.plantName, style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center)
             Text(
-                stringResource(R.string.duration_minutes_short, session.durationMinutes),
+                text = species?.displayName ?: "Bitki",
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                fontSize = 11.sp
+            )
+            Text(
+                stringResource(R.string.duration_minutes_short, entry.focusMinutes),
                 fontFamily = TimerFontFamily,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.primary,
+                color = if (entry.state == GardenPlantState.WITHERED) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
             )
-            Text(dateFormat.format(Date(session.completedAt)), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp)
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = dateFormat.format(Date(entry.plantedAt)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 9.sp
+                )
+                Text(
+                    text = when (entry.state) {
+                        GardenPlantState.BLOOMED -> "✓"
+                        GardenPlantState.WITHERED -> "✗"
+                        GardenPlantState.GROWING -> "⏳"
+                    },
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (entry.state == GardenPlantState.WITHERED) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    fontSize = 9.sp
+                )
+            }
         }
     }
 }

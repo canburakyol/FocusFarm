@@ -11,6 +11,7 @@ data class UserProgressEntity(
     val streakFreezeTokens: Int = 1,
     val lastFreezeGrantWeekStart: Long = 0L,
     val nextSessionDoubleSeedBoostActive: Boolean = false,
+    val dailyGoalMinutes: Int = 10,
 ) {
     companion object {
         const val SINGLETON_ID = 0

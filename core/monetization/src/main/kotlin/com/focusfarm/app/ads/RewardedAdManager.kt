@@ -2,6 +2,7 @@ package com.focusfarm.app.ads
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import com.focusfarm.app.telemetry.AppTelemetry
 import com.focusfarm.app.monetization.ConsentManager
 import com.focusfarm.core.ui.R
@@ -13,6 +14,9 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @Singleton
 class RewardedAdManager @Inject constructor(
@@ -20,8 +24,9 @@ class RewardedAdManager @Inject constructor(
     private val consentManager: ConsentManager,
 ) {
     private var rewardedAd: RewardedAd? = null
-    private var isLoading = false
-    private var isShowing = false
+
+    private val _adState = MutableStateFlow<RewardedAdState>(RewardedAdState.Idle)
+    val adState: StateFlow<RewardedAdState> = _adState.asStateFlow()
 
     object Placements {
         const val DAILY_QUEST_REROLL = "daily_quest_reroll"
@@ -29,6 +34,8 @@ class RewardedAdManager @Inject constructor(
         const val SESSION_REVIVE = "session_revive"
         const val SHARE_GARDEN_BOOST = "share_garden_boost"
         const val DAILY_BONUS_WHEEL = "daily_bonus_wheel"
+        const val DAILY_SEED_BONUS = "daily_seed_bonus"
+        const val SHOP_SEED_PACK = "shop_seed_pack"
     }
 
     fun preload(context: Context) {
@@ -42,8 +49,9 @@ class RewardedAdManager @Inject constructor(
         onRewardEarned: () -> Unit,
         onNotReady: () -> Unit,
     ) {
-        if (isShowing) return
+        if (_adState.value == RewardedAdState.Showing) return
         if (!consentManager.canLoadAds()) {
+            _adState.value = RewardedAdState.Error("Reklam izni verilmedi")
             onNotReady()
             return
         }
@@ -56,7 +64,7 @@ class RewardedAdManager @Inject constructor(
         }
 
         rewardedAd = null
-        isShowing = true
+        _adState.value = RewardedAdState.Showing
 
         ad.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdShowedFullScreenContent() {
@@ -67,12 +75,12 @@ class RewardedAdManager @Inject constructor(
             }
 
             override fun onAdDismissedFullScreenContent() {
-                isShowing = false
+                _adState.value = RewardedAdState.Idle
                 loadIfNeeded(activity.applicationContext)
             }
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                isShowing = false
+                _adState.value = RewardedAdState.Error("Reklam gösterilemedi: ${adError.message}")
                 telemetry.recordNonFatal(
                     tag = "rewarded_ad_show_failed",
                     message = "placement=$placement code=${adError.code} message=${adError.message}",
@@ -83,6 +91,7 @@ class RewardedAdManager @Inject constructor(
         }
 
         ad.show(activity) { rewardItem ->
+            _adState.value = RewardedAdState.Completed
             telemetry.logEvent(
                 name = "rewarded_ad_reward_granted",
                 params = mapOf(
@@ -96,23 +105,31 @@ class RewardedAdManager @Inject constructor(
     }
 
     private fun loadIfNeeded(context: Context) {
-        if (rewardedAd != null || isLoading) return
+        if (rewardedAd != null || _adState.value == RewardedAdState.Loading) return
 
-        isLoading = true
+        _adState.value = RewardedAdState.Loading
         val adRequest = AdRequest.Builder().build()
+
+        val isDebug = (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        val adUnitId = if (isDebug) {
+            "ca-app-pub-3940256099942544/5224354917" // Official AdMob Rewarded Test ID
+        } else {
+            context.getString(R.string.admob_rewarded_unit_id)
+        }
+
         RewardedAd.load(
             context,
-            context.getString(R.string.admob_rewarded_unit_id),
+            adUnitId,
             adRequest,
             object : RewardedAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedAd) {
-                    isLoading = false
                     rewardedAd = ad
+                    _adState.value = RewardedAdState.Ready
                 }
 
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    isLoading = false
                     rewardedAd = null
+                    _adState.value = RewardedAdState.Error("Reklam yüklenemedi: ${loadAdError.message}")
                     telemetry.recordNonFatal(
                         tag = "rewarded_ad_load_failed",
                         message = "code=${loadAdError.code} message=${loadAdError.message}",

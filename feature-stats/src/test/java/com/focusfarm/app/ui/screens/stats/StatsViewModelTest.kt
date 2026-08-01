@@ -7,10 +7,17 @@ import androidx.test.core.app.ApplicationProvider
 import com.focusfarm.app.data.local.AppDatabase
 import com.focusfarm.app.data.local.SessionEntity
 import com.focusfarm.app.data.repository.GardenRepository
+import com.focusfarm.app.data.repository.GardenRepositoryImpl
 import com.focusfarm.app.data.repository.ProgressRepository
+import com.focusfarm.app.data.repository.ProgressRepositoryImpl
 import com.focusfarm.app.data.repository.ReflectionRepository
+import com.focusfarm.app.data.repository.ReflectionRepositoryImpl
 import com.focusfarm.app.data.repository.ReferralResult
 import com.focusfarm.app.data.repository.ReferralState
+import com.focusfarm.app.data.repository.StatsRepositoryImpl
+import com.focusfarm.app.data.repository.GetStatsSummaryUseCase
+import com.focusfarm.app.data.repository.GetDailyFocusTrendUseCase
+import com.focusfarm.app.data.repository.GetTagDistributionUseCase
 import com.focusfarm.app.time.Clock
 import com.google.common.truth.Truth.assertThat
 import java.time.LocalDate
@@ -66,14 +73,30 @@ class StatsViewModelTest {
     @Test
     fun weeklyStateRollsIntoNewWeekWithoutRestart() = runTest {
         val clock = TestClock(initialDate = LocalDate.of(2026, 3, 15))
-        val gardenRepository = GardenRepository(database.sessionDao())
-        val progressRepository = ProgressRepository(
+        val gardenRepository = GardenRepositoryImpl(database.sessionDao(), database.gardenEntryDao())
+        val dummyTelemetry = object : com.focusfarm.app.telemetry.AppTelemetry {
+            override fun recordNonFatal(tag: String, message: String, throwable: Throwable?) {}
+            override fun logEvent(name: String, params: Map<String, String>) {}
+        }
+        val billingRepository = com.focusfarm.app.data.billing.FakeBillingRepository()
+        val progressRepository = ProgressRepositoryImpl(
             context = context,
             database = database,
             progressDao = database.progressDao(),
             clock = clock,
+            billingRepository = billingRepository,
         )
-        val reflectionRepository = ReflectionRepository(database.reflectionDao())
+        val reflectionRepository = ReflectionRepositoryImpl(database.reflectionDao())
+        val statsRepository = StatsRepositoryImpl(
+            sessionDao = database.sessionDao(),
+            gardenEntryDao = database.gardenEntryDao(),
+            walletDao = database.walletDao(),
+            progressDao = database.progressDao(),
+            clock = clock
+        )
+        val getStatsSummary = GetStatsSummaryUseCase(statsRepository, progressRepository, clock)
+        val getDailyFocusTrend = GetDailyFocusTrendUseCase(statsRepository, clock)
+        val getTagDistribution = GetTagDistributionUseCase(statsRepository, clock)
 
         insertSession(
             completedAt = LocalDate.of(2026, 3, 15)
@@ -90,6 +113,9 @@ class StatsViewModelTest {
             reflectionRepository = reflectionRepository,
             clock = clock,
             settingsActions = FakeStatsSettingsActions(),
+            getStatsSummary = getStatsSummary,
+            getDailyFocusTrend = getDailyFocusTrend,
+            getTagDistribution = getTagDistribution,
         )
 
         val weeklySessionsJob = backgroundScope.launch { viewModel.weeklySessions.collect { } }
@@ -122,6 +148,68 @@ class StatsViewModelTest {
 
         weeklySessionsJob.cancel()
         weeklyChallengeJob.cancel()
+    }
+
+    @Test
+    fun uiStateReflectsStatsSummaryLoadingAndSuccess() = runTest {
+        val clock = TestClock(initialDate = LocalDate.of(2026, 7, 11))
+        val gardenRepository = GardenRepositoryImpl(database.sessionDao(), database.gardenEntryDao())
+        val dummyTelemetry = object : com.focusfarm.app.telemetry.AppTelemetry {
+            override fun recordNonFatal(tag: String, message: String, throwable: Throwable?) {}
+            override fun logEvent(name: String, params: Map<String, String>) {}
+        }
+        val billingRepository = com.focusfarm.app.data.billing.FakeBillingRepository()
+        val progressRepository = ProgressRepositoryImpl(
+            context = context,
+            database = database,
+            progressDao = database.progressDao(),
+            clock = clock,
+            billingRepository = billingRepository,
+        )
+        val statsRepository = StatsRepositoryImpl(
+            sessionDao = database.sessionDao(),
+            gardenEntryDao = database.gardenEntryDao(),
+            walletDao = database.walletDao(),
+            progressDao = database.progressDao(),
+            clock = clock
+        )
+        val reflectionRepository = ReflectionRepositoryImpl(database.reflectionDao())
+        val getStatsSummary = GetStatsSummaryUseCase(statsRepository, progressRepository, clock)
+        val getDailyFocusTrend = GetDailyFocusTrendUseCase(statsRepository, clock)
+        val getTagDistribution = GetTagDistributionUseCase(statsRepository, clock)
+
+        val viewModel = StatsViewModel(
+            repository = gardenRepository,
+            progressRepository = progressRepository,
+            reflectionRepository = reflectionRepository,
+            clock = clock,
+            settingsActions = FakeStatsSettingsActions(),
+            getStatsSummary = getStatsSummary,
+            getDailyFocusTrend = getDailyFocusTrend,
+            getTagDistribution = getTagDistribution,
+        )
+
+        val uiStateJob = backgroundScope.launch { viewModel.uiState.collect { } }
+        advanceUntilIdle()
+
+        // Initially empty since no sessions (wait until it's not Loading)
+        val initialEmptyState = viewModel.uiState.first { it != StatsUiState.Loading }
+        assertThat(initialEmptyState).isInstanceOf(StatsUiState.Empty::class.java)
+
+        // Insert a completed session
+        insertSession(
+            completedAt = clock.nowMillis(),
+            durationMinutes = 30
+        )
+        advanceUntilIdle()
+
+        // Should now be success
+        val successState = viewModel.uiState.first { 
+            it is StatsUiState.Success && it.summary.totalFocusDurationMinutes == 30 
+        } as StatsUiState.Success
+        assertThat(successState.summary.successfulSessionCount).isEqualTo(1)
+
+        uiStateJob.cancel()
     }
 
     private suspend fun insertSession(

@@ -1,6 +1,14 @@
 package com.focusfarm.app.ui.screens.stats
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,18 +40,23 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,39 +66,38 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.data.local.ReflectionHistoryItem
+import com.focusfarm.app.data.repository.DailyTrendPoint
+import com.focusfarm.app.data.repository.TimeFilter
+import com.focusfarm.app.data.repository.TagDuration
+import com.focusfarm.app.data.repository.StatsSummary
 import com.focusfarm.app.domain.FocusSession
+import com.focusfarm.app.domain.FocusTag
 import com.focusfarm.app.ui.components.FocusBackdrop
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.core.ui.R
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
 @Composable
-fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
-    val totalMinutes by viewModel.totalMinutes.collectAsStateWithLifecycle()
-    val sessionCount by viewModel.sessionCount.collectAsStateWithLifecycle()
+fun StatsScreen(
+    onOpenMissions: () -> Unit,
+    onOpenStreak: () -> Unit,
+    viewModel: StatsViewModel = hiltViewModel()
+) {
+    val selectedFilter by viewModel.selectedFilter.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     val recentSessions by viewModel.recentSessions.collectAsStateWithLifecycle()
     val weeklySessions by viewModel.weeklySessions.collectAsStateWithLifecycle()
-    val streakDays by viewModel.streakDays.collectAsStateWithLifecycle()
     val weeklyChallenge by viewModel.weeklyChallenge.collectAsStateWithLifecycle()
     val isWeeklyRewardClaimed by viewModel.isWeeklyRewardClaimed.collectAsStateWithLifecycle()
     val reflectionHistory by viewModel.reflectionHistory.collectAsStateWithLifecycle()
 
     var showSettings by remember { mutableStateOf(false) }
-
-    val totalHours = totalMinutes / 60
-    val todayMinutes = remember(weeklySessions) {
-        val todayStart = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
-        weeklySessions.filter { it.completedAt >= todayStart }.sumOf { it.durationMinutes }
-    }
 
     FocusBackdrop {
         Column(
@@ -95,12 +107,16 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            // Header Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(stringResource(R.string.tab_stats), style = MaterialTheme.typography.displayMedium)
+                Text(
+                    text = stringResource(R.string.tab_stats),
+                    style = MaterialTheme.typography.displayMedium
+                )
                 IconButton(onClick = { showSettings = true }) {
                     Icon(
                         imageVector = Icons.Default.Settings,
@@ -110,119 +126,210 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
                 }
             }
 
-        // Summary row
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SummaryCard(
-                stringResource(R.string.streak_days_short, streakDays),
-                stringResource(R.string.current_streak),
-                Modifier.weight(1f),
-            )
-            SummaryCard(stringResource(R.string.total_hours_short, totalHours), stringResource(R.string.total_focus), Modifier.weight(1f))
-            SummaryCard(stringResource(R.string.total_focus_minutes, todayMinutes), stringResource(R.string.today), Modifier.weight(1f))
-        }
-        SummaryCard(
-            value = "$sessionCount",
-            label = stringResource(R.string.total_sessions),
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    weeklyChallenge.seasonTitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    weeklyChallenge.seasonSubtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    stringResource(
-                        R.string.weekly_challenge_progress,
-                        weeklyChallenge.currentSessions,
-                        weeklyChallenge.targetSessions,
-                        weeklyChallenge.currentMinutes,
-                        weeklyChallenge.targetMinutes,
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = if (weeklyChallenge.isCompleted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(Modifier.height(8.dp))
-                ProgressTrack(weeklyChallenge.overallRatio)
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.weekly_reward_seeds, weeklyChallenge.rewardSeeds),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                if (isWeeklyRewardClaimed) {
-                    Text(
-                        text = stringResource(R.string.weekly_reward_claimed),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-        }
-
-        // Weekly bar chart
-        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp)) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(stringResource(R.string.this_week), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
-                Spacer(Modifier.height(16.dp))
-                WeeklyChart(weeklySessions)
-            }
-        }
-
-        // Recent sessions
-        if (recentSessions.isNotEmpty()) {
-            Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp)) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(stringResource(R.string.recent_sessions), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
-                    Spacer(Modifier.height(8.dp))
-                    recentSessions.forEach { session ->
-                        SessionRow(session)
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 4.dp))
+            // Daily Missions Banner Card
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f)
+                ),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onOpenMissions() }
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Günlük Görevler",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            text = "Bugünün görevlerini tamamla, ödül tohumlarını topla!",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                        )
                     }
+                    Text("🎯", fontSize = 28.sp)
                 }
             }
-        }
 
-        if (reflectionHistory.isNotEmpty()) {
-            Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp)) {
+            // Weekly Challenge Card
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                shape = RoundedCornerShape(20.dp)
+            ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        stringResource(R.string.reflection_history_title),
+                        text = weeklyChallenge.seasonTitle,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.SemiBold,
                     )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        text = weeklyChallenge.seasonSubtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        text = stringResource(
+                            R.string.weekly_challenge_progress,
+                            weeklyChallenge.currentSessions,
+                            weeklyChallenge.targetSessions,
+                            weeklyChallenge.currentMinutes,
+                            weeklyChallenge.targetMinutes,
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (weeklyChallenge.isCompleted) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                     Spacer(Modifier.height(8.dp))
-                    reflectionHistory.forEach { item ->
-                        ReflectionRow(item)
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, modifier = Modifier.padding(vertical = 4.dp))
+                    ProgressTrack(weeklyChallenge.overallRatio)
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.weekly_reward_seeds, weeklyChallenge.rewardSeeds),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    if (isWeeklyRewardClaimed) {
+                        Text(
+                            text = stringResource(R.string.weekly_reward_claimed),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                 }
             }
-        }
 
-        if (sessionCount == 0) {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text("📊", fontSize = 56.sp)
-                Spacer(Modifier.height(16.dp))
-                Text(stringResource(R.string.no_data_title), style = MaterialTheme.typography.headlineLarge, textAlign = TextAlign.Center)
-                Spacer(Modifier.height(8.dp))
-                Text(stringResource(R.string.no_data_desc), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+            // Time Filter Row
+            TimeFilterSelector(
+                selectedFilter = selectedFilter,
+                onFilterSelected = { viewModel.onFilterSelected(it) }
+            )
+
+            // UI State Handling
+            when (val state = uiState) {
+                is StatsUiState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    }
+                }
+                is StatsUiState.Empty -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text("📊", fontSize = 48.sp)
+                        Text(
+                            text = "Henüz Veri Yok",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Seçilen zaman aralığında tamamlanmış oturum bulunmamaktadır.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                    }
+                }
+                is StatsUiState.Error -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text("⚠️", fontSize = 48.sp)
+                        Text(
+                            text = "Hata Oluştu",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = state.message,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+                is StatsUiState.Success -> {
+                    SuccessStatsContent(
+                        summary = state.summary,
+                        trend = state.trend,
+                        tagDistribution = state.tagDistribution,
+                        selectedFilter = selectedFilter,
+                        onOpenStreak = onOpenStreak
+                    )
+                }
             }
-        }
+
+            // Recent Sessions Section
+            if (recentSessions.isNotEmpty()) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = stringResource(R.string.recent_sessions),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        recentSessions.forEach { session ->
+                            SessionRow(session)
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Reflection History Section
+            if (reflectionHistory.isNotEmpty()) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = stringResource(R.string.reflection_history_title),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        reflectionHistory.forEach { item ->
+                            ReflectionRow(item)
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+            }
 
             Spacer(Modifier.height(24.dp))
         }
@@ -237,58 +344,462 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
 }
 
 @Composable
-private fun WeeklyChart(sessions: List<FocusSession>) {
-    val context = LocalContext.current
-    val dayLabels = listOf(
-        context.getString(R.string.day_mon_short),
-        context.getString(R.string.day_tue_short),
-        context.getString(R.string.day_wed_short),
-        context.getString(R.string.day_thu_short),
-        context.getString(R.string.day_fri_short),
-        context.getString(R.string.day_sat_short),
-        context.getString(R.string.day_sun_short),
+private fun SuccessStatsContent(
+    summary: StatsSummary,
+    trend: List<DailyTrendPoint>,
+    tagDistribution: List<TagDuration>,
+    selectedFilter: TimeFilter,
+    onOpenStreak: () -> Unit
+) {
+    // Metrics Grid
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            MetricCard(
+                value = formatMinutes(summary.totalFocusDurationMinutes),
+                label = "Toplam Odaklanma",
+                modifier = Modifier.weight(1f)
+            )
+            MetricCard(
+                value = "${summary.successfulSessionCount} / ${summary.failedSessionCount}",
+                label = "Başarılı / Başarısız",
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            MetricCard(
+                value = String.format(Locale.getDefault(), "%% %.0f", summary.successRate * 100),
+                label = "Başarı Oranı",
+                modifier = Modifier.weight(1f)
+            )
+            MetricCard(
+                value = String.format(Locale.getDefault(), "%.1f dk", summary.dailyAverageMinutes),
+                label = "Günlük Ortalama",
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            MetricCard(
+                value = "${summary.longestSessionMinutes} dk",
+                label = "En Uzun Oturum",
+                modifier = Modifier.weight(1f)
+            )
+            MetricCard(
+                value = "${summary.currentStreak} gün",
+                label = "Aktif Seri",
+                modifier = Modifier.weight(1f),
+                onClick = onOpenStreak
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            MetricCard(
+                value = "${summary.bestStreak} gün",
+                label = "En İyi Seri",
+                modifier = Modifier.weight(1f)
+            )
+            MetricCard(
+                value = "${summary.totalPlantsGrown} adet",
+                label = "Yetişen Bitki",
+                modifier = Modifier.weight(1f)
+            )
+        }
+        MetricCard(
+            value = "${summary.totalSeedsEarned} Seed",
+            label = "Kazanılan Toplam Seed",
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+
+    // Daily Focus Duration Trend Chart
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Günlük Odaklanma Süresi (Dakika)",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(Modifier.height(16.dp))
+            DailyFocusTrendChart(trend = trend, filter = selectedFilter)
+        }
+    }
+
+    // Completed Sessions Trend Chart
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Tamamlanan Oturum Sayısı",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(Modifier.height(16.dp))
+            CompletedSessionsChart(trend = trend, filter = selectedFilter)
+        }
+    }
+
+    // Weekly Trend Chart (Grouped by Weeks for 30 days and above)
+    if (selectedFilter != TimeFilter.TODAY && selectedFilter != TimeFilter.LAST_7_DAYS) {
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = RoundedCornerShape(20.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Haftalık Trend (Dakika)",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(Modifier.height(16.dp))
+                WeeklyTrendChart(trend = trend)
+            }
+        }
+    }
+
+    // Tag Distribution Section
+    if (tagDistribution.isNotEmpty()) {
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = RoundedCornerShape(20.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Etiket Süre Dağılımı",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.SemiBold
+                )
+                TagDistributionChart(tagDistribution = tagDistribution)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TimeFilterSelector(
+    selectedFilter: TimeFilter,
+    onFilterSelected: (TimeFilter) -> Unit
+) {
+    val filters = listOf(
+        TimeFilter.TODAY to "Bugün",
+        TimeFilter.LAST_7_DAYS to "7 Gün",
+        TimeFilter.LAST_30_DAYS to "30 Gün",
+        TimeFilter.THIS_MONTH to "Bu Ay",
+        TimeFilter.THIS_YEAR to "Bu Yıl",
+        TimeFilter.ALL_TIME to "Hepsi"
     )
 
-    val weeklyMinutes = remember(sessions) {
-        val result = IntArray(7)
-        sessions.forEach { session ->
-            val cal = Calendar.getInstance().apply { timeInMillis = session.completedAt }
-            val dayIndex = (cal.get(Calendar.DAY_OF_WEEK) + 5) % 7
-            result[dayIndex] += session.durationMinutes
-        }
-        result.toList()
-    }
-    val maxMinutes = (weeklyMinutes.maxOrNull() ?: 1).coerceAtLeast(1)
-    val todayIndex = (Calendar.getInstance().get(Calendar.DAY_OF_WEEK) + 5) % 7
-
     Row(
-        modifier = Modifier.fillMaxWidth().height(130.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.Bottom,
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        weeklyMinutes.forEachIndexed { index, minutes ->
-            val barHeight = ((minutes.toFloat() / maxMinutes) * 100).dp.coerceAtLeast(4.dp)
-            val isToday = index == todayIndex
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
-                if (minutes > 0) {
-                    Text("$minutes", fontFamily = TimerFontFamily, fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Spacer(Modifier.height(2.dp))
+        filters.forEach { (filter, label) ->
+            val isSelected = selectedFilter == filter
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        if (isSelected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.surface
+                    )
+                    .clickable { onFilterSelected(filter) }
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onSurface,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MetricCard(
+    value: String,
+    label: String,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
+) {
+    val cardModifier = if (onClick != null) modifier.clickable { onClick() } else modifier
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = RoundedCornerShape(20.dp),
+        modifier = cardModifier
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = value,
+                fontFamily = TimerFontFamily,
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+private fun DailyFocusTrendChart(trend: List<DailyTrendPoint>, filter: TimeFilter) {
+    val maxVal = (trend.maxOfOrNull { it.totalMinutes } ?: 0).coerceAtLeast(1)
+    val animatedProgress by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(durationMillis = 800),
+        label = "DailyFocusTrendAnimation"
+    )
+
+    Canvas(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(130.dp)
+    ) {
+        val width = size.width
+        val height = size.height
+        val barCount = when (filter) {
+            TimeFilter.TODAY -> 1
+            TimeFilter.LAST_7_DAYS -> 7
+            TimeFilter.LAST_30_DAYS -> 30
+            else -> trend.size.coerceAtLeast(7)
+        }
+        val spacing = 8.dp.toPx()
+        val totalSpacing = spacing * (barCount - 1)
+        val barWidth = ((width - totalSpacing) / barCount).coerceAtLeast(2.dp.toPx())
+
+        trend.forEachIndexed { index, point ->
+            val fraction = point.totalMinutes.toFloat() / maxVal
+            val barHeight = fraction * height * 0.85f * animatedProgress
+            val x = index * (barWidth + spacing)
+            val y = height - barHeight
+
+            drawRoundRect(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF81C784), // Light Green
+                        Color(0xFF388E3C)  // Dark Green
+                    )
+                ),
+                topLeft = Offset(x, y),
+                size = Size(barWidth, barHeight.coerceAtLeast(2.dp.toPx())),
+                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
+            )
+        }
+    }
+}
+
+@Composable
+private fun CompletedSessionsChart(trend: List<DailyTrendPoint>, filter: TimeFilter) {
+    val maxVal = (trend.maxOfOrNull { it.completedSessions } ?: 0).coerceAtLeast(1)
+    val animatedProgress by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(durationMillis = 800),
+        label = "CompletedSessionsAnimation"
+    )
+
+    Canvas(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(130.dp)
+    ) {
+        val width = size.width
+        val height = size.height
+        val points = trend.size
+        if (points < 2) {
+            // Draw a single bar if only 1 point
+            val x = width / 2
+            val h = (trend.firstOrNull()?.completedSessions?.toFloat() ?: 0f) / maxVal * height * 0.8f
+            drawRoundRect(
+                color = Color(0xFF64B5F6),
+                topLeft = Offset(x - 20.dp.toPx(), height - h),
+                size = Size(40.dp.toPx(), h),
+                cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
+            )
+            return@Canvas
+        }
+
+        val stepX = width / (points - 1)
+        val path = Path()
+
+        trend.forEachIndexed { index, point ->
+            val fraction = point.completedSessions.toFloat() / maxVal
+            val x = index * stepX
+            val y = height - (fraction * height * 0.8f * animatedProgress) - 10.dp.toPx()
+
+            if (index == 0) {
+                path.moveTo(x, y)
+            } else {
+                path.lineTo(x, y)
+            }
+        }
+
+        drawPath(
+            path = path,
+            color = Color(0xFF1E88E5),
+            style = Stroke(width = 3.dp.toPx())
+        )
+
+        // Draw points
+        trend.forEachIndexed { index, point ->
+            val fraction = point.completedSessions.toFloat() / maxVal
+            val x = index * stepX
+            val y = height - (fraction * height * 0.8f * animatedProgress) - 10.dp.toPx()
+
+            drawCircle(
+                color = Color.White,
+                radius = 5.dp.toPx(),
+                center = Offset(x, y)
+            )
+            drawCircle(
+                color = Color(0xFF1E88E5),
+                radius = 3.dp.toPx(),
+                center = Offset(x, y)
+            )
+        }
+    }
+}
+
+@Composable
+private fun WeeklyTrendChart(trend: List<DailyTrendPoint>) {
+    // Group trend points by week number (since epochDay / 7)
+    val weeklyMap = remember(trend) {
+        trend.groupBy { it.localDay / 7 }.mapValues { (_, points) ->
+            points.sumOf { it.totalMinutes }
+        }.toList().sortedBy { it.first }.takeLast(4)
+    }
+
+    val maxVal = (weeklyMap.maxOfOrNull { it.second } ?: 0).coerceAtLeast(1)
+    val animatedProgress by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(durationMillis = 800),
+        label = "WeeklyTrendAnimation"
+    )
+
+    Canvas(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(130.dp)
+    ) {
+        val width = size.width
+        val height = size.height
+        val barCount = weeklyMap.size.coerceAtLeast(1)
+        val spacing = 24.dp.toPx()
+        val totalSpacing = spacing * (barCount - 1)
+        val barWidth = ((width - totalSpacing) / barCount).coerceAtLeast(20.dp.toPx())
+
+        weeklyMap.forEachIndexed { index, pair ->
+            val fraction = pair.second.toFloat() / maxVal
+            val barHeight = fraction * height * 0.8f * animatedProgress
+            val x = index * (barWidth + spacing)
+            val y = height - barHeight
+
+            drawRoundRect(
+                color = Color(0xFFFFB74D), // Orange
+                topLeft = Offset(x, y),
+                size = Size(barWidth, barHeight.coerceAtLeast(2.dp.toPx())),
+                cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
+            )
+
+            // Draw text value above bar using native canvas
+            drawContext.canvas.nativeCanvas.drawText(
+                "${pair.second} dk",
+                x + barWidth / 2f,
+                y - 8.dp.toPx(),
+                android.graphics.Paint().apply {
+                    color = android.graphics.Color.GRAY
+                    textSize = 10.dp.toPx()
+                    textAlign = android.graphics.Paint.Align.CENTER
                 }
-                Spacer(Modifier.weight(1f))
+            )
+        }
+    }
+}
+
+@Composable
+private fun TagDistributionChart(tagDistribution: List<TagDuration>) {
+    val totalMinutes = tagDistribution.sumOf { it.totalMinutes }.coerceAtLeast(1)
+
+    tagDistribution.sortedByDescending { it.totalMinutes }.forEach { item ->
+        val percentage = (item.totalMinutes.toFloat() / totalMinutes)
+        val animatedProgress by animateFloatAsState(
+            targetValue = percentage,
+            animationSpec = tween(durationMillis = 800),
+            label = "TagDistributionAnimation"
+        )
+
+        val color = when (item.selectedTag) {
+            FocusTag.WORK -> Color(0xFF4CAF50)
+            FocusTag.STUDY -> Color(0xFF2196F3)
+            FocusTag.READING -> Color(0xFFFF9800)
+            FocusTag.EXERCISE -> Color(0xFFE91E63)
+            FocusTag.OTHER -> Color(0xFF9E9E9E)
+        }
+
+        val label = when (item.selectedTag) {
+            FocusTag.WORK -> "Çalışma"
+            FocusTag.STUDY -> "Ders Çalışma"
+            FocusTag.READING -> "Okuma"
+            FocusTag.EXERCISE -> "Egzersiz"
+            FocusTag.OTHER -> "Diğer"
+        }
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = "${item.totalMinutes} dk (%% ${String.format(Locale.getDefault(), "%.0f", percentage * 100)})",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(MaterialTheme.colorScheme.outlineVariant)
+            ) {
                 Box(
                     modifier = Modifier
-                        .width(22.dp)
-                        .height(barHeight)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    dayLabels[index],
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
-                    fontSize = 11.sp,
+                        .fillMaxWidth(animatedProgress)
+                        .height(10.dp)
+                        .clip(RoundedCornerShape(5.dp))
+                        .background(color)
                 )
             }
         }
@@ -299,7 +810,9 @@ private fun WeeklyChart(sessions: List<FocusSession>) {
 private fun SessionRow(session: FocusSession) {
     val dateFormat = remember { SimpleDateFormat("d MMM HH:mm", Locale.getDefault()) }
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(session.plantEmoji, fontSize = 24.sp)
@@ -314,16 +827,6 @@ private fun SessionRow(session: FocusSession) {
             fontSize = 13.sp,
             color = MaterialTheme.colorScheme.primary,
         )
-    }
-}
-
-@Composable
-private fun SummaryCard(value: String, label: String, modifier: Modifier = Modifier) {
-    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), shape = RoundedCornerShape(20.dp), modifier = modifier) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(12.dp).fillMaxWidth()) {
-            Text(value, fontFamily = TimerFontFamily, fontSize = 22.sp, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-            Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
-        }
     }
 }
 
@@ -375,6 +878,12 @@ private fun ProgressTrack(progress: Float) {
                 .background(MaterialTheme.colorScheme.primary),
         )
     }
+}
+
+private fun formatMinutes(minutes: Int): String {
+    val hrs = minutes / 60
+    val mins = minutes % 60
+    return if (hrs > 0) "${hrs}s ${mins}dk" else "${mins}dk"
 }
 
 @Composable
@@ -605,7 +1114,7 @@ private fun SettingsDialog(
                             if (success) {
                                 showDeleteConfirmation = false
                                 onDismiss()
-                                activity?.finishAffinity() // Uygulamayı kapat ve temizle
+                                activity?.finishAffinity()
                             }
                         }
                     },

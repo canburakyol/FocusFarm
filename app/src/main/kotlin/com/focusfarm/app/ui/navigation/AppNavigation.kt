@@ -17,25 +17,36 @@ import com.focusfarm.app.ui.screens.garden.GardenScreen
 import com.focusfarm.app.ui.screens.home.HomeScreen
 import com.focusfarm.app.ui.screens.session.SessionScreen
 import com.focusfarm.app.ui.screens.settings.SettingsScreen
+import com.focusfarm.app.ui.screens.onboarding.OnboardingScreen
 import com.focusfarm.app.ui.screens.shop.ShopScreen
 import com.focusfarm.app.ui.screens.stats.StatsScreen
+import com.focusfarm.app.ui.screens.missions.MissionsScreen
+import com.focusfarm.app.ui.screens.streak.StreakDetailScreen
+import com.focusfarm.app.ui.navigation.FocusFarmNavigationContracts
 
 object Routes {
-    const val HOME = "home"
-    const val GARDEN = "garden"
-    const val STATS = "stats"
-    const val SHOP = "shop"
-    const val SETTINGS = "settings"
-    const val COLLECTION = "collection"
-    const val SESSION = "session/{plantId}/{minutes}"
+    const val HOME = FocusFarmNavigationContracts.HOME
+    const val ONBOARDING = FocusFarmNavigationContracts.ONBOARDING
+    const val GARDEN = FocusFarmNavigationContracts.GARDEN
+    const val STATS = FocusFarmNavigationContracts.STATS
+    const val SHOP = FocusFarmNavigationContracts.SHOP
+    const val SETTINGS = FocusFarmNavigationContracts.SETTINGS
+    const val COLLECTION = FocusFarmNavigationContracts.COLLECTION
+    const val SESSION = FocusFarmNavigationContracts.SESSION
+    const val MISSIONS = "missions"
+    const val STREAK_DETAIL = "streak_detail"
 
-    fun session(plantId: String, minutes: Int) = "session/$plantId/$minutes"
+    fun session(sessionId: String, plantId: String, minutes: Int) =
+        FocusFarmNavigationContracts.sessionRoute(sessionId, plantId, minutes)
+
+    fun recoverSession(sessionId: String) =
+        FocusFarmNavigationContracts.recoverSessionRoute(sessionId)
 }
 
-val TAB_ROUTES = listOf(Routes.HOME, Routes.GARDEN, Routes.STATS, Routes.SHOP)
+val TAB_ROUTES = listOf(Routes.GARDEN, Routes.COLLECTION, Routes.HOME, Routes.STATS, Routes.SETTINGS)
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(onboardingCompleted: Boolean) {
     val navController: NavHostController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -48,10 +59,14 @@ fun AppNavigation() {
                 BottomNavBar(
                     currentRoute = currentRoute ?: Routes.HOME,
                     onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(Routes.HOME) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
+                        if (route != currentRoute) {
+                            navController.navigate(route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
                     },
                 )
@@ -60,14 +75,22 @@ fun AppNavigation() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Routes.HOME,
+            startDestination = if (onboardingCompleted) Routes.HOME else Routes.ONBOARDING,
             modifier = Modifier.padding(innerPadding),
         ) {
+            composable(Routes.ONBOARDING) {
+                OnboardingScreen(onCompleteOnboarding = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.ONBOARDING) { inclusive = true }
+                    }
+                })
+            }
             composable(Routes.HOME) {
                 HomeScreen(
-                    onStartSession = { plantId, minutes ->
-                        navController.navigate(Routes.session(plantId, minutes))
+                    onStartSession = { sessionId, plantId, minutes ->
+                        navController.navigate(Routes.session(sessionId, plantId, minutes))
                     },
+                    onRecoverSession = { navController.navigate(Routes.recoverSession(it)) },
                     onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                 )
             }
@@ -76,16 +99,31 @@ fun AppNavigation() {
                     onOpenCollection = { navController.navigate(Routes.COLLECTION) },
                 )
             }
-            composable(Routes.STATS) { StatsScreen() }
+            composable(Routes.STATS) {
+                StatsScreen(
+                    onOpenMissions = { navController.navigate(Routes.MISSIONS) },
+                    onOpenStreak = { navController.navigate(Routes.STREAK_DETAIL) }
+                )
+            }
             composable(Routes.SHOP) { ShopScreen() }
+            composable(Routes.MISSIONS) {
+                MissionsScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable(Routes.STREAK_DETAIL) {
+                StreakDetailScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
             composable(Routes.SETTINGS) {
                 SettingsScreen(
-                    onBack = { navController.popBackStack() },
+                    onBack = null,
                 )
             }
             composable(Routes.COLLECTION) {
                 CollectionScreen(
-                    onBack = { navController.popBackStack() },
+                    onBack = null,
                 )
             }
             composable(
@@ -93,14 +131,22 @@ fun AppNavigation() {
                 arguments = listOf(
                     navArgument("plantId") { type = NavType.StringType },
                     navArgument("minutes") { type = NavType.IntType },
+                    navArgument("sessionId") { type = NavType.StringType },
                 ),
             ) { backStack ->
                 val plantId = backStack.arguments?.getString("plantId") ?: "sprout"
                 val minutes = backStack.arguments?.getInt("minutes") ?: 25
+                val sessionId = backStack.arguments?.getString("sessionId") ?: return@composable
                 SessionScreen(
+                    sessionId = sessionId,
                     plantId = plantId,
                     targetMinutes = minutes,
-                    onBack = { navController.popBackStack() },
+                    onBack = {
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(Routes.SESSION) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    },
                 )
             }
         }

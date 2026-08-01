@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import com.focusfarm.app.data.billing.PremiumPlan
 import com.focusfarm.app.ads.RewardedAdManager
-import com.focusfarm.app.data.billing.PremiumBillingManager
+import com.focusfarm.app.data.billing.BillingRepository
 import com.focusfarm.app.data.billing.PremiumBillingState
 import dagger.Binds
 import dagger.Module
@@ -44,17 +44,30 @@ internal fun shouldShowAds(
 
 @Singleton
 class DefaultMonetizationRepository @Inject constructor(
-    private val premiumBillingManager: PremiumBillingManager,
+    private val billingRepository: BillingRepository,
     private val rewardedAdManager: RewardedAdManager,
     private val consentManager: ConsentManager,
 ) : MonetizationRepository {
-    override val billingState: Flow<PremiumBillingState> = premiumBillingManager.state
+    override val billingState: Flow<PremiumBillingState> = combine(
+        billingRepository.entitlement,
+        billingRepository.availableOffers,
+        billingRepository.isLoading,
+        billingRepository.errorMessages
+    ) { entitlement, offers, isLoading, message ->
+        PremiumBillingState(
+            isConnected = true,
+            isLoading = isLoading,
+            isPremiumUnlocked = entitlement.isPremiumUnlocked,
+            offers = offers,
+            message = message
+        )
+    }
 
     override val canShowAds: Flow<Boolean> = combine(
-        premiumBillingManager.state,
+        billingState,
         consentManager.state,
-    ) { billingState, consentState ->
-        shouldShowAds(billingState, consentState)
+    ) { bState, consentState ->
+        shouldShowAds(bState, consentState)
     }
 
     override fun refreshConsent(activity: Activity?) {
@@ -62,15 +75,15 @@ class DefaultMonetizationRepository @Inject constructor(
     }
 
     override fun refreshBilling() {
-        premiumBillingManager.refresh()
+        billingRepository.refresh()
     }
 
     override fun launchPurchase(activity: Activity, plan: PremiumPlan) {
-        premiumBillingManager.launchPurchase(activity, plan)
+        billingRepository.launchPurchase(activity, plan)
     }
 
     override fun clearBillingMessage() {
-        premiumBillingManager.clearMessage()
+        billingRepository.clearErrorMessage()
     }
 
     override fun preloadRewarded(context: Context) {

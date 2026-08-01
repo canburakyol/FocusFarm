@@ -1,22 +1,17 @@
 package com.focusfarm.app
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
-import com.focusfarm.app.data.auth.AuthManager
+import com.focusfarm.app.data.repository.OnboardingPreferences
+import com.focusfarm.app.data.repository.RetentionTracker
 import com.focusfarm.app.data.repository.ReferralManager
 import com.focusfarm.app.monetization.ConsentManager
 import com.focusfarm.app.telemetry.AppTelemetry
@@ -40,10 +35,10 @@ class MainActivity : ComponentActivity() {
     lateinit var referralManager: ReferralManager
 
     @Inject
-    lateinit var authManager: AuthManager
+    lateinit var onboardingPreferences: OnboardingPreferences
 
-    private val notificationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op */ }
+    @Inject
+    lateinit var retentionTracker: RetentionTracker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,17 +46,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             FocusFarmTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    AppNavigation()
+                    AppNavigation(onboardingCompleted = onboardingPreferences.isCompleted())
                 }
             }
         }
         telemetry.logEvent("app_open")
         consentManager.refreshConsent(this)
-        maybeRequestNotificationPermission()
         handleDeepLink(intent)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            authManager.signInAnonymouslyIfNeeded()
+            retentionTracker.trackCurrentDay()
         }
     }
 
@@ -114,24 +108,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun maybeRequestNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
-
-        val permission = Manifest.permission.POST_NOTIFICATIONS
-        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-
-        val prefs = getSharedPreferences(PREFS_PERMISSIONS, MODE_PRIVATE)
-        val askedBefore = prefs.getBoolean(KEY_NOTIFICATIONS_ASKED, false)
-        if (askedBefore) return
-
-        prefs.edit { putBoolean(KEY_NOTIFICATIONS_ASKED, true) }
-        notificationPermissionLauncher.launch(permission)
-    }
-
-    private companion object {
-        const val PREFS_PERMISSIONS = "permission_prefs"
-        const val KEY_NOTIFICATIONS_ASKED = "notifications_asked"
-    }
 }
