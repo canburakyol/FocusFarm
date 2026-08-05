@@ -1,10 +1,14 @@
 package com.focusfarm.app.ui.navigation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,6 +27,8 @@ import com.focusfarm.app.ui.screens.stats.StatsScreen
 import com.focusfarm.app.ui.screens.missions.MissionsScreen
 import com.focusfarm.app.ui.screens.streak.StreakDetailScreen
 import com.focusfarm.app.ui.navigation.FocusFarmNavigationContracts
+import com.focusfarm.app.monetization.BannerAdSlot
+import com.focusfarm.app.monetization.BannerAdViewModel
 
 object Routes {
     const val HOME = FocusFarmNavigationContracts.HOME
@@ -46,30 +52,37 @@ object Routes {
 val TAB_ROUTES = listOf(Routes.GARDEN, Routes.COLLECTION, Routes.HOME, Routes.STATS, Routes.SETTINGS)
 
 @Composable
-fun AppNavigation(onboardingCompleted: Boolean) {
+fun AppNavigation(
+    onboardingCompleted: Boolean,
+    bannerAdViewModel: BannerAdViewModel = hiltViewModel(),
+) {
     val navController: NavHostController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
+    val canShowAds by bannerAdViewModel.canShowAds.collectAsStateWithLifecycle()
 
     val showBottomBar = currentRoute in TAB_ROUTES
 
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-                BottomNavBar(
-                    currentRoute = currentRoute ?: Routes.HOME,
-                    onNavigate = { route ->
-                        if (route != currentRoute) {
-                            navController.navigate(route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    BannerAdSlot(enabled = canShowAds)
+                    BottomNavBar(
+                        currentRoute = currentRoute ?: Routes.HOME,
+                        onNavigate = { route ->
+                            if (route != currentRoute) {
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
-                        }
-                    },
-                )
+                        },
+                    )
+                }
             }
         },
     ) { innerPadding ->
