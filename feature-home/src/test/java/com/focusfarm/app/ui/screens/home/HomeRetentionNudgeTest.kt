@@ -1,5 +1,6 @@
 package com.focusfarm.app.ui.screens.home
 
+import com.focusfarm.core.ui.R
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -12,8 +13,8 @@ class HomeRetentionNudgeTest {
             currentStreak = 4,
         )
 
-        assertThat(nudge.title).isEqualTo("Serini koru")
-        assertThat(nudge.detail).contains("4 günlük")
+        assertThat(nudge.titleRes).isEqualTo(R.string.nudge_streak_title)
+        assertThat(nudge.detailArg).isEqualTo(4)
         assertThat(nudge.tone).isEqualTo(HomeRetentionNudge.Tone.URGENT)
     }
 
@@ -25,8 +26,17 @@ class HomeRetentionNudgeTest {
             currentStreak = 2,
         )
 
-        assertThat(nudge.title).isEqualTo("Ritmini sürdür")
-        assertThat(nudge.detail).contains("25 dakika")
+        assertThat(nudge.titleRes).isEqualTo(R.string.nudge_progress_title)
+        assertThat(nudge.detailArg).isEqualTo(25)
         assertThat(nudge.tone).isEqualTo(HomeRetentionNudge.Tone.PROGRESS)
+    }
+
+    @Test
+    fun reachedGoalCelebratesWithoutAFormatArgument() {
+        val nudge = HomeRetentionNudge.from(todayFocusMinutes = 60, dailyGoalMinutes = 60, currentStreak = 0)
+
+        assertThat(nudge.titleRes).isEqualTo(R.string.nudge_celebrate_title)
+        assertThat(nudge.detailArg).isNull()
+        assertThat(nudge.tone).isEqualTo(HomeRetentionNudge.Tone.CELEBRATE)
     }
 }

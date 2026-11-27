@@ -310,4 +310,67 @@
     <string name="billing_unavailable">Billing is unavailable on this device.</string>
     <string name="billing_item_unavailable">This product is currently unavailable.</string>
     <string name="billing_purchase_failed">Purchase could not be completed.</string>
+    <string name="home_change_plant">Change plant</string>
+    <string name="home_edit_setup">Edit focus settings</string>
+    <string name="home_strict_mode">Strict mode</string>
+    <string name="home_stopwatch_label">Open-ended</string>
+    <string name="home_goal_progress">%1$d / %2$d min</string>
+    <string name="home_mission_progress">%1$d / %2$d · +%3$d seeds</string>
+    <string name="home_mission_claim">Claim</string>
+    <string name="home_daily_bonus_title">Daily bonus</string>
+    <string name="home_daily_bonus_ad">Watch a short ad to earn 50 seeds.</string>
+    <string name="home_daily_bonus_premium">Claim your 50 premium seeds.</string>
+    <string name="session_pause">Pause</string>
+    <string name="session_paused">Paused</string>
+    <string name="session_finish">Finish</string>
+    <string name="ambience_off">Off</string>
+    <string name="ambience_rain">Rain</string>
+    <string name="ambience_white_noise">White noise</string>
+    <string name="plant_gave_up_desc">You ended the session early, so your plant withered. Try again next session.</string>
+    <string name="nav_focus">Focus</string>
+    <string name="tag_work">Work</string>
+    <string name="tag_study">Study</string>
+    <string name="tag_reading">Reading</string>
+    <string name="tag_exercise">Exercise</string>
+    <string name="tag_other">Other</string>
+    <string name="mode_countdown">Countdown</string>
+    <string name="mode_stopwatch">Stopwatch</string>
+    <string name="mode_pomodoro">Pomodoro</string>
+    <string name="mode_short_break">Short break</string>
+    <string name="mode_long_break">Long break</string>
+    <string name="nudge_celebrate_title">Today\'s garden is done</string>
+    <string name="nudge_celebrate_body">You hit your goal. Grow your garden with a calm extra session if you like.</string>
+    <string name="nudge_streak_title">Keep your streak</string>
+    <string name="nudge_streak_body">A short focus session today keeps your %d-day streak.</string>
+    <string name="nudge_progress_title">Keep your rhythm</string>
+    <string name="nudge_progress_body">Focus %d more minutes to reach today\'s goal.</string>
+    <string name="nudge_welcome_title">Start your garden small</string>
+    <string name="nudge_welcome_body">Pick a short focus session today and grow your first sprout.</string>
+    <string name="mission_focus_minutes">Focus for %d minutes</string>
+    <string name="mission_deep_session">Focus %d minutes in one go</string>
+    <string name="mission_generic">Complete the daily quest</string>
+    <string name="mission_reward_toast">Quest reward claimed: +%d seeds</string>
+    <string name="setup_title">Focus setup</string>
+    <string name="setup_plant">Plant to grow</string>
+    <string name="setup_mode">Session mode</string>
+    <string name="setup_duration">Duration: %d minutes</string>
+    <string name="setup_stopwatch_note">Stopwatch mode has no time limit.</string>
+    <string name="setup_tag">Session tag</string>
+    <string name="setup_strict_body">If you leave the app, your plant withers.</string>
+    <string name="setup_ambience">Ambient sound</string>
+    <string name="setup_select_plant">Select %s</string>
+    <string name="milestone_seed_title" formatted="false">Your seed is taking root</string>
+    <string name="milestone_seed_body" formatted="false">Reach 25% for the first growth.</string>
+    <string name="milestone_sprout_title" formatted="false">Your first sprout is up</string>
+    <string name="milestone_sprout_body" formatted="false">25% of your focus is done.</string>
+    <string name="milestone_growing_title" formatted="false">Your garden is coming alive</string>
+    <string name="milestone_growing_body" formatted="false">Halfway there: 50% focused.</string>
+    <string name="milestone_maturing_title" formatted="false">Your plant is getting stronger</string>
+    <string name="milestone_maturing_body" formatted="false">75% done, 25% to harvest.</string>
+    <string name="milestone_full_title" formatted="false">Harvest time</string>
+    <string name="milestone_full_body" formatted="false">Your focus session is complete.</string>
+    <plurals name="mission_complete_sessions">
+        <item quantity="one">Complete %d focus session</item>
+        <item quantity="other">Complete %d focus sessions</item>
+    </plurals>
 </resources>

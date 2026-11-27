@@ -310,4 +310,67 @@
     <string name="billing_unavailable">الشراء غير متاح على هذا الجهاز.</string>
     <string name="billing_item_unavailable">هذا المنتج غير متاح حاليًا.</string>
     <string name="billing_purchase_failed">تعذر إكمال عملية الشراء.</string>
+    <string name="home_change_plant">تغيير النبتة</string>
+    <string name="home_edit_setup">تعديل إعدادات التركيز</string>
+    <string name="home_strict_mode">الوضع الصارم</string>
+    <string name="home_stopwatch_label">بدون حد زمني</string>
+    <string name="home_goal_progress">%1$d / %2$d د</string>
+    <string name="home_mission_progress">%1$d / %2$d · +%3$d بذرة</string>
+    <string name="home_mission_claim">استلام</string>
+    <string name="home_daily_bonus_title">المكافأة اليومية</string>
+    <string name="home_daily_bonus_ad">شاهد إعلانًا قصيرًا واربح 50 بذرة.</string>
+    <string name="home_daily_bonus_premium">استلم 50 بذرة بريميوم.</string>
+    <string name="session_pause">إيقاف مؤقت</string>
+    <string name="session_paused">متوقف مؤقتًا</string>
+    <string name="session_finish">إنهاء</string>
+    <string name="ambience_off">إيقاف</string>
+    <string name="ambience_rain">مطر</string>
+    <string name="ambience_white_noise">ضوضاء بيضاء</string>
+    <string name="plant_gave_up_desc">أنهيت الجلسة مبكرًا فذبلت نبتتك. حاول مجددًا في الجلسة القادمة.</string>
+    <string name="nav_focus">تركيز</string>
+    <string name="tag_work">عمل</string>
+    <string name="tag_study">دراسة</string>
+    <string name="tag_reading">قراءة</string>
+    <string name="tag_exercise">رياضة</string>
+    <string name="tag_other">أخرى</string>
+    <string name="mode_countdown">عد تنازلي</string>
+    <string name="mode_stopwatch">ساعة إيقاف</string>
+    <string name="mode_pomodoro">بومودورو</string>
+    <string name="mode_short_break">استراحة قصيرة</string>
+    <string name="mode_long_break">استراحة طويلة</string>
+    <string name="nudge_celebrate_title">اكتملت حديقة اليوم</string>
+    <string name="nudge_celebrate_body">حققت هدفك. إن شئت، نمِّ حديقتك بجلسة إضافية هادئة.</string>
+    <string name="nudge_streak_title">حافظ على سلسلتك</string>
+    <string name="nudge_streak_body">جلسة تركيز قصيرة اليوم تحافظ على سلسلتك الممتدة %d يومًا.</string>
+    <string name="nudge_progress_title">حافظ على إيقاعك</string>
+    <string name="nudge_progress_body">ركّز %d دقيقة أخرى لتبلغ هدفك اليومي.</string>
+    <string name="nudge_welcome_title">ابدأ حديقتك بخطوة صغيرة</string>
+    <string name="nudge_welcome_body">اختر جلسة تركيز قصيرة اليوم وازرع أول برعم لك.</string>
+    <string name="mission_focus_minutes">ركّز لمدة %d دقيقة</string>
+    <string name="mission_deep_session">ركّز %d دقيقة دون توقف</string>
+    <string name="mission_generic">أكمل المهمة اليومية</string>
+    <string name="mission_reward_toast">تم استلام المكافأة: +%d بذرة</string>
+    <string name="setup_title">إعداد التركيز</string>
+    <string name="setup_plant">النبتة التي ستزرعها</string>
+    <string name="setup_mode">وضع الجلسة</string>
+    <string name="setup_duration">المدة: %d دقيقة</string>
+    <string name="setup_stopwatch_note">لا يوجد حد زمني في وضع ساعة الإيقاف.</string>
+    <string name="setup_tag">وسم الجلسة</string>
+    <string name="setup_strict_body">إذا غادرت التطبيق، تذبل نبتتك.</string>
+    <string name="setup_ambience">صوت الخلفية</string>
+    <string name="setup_select_plant">اختيار %s</string>
+    <string name="milestone_seed_title" formatted="false">بذرتك تمد جذورها</string>
+    <string name="milestone_seed_body" formatted="false">صِل إلى 25٪ لأول نمو.</string>
+    <string name="milestone_sprout_title" formatted="false">ظهر أول برعم</string>
+    <string name="milestone_sprout_body" formatted="false">أنجزت 25٪ من تركيزك.</string>
+    <string name="milestone_growing_title" formatted="false">حديقتك تنبض بالحياة</string>
+    <string name="milestone_growing_body" formatted="false">في منتصف الطريق: 50٪ من التركيز.</string>
+    <string name="milestone_maturing_title" formatted="false">نبتتك تزداد قوة</string>
+    <string name="milestone_maturing_body" formatted="false">أنجزت 75٪، وتبقى 25٪ على الحصاد.</string>
+    <string name="milestone_full_title" formatted="false">حان وقت الحصاد</string>
+    <string name="milestone_full_body" formatted="false">اكتملت جلسة تركيزك.</string>
+    <plurals name="mission_complete_sessions">
+        <item quantity="one">أكمل جلسة تركيز واحدة (%d)</item>
+        <item quantity="other">أكمل %d جلسات تركيز</item>
+    </plurals>
 </resources>

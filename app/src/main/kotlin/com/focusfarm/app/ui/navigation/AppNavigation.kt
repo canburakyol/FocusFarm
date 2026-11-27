@@ -117,7 +117,6 @@ fun AppNavigation(
                         navController.navigate(Routes.session(sessionId, plantId, minutes))
                     },
                     onRecoverSession = { navController.navigate(Routes.recoverSession(it)) },
-                    onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                 )
             }
             composable(Routes.GARDEN) {

@@ -1,7 +1,31 @@
 package com.focusfarm.app.ui.screens.session
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +77,7 @@ import com.focusfarm.app.domain.PlantCatalog
 import com.focusfarm.app.data.local.SessionDifficulty
 import com.focusfarm.app.ui.components.FocusBackdrop
 import com.focusfarm.app.ui.components.PlantDisplay
+import com.focusfarm.app.ui.components.labelRes
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.core.ui.R
 
@@ -69,6 +94,7 @@ fun SessionScreen(
     val statusMessage by viewModel.statusMessage.collectAsStateWithLifecycle()
     val canRevive by viewModel.canRevive.collectAsStateWithLifecycle()
     var showAbandonDialog by remember { mutableStateOf(false) }
+    var gaveUp by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(viewModel) {
         viewModel.reviewRequest.collect { onReviewRequested() }
@@ -96,6 +122,8 @@ fun SessionScreen(
             val context = LocalContext.current
             val activity = context as? Activity
             KilledScreen(
+                state = state,
+                gaveUp = gaveUp,
                 canRevive = canRevive,
                 statusMessage = statusMessage,
                 onDismissMessage = viewModel::dismissStatusMessage,
@@ -119,15 +147,11 @@ fun SessionScreen(
             onBack = onBack,
         )
 
-        SessionState.PAUSED -> PausedScreen(
+        else -> ActiveSessionScreen(
             state = state,
-            onResume = viewModel::resumeSession,
-            onAbandon = { showAbandonDialog = true }
-        )
-
-        else -> RunningScreen(
-            state = state,
+            isPaused = state.sessionState == SessionState.PAUSED,
             onPause = viewModel::pauseSession,
+            onResume = viewModel::resumeSession,
             onAbandon = { showAbandonDialog = true },
             onCompleteStopwatch = viewModel::completeStopwatch,
             onSelectAmbience = { viewModel.onIntent(SessionIntent.SelectAmbience(it)) },
@@ -142,8 +166,9 @@ fun SessionScreen(
             confirmButton = {
                 TextButton(onClick = {
                     showAbandonDialog = false
+                    gaveUp = true
+                    // Stay on the withered-plant screen; it persists the failure when the user leaves.
                     viewModel.abandon()
-                    viewModel.leaveKilledSession(onBack)
                 }) {
                     Text(stringResource(R.string.abandon_confirm), color = MaterialTheme.colorScheme.error)
                 }
@@ -210,82 +235,19 @@ private fun FinalizingScreen(
 }
 
 @Composable
-private fun PausedScreen(
+private fun ActiveSessionScreen(
     state: SessionUiState,
-    onResume: () -> Unit,
-    onAbandon: () -> Unit,
-) {
-    val configuration = LocalConfiguration.current
-    val isLandscape = configuration.screenWidthDp > configuration.screenHeightDp
-    FocusBackdrop {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .then(if (isLandscape) Modifier.verticalScroll(rememberScrollState()) else Modifier)
-                .padding(horizontal = 24.dp, vertical = if (isLandscape) 12.dp else 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Spacer(Modifier.height(20.dp))
-            Text(
-                text = "${state.selectedTag.icon()} ${state.selectedTag.label()} • DURDURULDU",
-                modifier = Modifier
-                    .background(
-                        MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.8f),
-                        RoundedCornerShape(20.dp),
-                    )
-                    .padding(horizontal = 18.dp, vertical = 10.dp),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onErrorContainer,
-            )
-
-            Spacer(if (isLandscape) Modifier.height(8.dp) else Modifier.weight(1f))
-            SessionProgressDial(state, compact = isLandscape)
-            Spacer(if (isLandscape) Modifier.height(8.dp) else Modifier.weight(1f))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
-            ) {
-                Button(
-                    onClick = onResume,
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Devam Et", style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(vertical = 4.dp))
-                }
-
-                TextButton(
-                    onClick = onAbandon,
-                    modifier = Modifier
-                        .weight(1f)
-                        .border(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f), RoundedCornerShape(50)),
-                ) {
-                    Text(
-                        stringResource(R.string.give_up),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
-            Spacer(Modifier.height(24.dp))
-        }
-    }
-}
-
-@Composable
-private fun RunningScreen(
-    state: SessionUiState,
+    isPaused: Boolean,
     onPause: () -> Unit,
+    onResume: () -> Unit,
     onAbandon: () -> Unit,
     onCompleteStopwatch: () -> Unit,
     onSelectAmbience: (AmbienceSound) -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.screenWidthDp > configuration.screenHeightDp
+    val progress = sessionProgress(state)
+    val milestone = SessionGrowthMilestone.from(progress)
     FocusBackdrop {
         Column(
             modifier = Modifier
@@ -294,191 +256,185 @@ private fun RunningScreen(
                 .padding(horizontal = 24.dp, vertical = if (isLandscape) 12.dp else 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(20.dp))
-            Text(
-                text = "${state.selectedTag.icon()} ${state.selectedTag.label()}",
-                modifier = Modifier
-                    .background(
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.72f),
-                        RoundedCornerShape(20.dp),
-                    )
-                    .padding(horizontal = 18.dp, vertical = 10.dp),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
-
-            Spacer(if (isLandscape) Modifier.height(8.dp) else Modifier.weight(1f))
-            SessionProgressDial(state, compact = isLandscape)
-            Spacer(if (isLandscape) Modifier.height(8.dp) else Modifier.weight(1f))
-
-            Text(
-                stringResource(R.string.focus_tip),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Spacer(Modifier.height(14.dp))
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                AmbienceSound.entries.forEach { sound ->
-                    val selected = state.currentAmbience == sound
-                    FilterChip(
-                        selected = selected,
-                        onClick = { onSelectAmbience(sound) },
-                        label = { Text(sound.label()) },
-                        leadingIcon = { Text(sound.icon()) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.58f),
-                            selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                            selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
-                        ),
-                        shape = RoundedCornerShape(18.dp),
-                    )
-                }
+            Spacer(Modifier.height(12.dp))
+            Surface(
+                shape = CircleShape,
+                color = if (isPaused) {
+                    MaterialTheme.colorScheme.errorContainer
+                } else {
+                    MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+                },
+            ) {
+                Text(
+                    text = if (isPaused) {
+                        "${stringResource(state.selectedTag.labelRes())} · ${stringResource(R.string.session_paused)}"
+                    } else {
+                        stringResource(state.selectedTag.labelRes())
+                    },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = if (isPaused) {
+                        MaterialTheme.colorScheme.onErrorContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
+                )
             }
-            Spacer(Modifier.height(20.dp))
+
+            Spacer(if (isLandscape) Modifier.height(12.dp) else Modifier.weight(1f))
+            GrowthRing(
+                state = state,
+                progress = progress,
+                stage = milestone.stage,
+                ringSize = if (isLandscape) 200.dp else 288.dp,
+            )
+            Spacer(Modifier.height(if (isLandscape) 12.dp else 28.dp))
+            Text(
+                text = formatClock(
+                    if (state.sessionType == FocusSessionType.STOPWATCH) state.elapsedSeconds else state.remainingSeconds,
+                ),
+                fontFamily = TimerFontFamily,
+                fontWeight = FontWeight.Medium,
+                fontSize = if (isLandscape) 44.sp else 60.sp,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = stringResource(milestone.titleRes),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Text(
+                text = stringResource(milestone.detailRes),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(if (isLandscape) Modifier.height(16.dp) else Modifier.weight(1f))
+
+            if (!isPaused) {
+                Text(
+                    stringResource(R.string.focus_tip),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(12.dp))
+                AmbienceSelector(selected = state.currentAmbience, onSelect = onSelectAmbience)
+                Spacer(Modifier.height(20.dp))
+            }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 480.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                if (state.sessionType == FocusSessionType.STOPWATCH) {
-                    Button(
+                val buttonModifier = Modifier
+                    .weight(1f)
+                    .height(52.dp)
+                when {
+                    isPaused -> Button(onClick = onResume, modifier = buttonModifier) {
+                        Text(stringResource(R.string.continue_btn), style = MaterialTheme.typography.titleSmall)
+                    }
+                    state.sessionType == FocusSessionType.STOPWATCH -> Button(
                         onClick = onCompleteStopwatch,
-                        shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        modifier = Modifier.weight(1f)
+                        modifier = buttonModifier,
                     ) {
-                        Text("Tamamla", style = MaterialTheme.typography.labelLarge)
+                        Text(stringResource(R.string.session_finish), style = MaterialTheme.typography.titleSmall)
+                    }
+                    !state.isStrict -> FilledTonalButton(onClick = onPause, modifier = buttonModifier) {
+                        Text(stringResource(R.string.session_pause), style = MaterialTheme.typography.titleSmall)
                     }
                 }
-
-                if (!state.isStrict) {
-                    Button(
-                        onClick = onPause,
-                        shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        ),
-                        modifier = if (state.sessionType == FocusSessionType.STOPWATCH) Modifier.weight(1f) else Modifier.fillMaxWidth(0.5f)
-                    ) {
-                        Text("Durdur", style = MaterialTheme.typography.labelLarge)
-                    }
-                }
-
-                TextButton(
+                OutlinedButton(
                     onClick = onAbandon,
-                    modifier = Modifier
-                        .border(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.5f), RoundedCornerShape(50))
-                        .padding(horizontal = 16.dp),
+                    modifier = buttonModifier,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.4f)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
                 ) {
-                    Text(
-                        stringResource(R.string.give_up),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                    Text(stringResource(R.string.give_up), style = MaterialTheme.typography.titleSmall)
                 }
             }
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(8.dp))
         }
     }
 }
 
-private fun AmbienceSound.icon(): String = when (this) {
-    AmbienceSound.NONE -> "♪"
-    AmbienceSound.RAIN -> "☂"
-    AmbienceSound.WHITE_NOISE -> "≈"
-}
-
-private fun AmbienceSound.label(): String = when (this) {
-    AmbienceSound.NONE -> "Kapalı"
-    AmbienceSound.RAIN -> "Yağmur"
-    AmbienceSound.WHITE_NOISE -> "Beyaz Gürültü"
-}
-
-private fun FocusTag.icon(): String = when (this) {
-    FocusTag.WORK -> "💼"
-    FocusTag.STUDY -> "✏️"
-    FocusTag.READING -> "📖"
-    FocusTag.EXERCISE -> "🏃"
-    FocusTag.OTHER -> "●"
-}
-
-private fun FocusTag.label(): String = when (this) {
-    FocusTag.WORK -> "Çalışma"
-    FocusTag.STUDY -> "Ders"
-    FocusTag.READING -> "Okuma"
-    FocusTag.EXERCISE -> "Egzersiz"
-    FocusTag.OTHER -> "Diğer"
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SessionProgressDial(
-    state: SessionUiState,
-    compact: Boolean = false,
-) {
-    val totalSeconds = (state.targetMinutes * 60).coerceAtLeast(1)
-    val progress = if (state.sessionType == FocusSessionType.STOPWATCH) {
-        (state.elapsedSeconds.toFloat() / totalSeconds.toFloat()).coerceIn(0f, 1f)
-    } else {
-        (1f - state.remainingSeconds.toFloat() / totalSeconds).coerceIn(0f, 1f)
+private fun AmbienceSelector(selected: AmbienceSound, onSelect: (AmbienceSound) -> Unit) {
+    val sounds = AmbienceSound.entries
+    SingleChoiceSegmentedButtonRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .widthIn(max = 480.dp),
+    ) {
+        sounds.forEachIndexed { index, sound ->
+            SegmentedButton(
+                selected = selected == sound,
+                onClick = { onSelect(sound) },
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = sounds.size),
+                icon = {},
+                colors = SegmentedButtonDefaults.colors(
+                    activeContainerColor = MaterialTheme.colorScheme.primary,
+                    activeContentColor = MaterialTheme.colorScheme.onPrimary,
+                    inactiveContainerColor = Color.Transparent,
+                ),
+            ) {
+                Text(
+                    text = stringResource(sound.labelRes()),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        }
     }
-    
-    val secondsToFormat = if (state.sessionType == FocusSessionType.STOPWATCH) state.elapsedSeconds else state.remainingSeconds
-    val milestone = SessionGrowthMilestone.from(progress)
-    val dialSize = if (compact) 220.dp else 292.dp
-    val timerFontSize = if (compact) 42.sp else 52.sp
-    val plantSize = if (compact) 72.dp else 104.dp
-    val hours = secondsToFormat / 3600
-    val minutes = (secondsToFormat % 3600) / 60
-    val seconds = secondsToFormat % 60
+}
 
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(dialSize)) {
+/** The plant is the hero: it grows inside a thin progress ring instead of under the timer. */
+@Composable
+private fun GrowthRing(
+    state: SessionUiState,
+    progress: Float,
+    stage: GrowthStage,
+    ringSize: Dp,
+) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(ringSize)) {
         CircularProgressIndicator(
             progress = { progress },
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.primary,
-            strokeWidth = 14.dp,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            strokeWidth = 6.dp,
+            trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+            strokeCap = StrokeCap.Round,
+            gapSize = 0.dp,
         )
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = if (hours > 0) {
-                    "%02d:%02d:%02d".format(hours, minutes, seconds)
-                } else {
-                    "%02d:%02d".format(minutes, seconds)
-                },
-                fontFamily = TimerFontFamily,
-                fontWeight = FontWeight.Medium,
-                fontSize = timerFontSize,
-                letterSpacing = 2.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Spacer(Modifier.height(8.dp))
-            PlantDisplay(
-                plant = state.plant,
-                stage = milestone.stage,
-                size = plantSize,
-                breathing = state.sessionState == SessionState.RUNNING,
-            )
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = milestone.title,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = milestone.detail,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-        }
+        PlantDisplay(
+            plant = state.plant,
+            stage = stage,
+            size = ringSize * 0.66f,
+            breathing = state.sessionState == SessionState.RUNNING,
+        )
     }
 }
+
+private fun sessionProgress(state: SessionUiState): Float {
+    val totalSeconds = (state.targetMinutes * 60).coerceAtLeast(1)
+    return if (state.sessionType == FocusSessionType.STOPWATCH) {
+        state.elapsedSeconds.toFloat() / totalSeconds
+    } else {
+        1f - state.remainingSeconds.toFloat() / totalSeconds
+    }.coerceIn(0f, 1f)
+}
+
+private fun formatClock(totalSeconds: Int): String {
+    val hours = totalSeconds / 3600
+    val minutes = (totalSeconds % 3600) / 60
+    val seconds = totalSeconds % 60
+    return if (hours > 0) "%02d:%02d:%02d".format(hours, minutes, seconds) else "%02d:%02d".format(minutes, seconds)
+}
+
 
 @Composable
 private fun HarvestRewardCard(
@@ -532,46 +488,79 @@ private fun HarvestRewardCard(
 
 @Composable
 private fun KilledScreen(
+    state: SessionUiState,
+    gaveUp: Boolean,
     canRevive: Boolean,
     statusMessage: String?,
     onDismissMessage: () -> Unit,
     onRevive: () -> Unit,
     onBack: () -> Unit,
 ) {
+    // A seed-stage plant is only soil; show at least a sprout so there is something to wither.
+    val stage = SessionGrowthMilestone.from(sessionProgress(state)).stage
+        .let { if (it == GrowthStage.SEED) GrowthStage.SPROUT else it }
     FocusBackdrop {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Text("🥀", fontSize = 80.sp)
-            Spacer(Modifier.height(16.dp))
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)),
+            ) {
+                PlantDisplay(
+                    plant = state.plant,
+                    stage = stage,
+                    size = 140.dp,
+                    modifier = Modifier
+                        .graphicsLayer {
+                            rotationZ = -10f
+                            alpha = 0.75f
+                        }
+                        // Desaturate only the plant's own pixels by drawing it through a grayscale layer.
+                        .drawWithContent {
+                            val grayscale = Paint().apply {
+                                colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
+                            }
+                            drawIntoCanvas { canvas ->
+                                canvas.saveLayer(Rect(Offset.Zero, size), grayscale)
+                                drawContent()
+                                canvas.restore()
+                            }
+                        },
+                )
+            }
+            Spacer(Modifier.height(24.dp))
             Text(
                 stringResource(R.string.plant_died),
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(8.dp))
             Text(
-                stringResource(R.string.plant_died_desc),
+                stringResource(if (gaveUp) R.string.plant_gave_up_desc else R.string.plant_died_desc),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(28.dp))
             if (canRevive) {
                 Button(
                     onClick = onRevive,
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .widthIn(max = 480.dp)
+                        .height(52.dp),
                 ) {
-                    Text(stringResource(R.string.session_revive_now))
+                    Text(stringResource(R.string.session_revive_now), style = MaterialTheme.typography.titleSmall)
                 }
                 Spacer(Modifier.height(12.dp))
             }
@@ -583,22 +572,19 @@ private fun KilledScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
-                Spacer(Modifier.height(4.dp))
                 TextButton(onClick = onDismissMessage) {
                     Text(stringResource(R.string.action_ok), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 
-            Spacer(Modifier.height(8.dp))
-            TextButton(
+            OutlinedButton(
                 onClick = onBack,
-                modifier = Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(50)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 480.dp)
+                    .height(52.dp),
             ) {
-                Text(
-                    stringResource(R.string.go_home),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
-                )
+                Text(stringResource(R.string.go_home), style = MaterialTheme.typography.titleSmall)
             }
         }
     }

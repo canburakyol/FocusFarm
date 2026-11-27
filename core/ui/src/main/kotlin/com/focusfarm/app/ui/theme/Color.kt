@@ -9,6 +9,7 @@ val VividSprout = Color(0xFF52B788) // Decorative growth and plant accent; not u
 val SoftMint = Color(0xFFD8F3DC)
 val SoftEcoWhite = Color(0xFFF4F9F5)
 val DeepForest = Color(0xFF1B4332)
+val SeedGold = Color(0xFFE0A526) // Seed economy accent; decorative only, never text.
 val ForestMuted = Color(0xFF476E5B)
 
 val CozyBackground = SoftEcoWhite

@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 private val QUICK_DURATIONS = listOf(15, 25, 45, 60, 90)
 
 data class TodayGrownPlant(
-    val emoji: String,
+    val plantId: String,
     val name: String,
     val durationMinutes: Int,
 )
@@ -175,7 +175,7 @@ class HomeViewModel @Inject constructor(
             val grownPlantsFlow = gardenEntryDao.observeSinceWithSpecies(start).map { list ->
                 list.filter { it.entry.state == "BLOOMED" }.map {
                     TodayGrownPlant(
-                        emoji = PlantCatalog.getById(it.entry.plantSpeciesId)?.emoji ?: "🌱",
+                        plantId = it.entry.plantSpeciesId,
                         name = it.species.displayName,
                         durationMinutes = it.entry.focusMinutes
                     )

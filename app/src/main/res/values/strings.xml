@@ -325,4 +325,67 @@
     <string name="billing_unavailable">Cihazında faturalandırma kullanılamıyor.</string>
     <string name="billing_item_unavailable">Bu ürün şu anda kullanılamıyor.</string>
     <string name="billing_purchase_failed">Satın alma işlemi tamamlanamadı.</string>
+    <string name="home_change_plant">Bitkiyi değiştir</string>
+    <string name="home_edit_setup">Odak ayarlarını düzenle</string>
+    <string name="home_strict_mode">Katı mod</string>
+    <string name="home_stopwatch_label">Serbest süre</string>
+    <string name="home_goal_progress">%1$d / %2$d dk</string>
+    <string name="home_mission_progress">%1$d / %2$d · +%3$d Seed</string>
+    <string name="home_mission_claim">Ödülü al</string>
+    <string name="home_daily_bonus_title">Günlük bonus</string>
+    <string name="home_daily_bonus_ad">Kısa bir reklam izle, 50 Seed kazan.</string>
+    <string name="home_daily_bonus_premium">Premium üyeliğinle 50 Seed\'ini hemen al.</string>
+    <string name="session_pause">Durdur</string>
+    <string name="session_paused">Durduruldu</string>
+    <string name="session_finish">Tamamla</string>
+    <string name="ambience_off">Sessiz</string>
+    <string name="ambience_rain">Yağmur</string>
+    <string name="ambience_white_noise">Beyaz gürültü</string>
+    <string name="plant_gave_up_desc">Oturumu erken bitirdiğin için bitkin soldu. Bir sonraki oturumda yeniden dene.</string>
+    <string name="nav_focus">Odaklan</string>
+    <string name="tag_work">Çalışma</string>
+    <string name="tag_study">Ders</string>
+    <string name="tag_reading">Okuma</string>
+    <string name="tag_exercise">Egzersiz</string>
+    <string name="tag_other">Diğer</string>
+    <string name="mode_countdown">Geri sayım</string>
+    <string name="mode_stopwatch">Kronometre</string>
+    <string name="mode_pomodoro">Pomodoro</string>
+    <string name="mode_short_break">Kısa mola</string>
+    <string name="mode_long_break">Uzun mola</string>
+    <string name="nudge_celebrate_title">Bugünün bahçesi tamam</string>
+    <string name="nudge_celebrate_body">Hedefini doldurdun. İstersen sakin bir ek oturumla bahçeni büyüt.</string>
+    <string name="nudge_streak_title">Serini koru</string>
+    <string name="nudge_streak_body">%d günlük serin için bugün kısa bir odak oturumu yeterli.</string>
+    <string name="nudge_progress_title">Ritmini sürdür</string>
+    <string name="nudge_progress_body">Günlük hedefine ulaşmak için %d dakika daha odaklan.</string>
+    <string name="nudge_welcome_title">Bahçene küçük bir başlangıç yap</string>
+    <string name="nudge_welcome_body">Bugün kısa bir odak oturumu seç ve ilk filizini büyüt.</string>
+    <string name="mission_focus_minutes">%d dakika odaklan</string>
+    <string name="mission_deep_session">Tek seferde %d dakika odaklan</string>
+    <string name="mission_generic">Günlük görevi tamamla</string>
+    <string name="mission_reward_toast">Görev ödülü alındı: +%d Seed</string>
+    <string name="setup_title">Odak kurulumu</string>
+    <string name="setup_plant">Yetiştirilecek bitki</string>
+    <string name="setup_mode">Oturum modu</string>
+    <string name="setup_duration">Süre: %d dakika</string>
+    <string name="setup_stopwatch_note">Kronometre modunda süre sınırı yoktur.</string>
+    <string name="setup_tag">Oturum etiketi</string>
+    <string name="setup_strict_body">Uygulamadan ayrılırsan bitkin solar.</string>
+    <string name="setup_ambience">Ortam sesi</string>
+    <string name="setup_select_plant">%s seç</string>
+    <string name="milestone_seed_title" formatted="false">Tohum kök salıyor</string>
+    <string name="milestone_seed_body" formatted="false">İlk büyüme için %25\'e ulaş.</string>
+    <string name="milestone_sprout_title" formatted="false">İlk filiz çıktı</string>
+    <string name="milestone_sprout_body" formatted="false">Odak akışın %25 tamamlandı.</string>
+    <string name="milestone_growing_title" formatted="false">Bahçen canlanıyor</string>
+    <string name="milestone_growing_body" formatted="false">Yolun yarısındasın: %50 odaklandı.</string>
+    <string name="milestone_maturing_title" formatted="false">Bitkin güçleniyor</string>
+    <string name="milestone_maturing_body" formatted="false">Son hasada %25 kaldı: %75 tamamlandı.</string>
+    <string name="milestone_full_title" formatted="false">Hasat vakti</string>
+    <string name="milestone_full_body" formatted="false">Odak oturumun tamamlandı.</string>
+    <plurals name="mission_complete_sessions">
+        <item quantity="one">%d odak seansı tamamla</item>
+        <item quantity="other">%d odak seansı tamamla</item>
+    </plurals>
 </resources>

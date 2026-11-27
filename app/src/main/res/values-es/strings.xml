@@ -310,4 +310,67 @@
     <string name="billing_unavailable">Las compras no están disponibles en este dispositivo.</string>
     <string name="billing_item_unavailable">Este producto no está disponible en este momento.</string>
     <string name="billing_purchase_failed">No se pudo completar la compra.</string>
+    <string name="home_change_plant">Cambiar planta</string>
+    <string name="home_edit_setup">Editar ajustes de enfoque</string>
+    <string name="home_strict_mode">Modo estricto</string>
+    <string name="home_stopwatch_label">Sin límite</string>
+    <string name="home_goal_progress">%1$d / %2$d min</string>
+    <string name="home_mission_progress">%1$d / %2$d · +%3$d seeds</string>
+    <string name="home_mission_claim">Reclamar</string>
+    <string name="home_daily_bonus_title">Bono diario</string>
+    <string name="home_daily_bonus_ad">Mira un anuncio corto y gana 50 seeds.</string>
+    <string name="home_daily_bonus_premium">Reclama tus 50 seeds premium.</string>
+    <string name="session_pause">Pausar</string>
+    <string name="session_paused">En pausa</string>
+    <string name="session_finish">Terminar</string>
+    <string name="ambience_off">Sin sonido</string>
+    <string name="ambience_rain">Lluvia</string>
+    <string name="ambience_white_noise">Ruido blanco</string>
+    <string name="plant_gave_up_desc">Terminaste la sesión antes de tiempo y tu planta se marchitó. Inténtalo de nuevo en la próxima sesión.</string>
+    <string name="nav_focus">Enfoque</string>
+    <string name="tag_work">Trabajo</string>
+    <string name="tag_study">Estudio</string>
+    <string name="tag_reading">Lectura</string>
+    <string name="tag_exercise">Ejercicio</string>
+    <string name="tag_other">Otro</string>
+    <string name="mode_countdown">Cuenta atrás</string>
+    <string name="mode_stopwatch">Cronómetro</string>
+    <string name="mode_pomodoro">Pomodoro</string>
+    <string name="mode_short_break">Descanso corto</string>
+    <string name="mode_long_break">Descanso largo</string>
+    <string name="nudge_celebrate_title">El jardín de hoy está listo</string>
+    <string name="nudge_celebrate_body">Alcanzaste tu meta. Si quieres, haz crecer tu jardín con una sesión extra tranquila.</string>
+    <string name="nudge_streak_title">Mantén tu racha</string>
+    <string name="nudge_streak_body">Una sesión corta hoy mantiene tu racha de %d días.</string>
+    <string name="nudge_progress_title">Mantén tu ritmo</string>
+    <string name="nudge_progress_body">Concéntrate %d minutos más para llegar a tu meta diaria.</string>
+    <string name="nudge_welcome_title">Empieza tu jardín con calma</string>
+    <string name="nudge_welcome_body">Elige hoy una sesión corta y haz crecer tu primer brote.</string>
+    <string name="mission_focus_minutes">Concéntrate %d minutos</string>
+    <string name="mission_deep_session">Concéntrate %d minutos seguidos</string>
+    <string name="mission_generic">Completa la misión diaria</string>
+    <string name="mission_reward_toast">Recompensa reclamada: +%d seeds</string>
+    <string name="setup_title">Configurar enfoque</string>
+    <string name="setup_plant">Planta a cultivar</string>
+    <string name="setup_mode">Modo de sesión</string>
+    <string name="setup_duration">Duración: %d minutos</string>
+    <string name="setup_stopwatch_note">El modo cronómetro no tiene límite de tiempo.</string>
+    <string name="setup_tag">Etiqueta de sesión</string>
+    <string name="setup_strict_body">Si sales de la app, tu planta se marchita.</string>
+    <string name="setup_ambience">Sonido ambiente</string>
+    <string name="setup_select_plant">Elegir %s</string>
+    <string name="milestone_seed_title" formatted="false">Tu semilla echa raíces</string>
+    <string name="milestone_seed_body" formatted="false">Llega al 25 % para el primer crecimiento.</string>
+    <string name="milestone_sprout_title" formatted="false">Ya salió el primer brote</string>
+    <string name="milestone_sprout_body" formatted="false">Llevas el 25 % de tu enfoque.</string>
+    <string name="milestone_growing_title" formatted="false">Tu jardín cobra vida</string>
+    <string name="milestone_growing_body" formatted="false">A mitad de camino: 50 % enfocado.</string>
+    <string name="milestone_maturing_title" formatted="false">Tu planta se fortalece</string>
+    <string name="milestone_maturing_body" formatted="false">75 % hecho, falta 25 % para la cosecha.</string>
+    <string name="milestone_full_title" formatted="false">Hora de cosechar</string>
+    <string name="milestone_full_body" formatted="false">Tu sesión de enfoque terminó.</string>
+    <plurals name="mission_complete_sessions">
+        <item quantity="one">Completa %d sesión de enfoque</item>
+        <item quantity="other">Completa %d sesiones de enfoque</item>
+    </plurals>
 </resources>

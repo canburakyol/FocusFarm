@@ -88,19 +88,20 @@ val Typography = Typography(
         lineHeight = 20.sp,
         letterSpacing = 0.2.sp,
     ),
+    // Labels carry UI text in every language; wide tracking and mono glyphs read as broken words.
     labelMedium = TextStyle(
-        fontFamily = dmMono,
+        fontFamily = dmSans,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
-        letterSpacing = 2.sp,
+        letterSpacing = 0.1.sp,
     ),
     labelSmall = TextStyle(
         fontFamily = dmSans,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 16.sp,
-        letterSpacing = 1.5.sp,
+        letterSpacing = 0.3.sp,
     ),
 )
 
