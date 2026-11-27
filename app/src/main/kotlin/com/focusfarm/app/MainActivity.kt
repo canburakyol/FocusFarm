@@ -65,7 +65,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         telemetry.logEvent("app_open")
-        consentManager.refreshConsent(this)
         handleDeepLink(intent)
 
         lifecycleScope.launch {
@@ -73,9 +72,12 @@ class MainActivity : ComponentActivity() {
                 retentionTracker.trackCurrentDay()
                 recoveryManager.reconcile()
             }
+            val hasActiveSession = decision != RecoveryDecision.None
+            // Never drop the consent form on top of a focus session; only refresh the stored status then.
+            consentManager.refreshConsent(if (hasActiveSession) null else this@MainActivity)
             appReviewManager.onAppOpen(
                 activity = this@MainActivity,
-                hasActiveSession = decision != RecoveryDecision.None,
+                hasActiveSession = hasActiveSession,
             )
         }
     }
