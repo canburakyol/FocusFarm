@@ -477,4 +477,19 @@
     <string name="onb_daily_goal">هدف التركيز اليومي</string>
     <string name="onb_daily_goal_body">الوقت الإجمالي الذي تريد بلوغه كل يوم.</string>
     <string name="minutes_unit">د</string>
+    <string name="shop_title">سوق البذور</string>
+    <string name="shop_intro">أنفق بذورك على نباتات جديدة لحديقتك.</string>
+    <string name="shop_balance">الرصيد</string>
+    <string name="shop_free_pack">حزمة بذور مجانية</string>
+    <string name="shop_free_pack_body">شاهد إعلانًا قصيرًا واربح 25 بذرة.</string>
+    <string name="shop_owned">تملكها</string>
+    <string name="shop_buy">شراء</string>
+    <string name="shop_premium_note">بريميوم يفتح كل النباتات.</string>
+    <string name="shop_bought">أضيفت %s إلى نباتاتك</string>
+    <string name="shop_not_enough">تحتاج %d بذرة إضافية</string>
+    <string name="shop_buy_failed">تعذر إتمام الشراء. حاول مرة أخرى.</string>
+    <string name="shop_premium_no_ads">بريميوم بلا إعلانات؛ اربح البذور من الجلسات.</string>
+    <string name="shop_ad_unavailable">لا يتوفر إعلان الآن. حاول بعد قليل.</string>
+    <string name="shop_reward_failed">تعذرت إضافة المكافأة.</string>
+    <string name="cd_open_shop">فتح سوق البذور</string>
 </resources>

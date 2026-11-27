@@ -1,5 +1,7 @@
 package com.focusfarm.app.ui.screens.shop
 
+import com.focusfarm.app.R
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.focusfarm.app.data.repository.UnlockedPlantsRepository
@@ -51,7 +53,8 @@ sealed interface StoreIntent {
 }
 
 sealed interface StoreEffect {
-    data class ShowMessage(val message: String) : StoreEffect
+    /** A localized message: [messageRes] formatted with [args]. */
+    class ShowMessage(@StringRes val messageRes: Int, vararg val args: Any) : StoreEffect
 }
 
 @HiltViewModel
@@ -140,15 +143,13 @@ class ShopViewModel @Inject constructor(
                     itemId = productId,
                     price = item.product.price
                 )
-                effects.send(StoreEffect.ShowMessage("${item.product.displayName} satın alındı!"))
+                effects.send(StoreEffect.ShowMessage(R.string.shop_bought, item.product.displayName))
             } catch (error: InsufficientSeedsException) {
                 effects.send(
-                    StoreEffect.ShowMessage(
-                        "Yetersiz Tohum: ${error.required} gerekli, ${error.available} mevcut"
-                    )
+                    StoreEffect.ShowMessage(R.string.shop_not_enough, error.required - error.available)
                 )
             } catch (e: Exception) {
-                effects.send(StoreEffect.ShowMessage("Satın alma sırasında hata oluştu: ${e.localizedMessage}"))
+                effects.send(StoreEffect.ShowMessage(R.string.shop_buy_failed))
             } finally {
                 _uiState.update { state ->
                     state.copy(
@@ -165,13 +166,13 @@ class ShopViewModel @Inject constructor(
         val state = _uiState.value
         if (state.isPremium) {
             viewModelScope.launch {
-                effects.send(StoreEffect.ShowMessage("Premium üyeler reklam izleyemez."))
+                effects.send(StoreEffect.ShowMessage(R.string.shop_premium_no_ads))
             }
             return
         }
         if (activity == null) {
             viewModelScope.launch {
-                effects.send(StoreEffect.ShowMessage("Reklam yüklenemedi: Ekran hazır değil."))
+                effects.send(StoreEffect.ShowMessage(R.string.shop_ad_unavailable))
             }
             return
         }
@@ -188,15 +189,15 @@ class ShopViewModel @Inject constructor(
                         nowMillis = clock.nowMillis()
                     )
                     if (success) {
-                        effects.send(StoreEffect.ShowMessage("Tebrikler! +25 Seed cüzdanınıza eklendi. 🪙"))
+                        effects.send(StoreEffect.ShowMessage(R.string.seeds_plus, 25))
                     } else {
-                        effects.send(StoreEffect.ShowMessage("Hata: Ödül doğrulanamadı."))
+                        effects.send(StoreEffect.ShowMessage(R.string.shop_reward_failed))
                     }
                 }
             },
             onNotReady = {
                 viewModelScope.launch {
-                    effects.send(StoreEffect.ShowMessage("Reklam hazır değil. Lütfen daha sonra tekrar deneyin."))
+                    effects.send(StoreEffect.ShowMessage(R.string.shop_ad_unavailable))
                 }
             }
         )

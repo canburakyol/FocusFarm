@@ -120,6 +120,11 @@ fun AppNavigation(
                         navController.navigate(Routes.session(sessionId, plantId, minutes))
                     },
                     onRecoverSession = { navController.navigate(Routes.recoverSession(it)) },
+                    onOpenShop = if (ReleaseFeatureScope.SHOP_ENABLED) {
+                        { navController.navigate(Routes.SHOP) }
+                    } else {
+                        null
+                    },
                 )
             }
             composable(Routes.GARDEN) {
@@ -141,7 +146,7 @@ fun AppNavigation(
                 )
             }
             if (ReleaseFeatureScope.SHOP_ENABLED) {
-                composable(Routes.SHOP) { ShopScreen() }
+                composable(Routes.SHOP) { ShopScreen(onBack = { navController.popBackStack() }) }
             }
             composable(Routes.MISSIONS) {
                 MissionsScreen(

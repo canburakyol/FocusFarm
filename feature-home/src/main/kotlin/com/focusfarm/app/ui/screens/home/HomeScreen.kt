@@ -38,6 +38,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +65,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun HomeScreen(
     onStartSession: (sessionId: String, plantId: String, minutes: Int) -> Unit,
     onRecoverSession: (sessionId: String) -> Unit,
+    onOpenShop: (() -> Unit)? = null,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -93,6 +95,7 @@ fun HomeScreen(
     HomeContent(
         state = state,
         onIntent = viewModel::onIntent,
+        onOpenShop = onOpenShop,
     )
 }
 
@@ -105,6 +108,7 @@ internal fun HomeContent(
     state: HomeUiState,
     onIntent: (HomeIntent) -> Unit,
     modifier: Modifier = Modifier,
+    onOpenShop: (() -> Unit)? = null,
 ) {
     val selectedPlant = PlantCatalog.getById(state.selectedPlantId) ?: PlantCatalog.FREE.first()
     var showSetupSheet by remember { mutableStateOf(false) }
@@ -118,7 +122,7 @@ internal fun HomeContent(
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            HomeTopBar(seedBalance = state.seedBalance, currentStreak = state.currentStreak)
+            HomeTopBar(seedBalance = state.seedBalance, currentStreak = state.currentStreak, onOpenShop = onOpenShop)
             Spacer(Modifier.height(28.dp))
             NudgeLine(state.retentionNudge)
             Spacer(Modifier.height(24.dp))
@@ -185,7 +189,7 @@ internal fun HomeContent(
 }
 
 @Composable
-private fun HomeTopBar(seedBalance: Int, currentStreak: Int) {
+private fun HomeTopBar(seedBalance: Int, currentStreak: Int, onOpenShop: (() -> Unit)?) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -198,7 +202,7 @@ private fun HomeTopBar(seedBalance: Int, currentStreak: Int) {
             modifier = Modifier.weight(1f),
         )
         val seedLabel = stringResource(R.string.seed_balance_short, seedBalance)
-        StatPill(text = "$seedBalance", description = seedLabel) {
+        StatPill(text = "$seedBalance", description = seedLabel, onClick = onOpenShop) {
             SeedIcon(size = 12.dp)
         }
         Spacer(Modifier.width(8.dp))
@@ -215,11 +219,23 @@ private fun HomeTopBar(seedBalance: Int, currentStreak: Int) {
 }
 
 @Composable
-private fun StatPill(text: String, description: String, leading: @Composable () -> Unit) {
+private fun StatPill(
+    text: String,
+    description: String,
+    onClick: (() -> Unit)? = null,
+    leading: @Composable () -> Unit,
+) {
+    val shopLabel = stringResource(R.string.cd_open_shop)
     Surface(
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-        modifier = Modifier.clearAndSetSemantics { contentDescription = description },
+        modifier = Modifier
+            .clip(CircleShape)
+            .then(if (onClick != null) Modifier.clickable(onClickLabel = shopLabel, onClick = onClick) else Modifier)
+            .clearAndSetSemantics {
+                contentDescription = description
+                if (onClick != null) onClick(label = shopLabel) { onClick(); true }
+            },
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),

@@ -477,4 +477,19 @@
     <string name="onb_daily_goal">Objectif de focus quotidien</string>
     <string name="onb_daily_goal_body">Le temps total que tu veux atteindre chaque jour.</string>
     <string name="minutes_unit">min</string>
+    <string name="shop_title">Marché aux graines</string>
+    <string name="shop_intro">Dépense tes seeds pour de nouvelles plantes.</string>
+    <string name="shop_balance">Solde</string>
+    <string name="shop_free_pack">Pack de seeds gratuit</string>
+    <string name="shop_free_pack_body">Regarde une courte pub pour gagner 25 seeds.</string>
+    <string name="shop_owned">Possédée</string>
+    <string name="shop_buy">Acheter</string>
+    <string name="shop_premium_note">Premium débloque toutes les plantes.</string>
+    <string name="shop_bought">%s ajoutée à tes plantes</string>
+    <string name="shop_not_enough">Il te manque %d seeds</string>
+    <string name="shop_buy_failed">Achat impossible. Réessaie.</string>
+    <string name="shop_premium_no_ads">Premium est sans pub ; gagne des seeds avec tes sessions.</string>
+    <string name="shop_ad_unavailable">Aucune pub disponible pour l\'instant. Réessaie bientôt.</string>
+    <string name="shop_reward_failed">Impossible d\'ajouter la récompense.</string>
+    <string name="cd_open_shop">Ouvrir le marché</string>
 </resources>

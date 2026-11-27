@@ -492,4 +492,19 @@
     <string name="onb_daily_goal">Günlük odak hedefi</string>
     <string name="onb_daily_goal_body">Her gün ulaşmak istediğin toplam süre.</string>
     <string name="minutes_unit">dk</string>
+    <string name="shop_title">Tohum Pazarı</string>
+    <string name="shop_intro">Seed\'lerinle bahçene yeni bitkiler ekle.</string>
+    <string name="shop_balance">Bakiye</string>
+    <string name="shop_free_pack">Ücretsiz Seed paketi</string>
+    <string name="shop_free_pack_body">Kısa bir reklam izle, 25 Seed kazan.</string>
+    <string name="shop_owned">Sende var</string>
+    <string name="shop_buy">Al</string>
+    <string name="shop_premium_note">Premium ile tüm bitkiler açık.</string>
+    <string name="shop_bought">%s bahçene eklendi</string>
+    <string name="shop_not_enough">%d Seed daha gerekiyor</string>
+    <string name="shop_buy_failed">Satın alma tamamlanamadı. Tekrar dene.</string>
+    <string name="shop_premium_no_ads">Premium\'da reklam yok; Seed\'lerin oturumlardan gelir.</string>
+    <string name="shop_ad_unavailable">Reklam şu an hazır değil. Biraz sonra tekrar dene.</string>
+    <string name="shop_reward_failed">Ödül eklenemedi. Tekrar dene.</string>
+    <string name="cd_open_shop">Tohum pazarını aç</string>
 </resources>

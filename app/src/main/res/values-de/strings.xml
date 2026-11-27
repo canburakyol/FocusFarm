@@ -477,4 +477,19 @@
     <string name="onb_daily_goal">Tägliches Fokusziel</string>
     <string name="onb_daily_goal_body">Die Gesamtzeit, die du täglich erreichen möchtest.</string>
     <string name="minutes_unit">Min.</string>
+    <string name="shop_title">Samenmarkt</string>
+    <string name="shop_intro">Gib deine Seeds für neue Pflanzen aus.</string>
+    <string name="shop_balance">Guthaben</string>
+    <string name="shop_free_pack">Gratis-Seed-Paket</string>
+    <string name="shop_free_pack_body">Sieh dir eine kurze Werbung an und erhalte 25 Seeds.</string>
+    <string name="shop_owned">Im Besitz</string>
+    <string name="shop_buy">Kaufen</string>
+    <string name="shop_premium_note">Premium schaltet alle Pflanzen frei.</string>
+    <string name="shop_bought">%s zu deinen Pflanzen hinzugefügt</string>
+    <string name="shop_not_enough">Dir fehlen noch %d Seeds</string>
+    <string name="shop_buy_failed">Kauf fehlgeschlagen. Versuch es erneut.</string>
+    <string name="shop_premium_no_ads">Premium ist werbefrei; Seeds verdienst du mit Sitzungen.</string>
+    <string name="shop_ad_unavailable">Gerade ist keine Werbung verfügbar. Versuch es gleich noch mal.</string>
+    <string name="shop_reward_failed">Belohnung konnte nicht gutgeschrieben werden.</string>
+    <string name="cd_open_shop">Samenmarkt öffnen</string>
 </resources>

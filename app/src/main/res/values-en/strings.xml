@@ -477,4 +477,19 @@
     <string name="onb_daily_goal">Daily focus goal</string>
     <string name="onb_daily_goal_body">Total time you want to reach each day.</string>
     <string name="minutes_unit">min</string>
+    <string name="shop_title">Seed market</string>
+    <string name="shop_intro">Spend your seeds on new plants for your garden.</string>
+    <string name="shop_balance">Balance</string>
+    <string name="shop_free_pack">Free seed pack</string>
+    <string name="shop_free_pack_body">Watch a short ad to earn 25 seeds.</string>
+    <string name="shop_owned">Owned</string>
+    <string name="shop_buy">Buy</string>
+    <string name="shop_premium_note">Premium unlocks every plant.</string>
+    <string name="shop_bought">%s added to your plants</string>
+    <string name="shop_not_enough">You need %d more seeds</string>
+    <string name="shop_buy_failed">Couldn\'t complete the purchase. Try again.</string>
+    <string name="shop_premium_no_ads">Premium has no ads; earn seeds from sessions.</string>
+    <string name="shop_ad_unavailable">No ad is ready right now. Try again in a bit.</string>
+    <string name="shop_reward_failed">Couldn\'t add the reward. Try again.</string>
+    <string name="cd_open_shop">Open seed market</string>
 </resources>

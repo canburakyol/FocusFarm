@@ -477,4 +477,19 @@
     <string name="onb_daily_goal">Meta diaria de enfoque</string>
     <string name="onb_daily_goal_body">El tiempo total que quieres alcanzar cada día.</string>
     <string name="minutes_unit">min</string>
+    <string name="shop_title">Mercado de semillas</string>
+    <string name="shop_intro">Usa tus seeds para conseguir plantas nuevas.</string>
+    <string name="shop_balance">Saldo</string>
+    <string name="shop_free_pack">Paquete de seeds gratis</string>
+    <string name="shop_free_pack_body">Mira un anuncio corto y gana 25 seeds.</string>
+    <string name="shop_owned">Tuya</string>
+    <string name="shop_buy">Comprar</string>
+    <string name="shop_premium_note">Premium desbloquea todas las plantas.</string>
+    <string name="shop_bought">%s añadida a tus plantas</string>
+    <string name="shop_not_enough">Te faltan %d seeds</string>
+    <string name="shop_buy_failed">No se pudo completar la compra. Inténtalo de nuevo.</string>
+    <string name="shop_premium_no_ads">Premium no tiene anuncios; gana seeds con sesiones.</string>
+    <string name="shop_ad_unavailable">Ahora no hay anuncios. Inténtalo en un momento.</string>
+    <string name="shop_reward_failed">No se pudo añadir la recompensa.</string>
+    <string name="cd_open_shop">Abrir mercado de semillas</string>
 </resources>
