@@ -2,6 +2,7 @@ package com.focusfarm.app.ui.screens.streak
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.focusfarm.app.domain.SessionStatus
 import com.focusfarm.app.data.repository.GardenRepository
 import com.focusfarm.app.data.repository.ProgressRepository
 import com.focusfarm.app.data.repository.StreakManager
@@ -79,7 +80,8 @@ class StreakViewModel @Inject constructor(
                 val calendarDays = (0..29).map { offset ->
                     val date = today.minusDays(offset.toLong())
                     val daySessions = sessions.filter {
-                        Instant.ofEpochMilli(it.completedAt).atZone(clock.zoneId).toLocalDate() == date
+                        it.status == SessionStatus.COMPLETED &&
+                            Instant.ofEpochMilli(it.completedAt).atZone(clock.zoneId).toLocalDate() == date
                     }
                     val totalMinutes = daySessions.sumOf { it.durationMinutes }
                     val status = when {

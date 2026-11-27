@@ -215,15 +215,3 @@ private data class PersistedSessionResult(
     val grantedWaterDroplets: Int,
     val grantedExperience: Int,
 )
-
-private fun SessionEntity.toDomain(): FocusSession = FocusSession(
-    id = id,
-    plantId = plantId,
-    plantName = plantName,
-    plantEmoji = plantEmoji,
-    durationMinutes = durationMinutes,
-    completedAt = completedAt,
-    selectedTag = selectedTag,
-    status = status,
-    failReason = failReason,
-)

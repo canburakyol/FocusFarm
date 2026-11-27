@@ -119,20 +119,28 @@ private fun GardenEntry.toEntity(): GardenEntryEntity = GardenEntryEntity(
     growthStageReached = growthStageReached,
 )
 
-private fun SessionEntity.toDomain(): FocusSession = FocusSession(
+// Status, tag and fail reason must round-trip: without them every withered session read through this
+// repository looked completed and counted toward streaks and daily goals.
+internal fun SessionEntity.toDomain(): FocusSession = FocusSession(
     id = id,
     plantId = plantId,
     plantName = plantName,
     plantEmoji = plantEmoji,
     durationMinutes = durationMinutes,
     completedAt = completedAt,
+    selectedTag = selectedTag,
+    status = status,
+    failReason = failReason,
 )
 
-private fun FocusSession.toEntity(): SessionEntity = SessionEntity(
+internal fun FocusSession.toEntity(): SessionEntity = SessionEntity(
     id = id,
     plantId = plantId,
     plantName = plantName,
     plantEmoji = plantEmoji,
     durationMinutes = durationMinutes,
     completedAt = completedAt,
+    selectedTag = selectedTag,
+    status = status,
+    failReason = failReason,
 )

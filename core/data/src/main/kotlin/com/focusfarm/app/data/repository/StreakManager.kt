@@ -4,6 +4,7 @@ import com.focusfarm.app.data.local.ProgressDao
 import com.focusfarm.app.data.local.StreakHistoryEntity
 import com.focusfarm.app.data.local.RecoverySessionDao
 import com.focusfarm.app.domain.FocusProgressEngine
+import com.focusfarm.app.domain.SessionStatus
 import com.focusfarm.app.domain.FocusSession
 import com.focusfarm.app.time.Clock
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +47,7 @@ class StreakManager @Inject constructor(
         val streak = FocusProgressEngine.currentStreakDays(sessions, dailyGoalMinutes, protectedDates, nowMillis, zoneId)
         val todayMinutes = FocusProgressEngine.todayMinutes(sessions, nowMillis, zoneId)
         val todaySessions = sessions.count {
-            FocusProgressEngine.isToday(it.completedAt, nowMillis, zoneId)
+            it.status == SessionStatus.COMPLETED && FocusProgressEngine.isToday(it.completedAt, nowMillis, zoneId)
         }
 
         val dateKey = FocusProgressEngine.todayDateKey(nowMillis, zoneId)
@@ -72,7 +73,7 @@ class StreakManager @Inject constructor(
         val currentStreak = FocusProgressEngine.currentStreakDays(sessions, dailyGoalMinutes, protectedDates, nowMillis, zoneId)
         val todayMinutes = FocusProgressEngine.todayMinutes(sessions, nowMillis, zoneId)
         val todaySessions = sessions.count {
-            FocusProgressEngine.isToday(it.completedAt, nowMillis, zoneId)
+            it.status == SessionStatus.COMPLETED && FocusProgressEngine.isToday(it.completedAt, nowMillis, zoneId)
         }
         val freezeCandidate = FocusProgressEngine.freezeCandidateDate(sessions, dailyGoalMinutes, protectedDates, nowMillis, zoneId)
         val bestStreak = progressDao.getBestStreak() ?: 0

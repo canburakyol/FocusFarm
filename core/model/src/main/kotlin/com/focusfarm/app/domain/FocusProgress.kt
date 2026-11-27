@@ -73,7 +73,9 @@ object FocusProgressEngine {
         freezeDates: Set<LocalDate>,
         zoneId: ZoneId
     ): Set<LocalDate> {
-        val sessionsByDate = sessions.groupBy { it.completedAt.toLocalDate(zoneId) }
+        // Withered or cancelled sessions store their planned length; they must never count as focus.
+        val sessionsByDate = sessions.filter { it.status == SessionStatus.COMPLETED }
+            .groupBy { it.completedAt.toLocalDate(zoneId) }
         val qualifiedDates = sessionsByDate.filter { (_, daySessions) ->
             daySessions.sumOf { it.durationMinutes } >= dailyGoalMinutes
         }.keys
@@ -138,7 +140,7 @@ object FocusProgressEngine {
         val startOfDay = startOfDayMillis(nowMillis, zoneId)
         return sessions
             .asSequence()
-            .filter { it.completedAt >= startOfDay }
+            .filter { it.status == SessionStatus.COMPLETED && it.completedAt >= startOfDay }
             .sumOf { it.durationMinutes }
     }
 
