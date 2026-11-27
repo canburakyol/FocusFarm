@@ -41,7 +41,7 @@ class FocusReminderReceiver : BroadcastReceiver() {
         )
 
         val notification = NotificationCompat.Builder(context, FocusReminderScheduler.CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(context.getString(R.string.reminder_title))
             .setContentText(context.getString(R.string.reminder_body))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

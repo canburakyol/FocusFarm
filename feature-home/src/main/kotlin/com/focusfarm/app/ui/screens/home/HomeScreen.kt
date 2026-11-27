@@ -55,7 +55,7 @@ import com.focusfarm.app.domain.PlantCatalog
 import com.focusfarm.app.ui.components.FocusBackdrop
 import com.focusfarm.app.ui.components.PlantDisplay
 import com.focusfarm.app.ui.components.labelRes
-import com.focusfarm.app.ui.theme.SeedGold
+import com.focusfarm.app.ui.components.SeedIcon
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.core.ui.R
 import kotlinx.coroutines.flow.collectLatest
@@ -199,12 +199,7 @@ private fun HomeTopBar(seedBalance: Int, currentStreak: Int) {
         )
         val seedLabel = stringResource(R.string.seed_balance_short, seedBalance)
         StatPill(text = "$seedBalance", description = seedLabel) {
-            Box(
-                Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(SeedGold),
-            )
+            SeedIcon(size = 12.dp)
         }
         Spacer(Modifier.width(8.dp))
         val streakLabel = stringResource(R.string.streak_days_short, currentStreak)
@@ -520,12 +515,7 @@ private fun DailyBonusRow(state: HomeUiState, onIntent: (HomeIntent) -> Unit) {
         }
         Spacer(Modifier.width(12.dp))
         OutlinedButton(onClick = { onIntent(HomeIntent.ClaimDailySeedBonus(activity)) }) {
-            Box(
-                Modifier
-                    .size(10.dp)
-                    .clip(CircleShape)
-                    .background(SeedGold),
-            )
+            SeedIcon(size = 10.dp)
             Spacer(Modifier.width(6.dp))
             Text("+50", fontWeight = FontWeight.Bold)
         }

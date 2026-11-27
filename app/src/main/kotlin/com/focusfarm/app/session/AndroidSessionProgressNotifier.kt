@@ -29,7 +29,7 @@ class AndroidSessionProgressNotifier @Inject constructor(
         val manager = context.getSystemService(NotificationManager::class.java) ?: return
         ensureChannels(context, manager)
         val builder = NotificationCompat.Builder(context, RUNNING_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_monochrome_premium)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(context.getString(R.string.session_notif_running_title, plantName))
             .setContentText(context.getString(R.string.session_notif_running_text))
             .setCategory(NotificationCompat.CATEGORY_STOPWATCH)
@@ -126,7 +126,7 @@ class SessionEndReceiver : BroadcastReceiver() {
         manager.notify(
             AndroidSessionProgressNotifier.DONE_NOTIFICATION_ID,
             NotificationCompat.Builder(context, AndroidSessionProgressNotifier.DONE_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_monochrome_premium)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(context.getString(R.string.session_notif_done_title, plantName))
                 .setContentText(context.getString(R.string.session_notif_done_text))
                 .setAutoCancel(true)

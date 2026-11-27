@@ -123,7 +123,7 @@ class NotificationScheduler @Inject constructor(
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID_FOCUS)
-            .setSmallIcon(R.drawable.ic_launcher_monochrome_premium)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

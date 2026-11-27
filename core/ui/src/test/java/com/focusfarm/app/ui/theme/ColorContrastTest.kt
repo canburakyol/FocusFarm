@@ -35,6 +35,7 @@ class ColorContrastTest {
             onPrimary to primary,
             onPrimaryContainer to primaryContainer,
             onSecondary to secondary,
+            onTertiaryContainer to tertiaryContainer,
             error to surface,
             onErrorContainer to errorContainer,
         )

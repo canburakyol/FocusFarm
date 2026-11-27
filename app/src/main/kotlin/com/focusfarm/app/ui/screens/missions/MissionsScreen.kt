@@ -28,6 +28,9 @@ import android.app.Activity
 import com.focusfarm.app.domain.MissionGoalType
 import com.focusfarm.app.ui.components.FocusBackdrop
 import kotlinx.coroutines.flow.collectLatest
+import com.focusfarm.app.ui.components.SeedIcon
+import com.focusfarm.app.R
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +42,7 @@ fun MissionsScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var claimedRewardAmount by remember { mutableStateOf<Int?>(null) }
 
+    val refreshedMessage = stringResource(R.string.missions_refreshed)
     LaunchedEffect(viewModel) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -47,7 +51,7 @@ fun MissionsScreen(
                         claimedRewardAmount = effect.rewardSeeds
                     } else {
                         claimedRewardAmount = null
-                        snackbarHostState.showSnackbar("Görevler başarıyla yenilendi!")
+                        snackbarHostState.showSnackbar(refreshedMessage)
                     }
                 }
                 is MissionsEffect.ShowError -> {
@@ -60,10 +64,10 @@ fun MissionsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Günlük Görevler", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.daily_quests_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 },
                 actions = {
@@ -77,7 +81,7 @@ fun MissionsScreen(
                             .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("🌱", fontSize = 16.sp)
+                        SeedIcon(size = 12.dp)
                         Spacer(Modifier.width(4.dp))
                         Text(
                             text = state.seedBalance.toString(),
@@ -116,14 +120,14 @@ fun MissionsScreen(
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(
-                                    "Bugünün Görevleri",
+                                    stringResource(R.string.missions_today),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                                 Spacer(Modifier.height(4.dp))
                                 Text(
-                                    "Oturumları tamamlayarak tohum kazan! Görevler her gün yerel saatle gece yarısı yenilenir.",
+                                    stringResource(R.string.missions_intro),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                                 )
@@ -140,13 +144,13 @@ fun MissionsScreen(
                                         shape = RoundedCornerShape(50)
                                     ) {
                                         Text(
-                                            text = if (state.isPremium) "Görevleri Yenile (Premium)" else "Görevleri Yenile (Reklam)",
+                                            text = stringResource(if (state.isPremium) R.string.missions_reroll_premium else R.string.missions_reroll_ad),
                                             style = MaterialTheme.typography.labelLarge
                                         )
                                     }
                                 } else {
                                     Text(
-                                        text = "✓ Bugün görev yenileme hakkınızı kullandınız.",
+                                        text = stringResource(R.string.missions_reroll_used),
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -225,7 +229,7 @@ private fun MissionCard(
                         .padding(horizontal = 8.dp, vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("🌱", fontSize = 12.sp)
+                    SeedIcon(size = 10.dp)
                     Spacer(Modifier.width(4.dp))
                     Text(
                         text = "+${mission.rewardSeeds}",
@@ -273,12 +277,12 @@ private fun MissionCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,
-                                contentDescription = "Alındı",
+                                contentDescription = stringResource(R.string.missions_claimed),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(Modifier.width(4.dp))
                             Text(
-                                "Ödül Alındı",
+                                stringResource(R.string.missions_claimed),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
@@ -293,12 +297,12 @@ private fun MissionCard(
                             ),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Ödülü Al", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.home_mission_claim), fontWeight = FontWeight.Bold)
                         }
                     }
                     else -> {
                         Text(
-                            "Devam Ediyor",
+                            stringResource(R.string.missions_in_progress),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -331,7 +335,7 @@ private fun MissionRewardClaimDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "🎉 Tebrikler! 🎉",
+                    text = stringResource(R.string.missions_congrats_title),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -339,7 +343,7 @@ private fun MissionRewardClaimDialog(
                 )
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "Görev başarıyla tamamlandı ve ödül cüzdanınıza eklendi.",
+                    text = stringResource(R.string.missions_congrats_body),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -355,10 +359,10 @@ private fun MissionRewardClaimDialog(
                         )
                         .padding(horizontal = 24.dp, vertical = 12.dp)
                 ) {
-                    Text("🌱", fontSize = 28.sp)
+                    SeedIcon(size = 20.dp)
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = "+$amount Tohum",
+                        text = stringResource(R.string.seeds_plus, amount),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -370,7 +374,7 @@ private fun MissionRewardClaimDialog(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Kapat", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.action_close), fontWeight = FontWeight.Bold)
                 }
             }
         }

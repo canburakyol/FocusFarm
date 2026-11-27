@@ -48,6 +48,12 @@ import com.focusfarm.app.domain.PlantCatalog
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.focusfarm.app.ui.components.SeedIcon
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.Icons
 
 @Composable
 fun CollectionScreen(
@@ -78,7 +84,7 @@ fun CollectionScreen(
             }
             Spacer(Modifier.height(6.dp))
             Text(
-                text = "Keşfettiğin bitkilerle bahçeni renklendir. Ödüllerini toplamayı unutma!",
+                text = stringResource(R.string.collection_intro),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -112,12 +118,12 @@ fun CollectionScreen(
 
             // Rarity filters row
             val rarityOptions = listOf(
-                null to "Tümü",
-                PlantRarity.COMMON to "Common",
-                PlantRarity.UNCOMMON to "Uncommon",
-                PlantRarity.RARE to "Rare",
-                PlantRarity.EPIC to "Epic",
-                PlantRarity.LEGENDARY to "Legendary"
+                null to stringResource(R.string.rarity_all),
+                PlantRarity.COMMON to stringResource(R.string.rarity_common),
+                PlantRarity.UNCOMMON to stringResource(R.string.rarity_uncommon),
+                PlantRarity.RARE to stringResource(R.string.rarity_rare),
+                PlantRarity.EPIC to stringResource(R.string.rarity_epic),
+                PlantRarity.LEGENDARY to stringResource(R.string.rarity_legendary)
             )
 
             LazyRow(
@@ -165,7 +171,7 @@ fun CollectionScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Bu nadirlikte bitki bulunamadı.",
+                        text = stringResource(R.string.collection_empty_rarity),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -198,9 +204,9 @@ private fun CollectionPlantCard(
     val plantObj = remember(item.plant.id) { PlantCatalog.getById(item.plant.id) }
 
     val statusText = when {
-        !item.isUnlocked -> "Kilitli"
-        item.isDiscovered -> "Yetiştirildi: ${item.grownCount}"
-        else -> "Keşfedilmedi"
+        !item.isUnlocked -> stringResource(R.string.collection_locked)
+        item.isDiscovered -> stringResource(R.string.collection_grown, item.grownCount)
+        else -> stringResource(R.string.collection_undiscovered)
     }
 
     val statusColor = when {
@@ -235,7 +241,7 @@ private fun CollectionPlantCard(
                     .padding(horizontal = 6.dp, vertical = 2.dp)
             ) {
                 Text(
-                    text = item.plant.rarity.name,
+                    text = stringResource(item.plant.rarity.labelRes()),
                     style = MaterialTheme.typography.labelSmall,
                     fontSize = 8.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -250,7 +256,7 @@ private fun CollectionPlantCard(
                 contentAlignment = Alignment.Center
             ) {
                 if (!item.isUnlocked) {
-                    Text("🔒", fontSize = 42.sp)
+                    Icon(Icons.Rounded.Lock, contentDescription = stringResource(R.string.collection_locked), modifier = Modifier.size(36.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 } else if (plantObj != null) {
                     PlantDisplay(
                         plant = plantObj,
@@ -258,7 +264,7 @@ private fun CollectionPlantCard(
                         size = 76.dp
                     )
                 } else {
-                    Text("🌱", fontSize = 42.sp)
+                    SeedIcon(size = 20.dp)
                 }
             }
 
@@ -282,9 +288,9 @@ private fun CollectionPlantCard(
             // Unlock conditions or discovery dates
             if (!item.isUnlocked) {
                 val condition = when {
-                    item.plant.isPremium -> "Premium gerektirir"
-                    item.plant.unlockType == "shop" -> "Bu tohum henüz açılamıyor"
-                    else -> "${item.plant.minimumFocusMinutes} dk odak seansı tamamla"
+                    item.plant.isPremium -> stringResource(R.string.collection_requires_premium)
+                    item.plant.unlockType == "shop" -> stringResource(R.string.collection_shop_locked)
+                    else -> stringResource(R.string.collection_unlock_minutes, item.plant.minimumFocusMinutes)
                 }
                 Text(
                     text = condition,
@@ -292,23 +298,23 @@ private fun CollectionPlantCard(
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
-                    modifier = Modifier.height(28.dp)
+                    modifier = Modifier.heightIn(min = 28.dp)
                 )
             } else if (item.isDiscovered && item.firstDiscoveredAt != null) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(2.dp),
-                    modifier = Modifier.height(28.dp)
+                    modifier = Modifier.heightIn(min = 28.dp)
                 ) {
                     Text(
-                        text = "İlk Keşif: " + dateFormat.format(Date(item.firstDiscoveredAt)),
+                        text = stringResource(R.string.collection_first, dateFormat.format(Date(item.firstDiscoveredAt))),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 9.sp
                     )
                     item.lastCompletedAt?.let { last ->
                         Text(
-                            text = "Son Seans: " + dateFormat.format(Date(last)),
+                            text = stringResource(R.string.collection_last, dateFormat.format(Date(last))),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 9.sp
@@ -317,12 +323,12 @@ private fun CollectionPlantCard(
                 }
             } else {
                 Text(
-                    text = "Kilidi açık, bahçende yetiştirerek keşfet!",
+                    text = stringResource(R.string.collection_unlocked_hint),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
-                    modifier = Modifier.height(28.dp)
+                    modifier = Modifier.heightIn(min = 28.dp)
                 )
             }
 
@@ -330,7 +336,7 @@ private fun CollectionPlantCard(
 
             // Seed Claim/Reward section
             Text(
-                text = "Hediye: 🌱 ${item.rewardSeeds}",
+                text = stringResource(R.string.collection_gift, item.rewardSeeds),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold
@@ -348,13 +354,13 @@ private fun CollectionPlantCard(
                         contentPadding = PaddingValues(vertical = 4.dp, horizontal = 12.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Ödülü Al", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.home_mission_claim), fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
                 }
 
                 item.isRewardClaimed -> {
                     Text(
-                        text = "✓ Alındı",
+                        text = stringResource(R.string.missions_claimed),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -368,4 +374,12 @@ private fun CollectionPlantCard(
             }
         }
     }
+}
+
+private fun PlantRarity.labelRes(): Int = when (this) {
+    PlantRarity.COMMON -> R.string.rarity_common
+    PlantRarity.UNCOMMON -> R.string.rarity_uncommon
+    PlantRarity.RARE -> R.string.rarity_rare
+    PlantRarity.EPIC -> R.string.rarity_epic
+    PlantRarity.LEGENDARY -> R.string.rarity_legendary
 }

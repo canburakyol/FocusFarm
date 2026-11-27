@@ -2,9 +2,6 @@ package com.focusfarm.app.ui.screens.streak
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +23,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.ui.components.FocusBackdrop
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.material.icons.rounded.EmojiEvents
+import androidx.compose.material.icons.rounded.LocalFireDepartment
+import androidx.compose.material.icons.rounded.AcUnit
+import com.focusfarm.app.R
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,10 +43,10 @@ fun StreakDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Odaklanma Serisi", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.streak_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Geri")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
                 },
                 actions = {
@@ -55,10 +60,10 @@ fun StreakDetailScreen(
                             .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("❄️", fontSize = 16.sp)
+                        Icon(Icons.Rounded.AcUnit, contentDescription = null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = "${state.freezeTokens} Dondurma",
+                            text = stringResource(R.string.streak_freezes, state.freezeTokens),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -86,18 +91,18 @@ fun StreakDetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     StreakBadgeCard(
-                        title = "Aktif Seri",
-                        value = "${state.currentStreak} Gün",
-                        icon = "🔥",
+                        title = stringResource(R.string.streak_current),
+                        value = pluralStringResource(R.plurals.streak_days, state.currentStreak, state.currentStreak),
+                        icon = Icons.Rounded.LocalFireDepartment,
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier.weight(1f)
                     )
 
                     StreakBadgeCard(
-                        title = "En İyi Seri",
-                        value = "${state.bestStreak} Gün",
-                        icon = "🏆",
+                        title = stringResource(R.string.streak_best),
+                        value = pluralStringResource(R.plurals.streak_days, state.bestStreak, state.bestStreak),
+                        icon = Icons.Rounded.EmojiEvents,
                         backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                         modifier = Modifier.weight(1f)
@@ -114,38 +119,38 @@ fun StreakDetailScreen(
                 // Calendar Grid Header
                 Column {
                     Text(
-                        text = "Son 30 Gün",
+                        text = stringResource(R.string.streak_last30),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Renkli günler hedefe ulaştığın, dondurduğun ya da kaçırdığın günleri temsil eder.",
+                        text = stringResource(R.string.streak_legend),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 // Calendar Grid
-                Box(
+                // Plain rows, not a lazy grid: a fixed-height grid inside this scrolling page cut off the
+                // last week, including today.
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(220.dp)
                         .background(
                             MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                             RoundedCornerShape(16.dp)
                         )
-                        .padding(12.dp)
+                        .padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(7),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(state.calendarDays) { day ->
-                            CalendarDayCell(day = day)
+                    state.calendarDays.chunked(7).forEach { week ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            week.forEach { day ->
+                                Box(Modifier.weight(1f)) { CalendarDayCell(day = day) }
+                            }
+                            repeat(7 - week.size) { Spacer(Modifier.weight(1f)) }
                         }
                     }
                 }
@@ -160,16 +165,14 @@ fun StreakDetailScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "Seri Koruma Kuralları",
+                            text = stringResource(R.string.streak_rules_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(Modifier.height(8.dp))
                         Text(
-                            text = "• Serinin bozulmaması için her gün belirlediğin günlük odak hedefine ulaşman gerekir.\n" +
-                                    "• Unuttuğun veya odaklanamadığın günlerde, cüzdanında dondurma tokenı (❄️) varsa serin otomatik olarak korunur.\n" +
-                                    "• Dondurma tokenlarını haftalık ödüllerden kazanabilirsin.",
+                            text = stringResource(R.string.streak_rules_body),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 20.sp
@@ -185,7 +188,7 @@ fun StreakDetailScreen(
 private fun StreakBadgeCard(
     title: String,
     value: String,
-    icon: String,
+    icon: ImageVector,
     backgroundColor: Color,
     contentColor: Color,
     modifier: Modifier = Modifier,
@@ -201,7 +204,7 @@ private fun StreakBadgeCard(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(icon, fontSize = 32.sp)
+            Icon(icon, contentDescription = null, modifier = Modifier.size(32.dp), tint = contentColor)
             Spacer(Modifier.height(8.dp))
             Text(
                 text = value,
@@ -237,7 +240,7 @@ private fun DailyGoalProgressCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Bugünün Odak Hedefi",
+                text = stringResource(R.string.streak_today_goal),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -250,13 +253,17 @@ private fun DailyGoalProgressCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (todayMinutes >= dailyGoalMinutes) "🎉 Hedefe Ulaşıldı!" else "Hedefe Kalan: ${dailyGoalMinutes - todayMinutes} dk",
+                    text = if (todayMinutes >= dailyGoalMinutes) {
+                        stringResource(R.string.streak_goal_reached)
+                    } else {
+                        stringResource(R.string.streak_goal_left, dailyGoalMinutes - todayMinutes)
+                    },
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = if (todayMinutes >= dailyGoalMinutes) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "$todayMinutes / $dailyGoalMinutes dk",
+                    text = stringResource(R.string.home_goal_progress, todayMinutes, dailyGoalMinutes),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -280,7 +287,7 @@ private fun DailyGoalProgressCard(
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "Günlük Hedefi Ayarla: ${sliderValue.roundToInt()} dakika",
+                text = stringResource(R.string.streak_set_goal, sliderValue.roundToInt()),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -323,7 +330,7 @@ private fun CalendarDayCell(day: CalendarDay) {
                 color = tc
             )
             if (day.status == DayStatus.FROZEN) {
-                Text("❄️", fontSize = 8.sp)
+                Icon(Icons.Rounded.AcUnit, contentDescription = null, modifier = Modifier.size(8.dp), tint = tc)
             }
         }
     }
