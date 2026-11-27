@@ -112,7 +112,6 @@ class StatsViewModelTest {
             progressRepository = progressRepository,
             reflectionRepository = reflectionRepository,
             clock = clock,
-            settingsActions = FakeStatsSettingsActions(),
             getStatsSummary = getStatsSummary,
             getDailyFocusTrend = getDailyFocusTrend,
             getTagDistribution = getTagDistribution,
@@ -183,7 +182,6 @@ class StatsViewModelTest {
             progressRepository = progressRepository,
             reflectionRepository = reflectionRepository,
             clock = clock,
-            settingsActions = FakeStatsSettingsActions(),
             getStatsSummary = getStatsSummary,
             getDailyFocusTrend = getDailyFocusTrend,
             getTagDistribution = getTagDistribution,
@@ -260,20 +258,3 @@ private class TestClock(
     }
 }
 
-private class FakeStatsSettingsActions : StatsSettingsActions {
-    private val _referralState = MutableStateFlow(ReferralState())
-    override val referralState: StateFlow<ReferralState> = _referralState
-    override val currentUserId: StateFlow<String?> = MutableStateFlow<String?>(null)
-
-    override suspend fun verifyReferral(referralCode: String): ReferralResult =
-        ReferralResult(success = true, message = "ok")
-
-    override fun showPrivacyOptions(activity: Activity, onDismissed: (errorMessage: String?) -> Unit) {
-        onDismissed(null)
-    }
-
-    override suspend fun deleteAccount(): com.focusfarm.app.data.auth.AccountDeletionResult =
-        com.focusfarm.app.data.auth.AccountDeletionResult.Success
-    override suspend fun clearLocalData(): com.focusfarm.app.data.auth.AccountDeletionResult =
-        com.focusfarm.app.data.auth.AccountDeletionResult.Success
-}

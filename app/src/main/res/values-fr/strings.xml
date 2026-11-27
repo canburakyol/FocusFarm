@@ -439,4 +439,27 @@
     <string name="session_harvest_done">Récolte terminée</string>
     <string name="session_harvest_bonus">%1$d pour le focus + %2$d de boost</string>
     <string name="session_harvest_added">Ajouté à ton jardin et à ton solde de seeds.</string>
+    <string name="stats_missions_body">Termine les quêtes du jour et récolte des seeds.</string>
+    <string name="stats_empty_title">Pas encore de session</string>
+    <string name="stats_empty_body">Aucune session terminée sur cette période.</string>
+    <string name="stats_error_title">Un problème est survenu</string>
+    <string name="stats_focus_time">Temps de focus</string>
+    <string name="stats_daily_avg">Moyenne par jour</string>
+    <string name="stats_success_rate">Taux de réussite</string>
+    <string name="stats_percent">%d %%</string>
+    <string name="stats_daily_chart">Focus quotidien (min)</string>
+    <string name="stats_by_tag">Par étiquette</string>
+    <string name="stats_tag_minutes">%1$d min · %2$d %%</string>
+    <string name="stats_filter_7d">7 jours</string>
+    <string name="stats_filter_30d">30 jours</string>
+    <string name="stats_filter_month">Ce mois-ci</string>
+    <string name="stats_filter_year">Cette année</string>
+    <string name="season_0_title">Semaine du travail profond</string>
+    <string name="season_0_body">Renforce ton rythme avec de longs blocs de focus.</string>
+    <string name="season_1_title">Semaine de la régularité</string>
+    <string name="season_1_body">Un petit pas clair chaque jour.</string>
+    <string name="season_2_title">Semaine marathon</string>
+    <string name="season_2_body">Porte ton temps de focus au sommet.</string>
+    <string name="season_3_title">Semaine de l\'élan</string>
+    <string name="season_3_body">Garde ton élan avec des sessions courtes.</string>
 </resources>

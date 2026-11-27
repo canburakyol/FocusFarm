@@ -439,4 +439,27 @@
     <string name="session_harvest_done">Cosecha completa</string>
     <string name="session_harvest_bonus">%1$d por enfoque + %2$d de impulso</string>
     <string name="session_harvest_added">Añadido a tu jardín y a tu saldo de seeds.</string>
+    <string name="stats_missions_body">Completa las misiones de hoy y gana seeds.</string>
+    <string name="stats_empty_title">Aún no hay sesiones</string>
+    <string name="stats_empty_body">No hay sesiones completadas en este periodo.</string>
+    <string name="stats_error_title">Algo salió mal</string>
+    <string name="stats_focus_time">Tiempo de enfoque</string>
+    <string name="stats_daily_avg">Media diaria</string>
+    <string name="stats_success_rate">Tasa de éxito</string>
+    <string name="stats_percent">%d %%</string>
+    <string name="stats_daily_chart">Enfoque diario (min)</string>
+    <string name="stats_by_tag">Por etiqueta</string>
+    <string name="stats_tag_minutes">%1$d min · %2$d %%</string>
+    <string name="stats_filter_7d">7 días</string>
+    <string name="stats_filter_30d">30 días</string>
+    <string name="stats_filter_month">Este mes</string>
+    <string name="stats_filter_year">Este año</string>
+    <string name="season_0_title">Semana de trabajo profundo</string>
+    <string name="season_0_body">Refuerza tu ritmo con bloques largos de enfoque.</string>
+    <string name="season_1_title">Semana de constancia</string>
+    <string name="season_1_body">Un avance corto y claro cada día.</string>
+    <string name="season_2_title">Semana maratón</string>
+    <string name="season_2_body">Lleva tu tiempo de enfoque al máximo.</string>
+    <string name="season_3_title">Semana de impulso</string>
+    <string name="season_3_body">Mantén tu ritmo con sesiones cortas.</string>
 </resources>
