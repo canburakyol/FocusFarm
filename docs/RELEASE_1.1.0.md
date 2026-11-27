@@ -11,6 +11,8 @@
   - Bildirim ve kesin alarm izni eklendi; bunlar Data Safety'yi etkilemez.
   - Reklam kimliği (AD_ID) kullanımı değişmedi.
 - [ ] **İzin beyanı:** `SCHEDULE_EXACT_ALARM` eklendi. Bu izin, `USE_EXACT_ALARM`'dan farklı olarak Play'de özel beyan gerektirmiyor (çıkarım; Play Console uyarı verirse oradaki yönlendirmeyi izle).
+- [ ] **Kullanım Erişimi (`PACKAGE_USAGE_STATS`) eklendi** (izinli uygulamalar için, isteğe bağlı). Kullanıcı Ayarlar'dan kendisi veriyor; Play'de beyan formu yok. Data Safety: "Uygulama etkinliği > Diğer uygulama etkinliği" cihazda işleniyor ama **toplanmıyor/paylaşılmıyor** (cihaz dışına çıkmıyor). Formda buna göre işaretle.
+- [ ] Mağaza açıklamasına izinli uygulamaları ve widget'ı ekle.
 - [ ] İlk dağıtımı **dahili test** kanalına yap, ardından kademeli yayına geç (%10 → %50 → %100). Crashlytics'i her adımda kontrol et.
 
 ## 2. Son test checklist'i
@@ -59,9 +61,18 @@ Her maddeyi gerçek bir cihazda dene. En kritik kısım "güncelleme" bölümü.
 26. [ ] Ayarlar > Google > Yedekle'den yedek al, uygulamayı kaldır, yeniden kur → bahçe ve Seed geri geliyor.
 27. [ ] Ayarlar'dan "Cihaz verilerini temizle" → her şey sıfırlanıyor, uygulama çökmüyor.
 
+### F. Yeni: widget ve izinli uygulamalar
+
+28. [ ] Ana ekrana uzun bas > Widget'lar > Focus Farm → widget ekleniyor, "Bugün X / Y dk" ve seri görünüyor.
+29. [ ] Bir oturum tamamla, uygulamadan çık → widget birkaç saniye içinde güncelleniyor. "Odaklan" uygulamayı açıyor.
+30. [ ] Katı modu aç → altında "İzinli uygulamalar" satırı çıkıyor. Dokun → "Erişim ver" Ayarlar'ı açıyor; izin verip dönünce uygulama listesi geliyor.
+31. [ ] Bir uygulamayı (ör. müzik) seç, katı modlu oturum başlat, o uygulamada 2 dk kal → bitki yaşıyor.
+32. [ ] Aynı oturumda seçilmemiş bir uygulamada 2 dk kal → bitki soluyor.
+33. [ ] Kullanım erişimini Ayarlar'dan geri al → katı mod eski haline dönüyor (her uygulama sayılıyor).
+
 ## 3. Sürüm notları
 
-### Türkçe (tr-TR) — Play sınırı 500 karakter; bu metin 419
+### Türkçe (tr-TR) — Play sınırı 500 karakter; bu metin 485
 
 ```
 FocusFarm 1.1 ile odaklanmak daha sakin ve daha adil:
@@ -71,6 +82,7 @@ FocusFarm 1.1 ile odaklanmak daha sakin ve daha adil:
 • Tohum Pazarı açıldı: Seed'lerinle yeni bitkiler al
 • Bahçe yenilendi; bitkine dokun, ayrıntıları gör
 • Telefon değiştirince ilerlemen korunuyor
+• Yeni: ana ekran widget'ı ve katı modda izinli uygulamalar
 • Odak ekranında reklam yok
 • Seri ve günlük hedef hesapları düzeltildi
 ```
@@ -85,6 +97,7 @@ FocusFarm 1.1 makes focusing calmer and fairer:
 • The Seed Market is open: spend seeds on new plants
 • A new garden view; tap a plant to see its details
 • Your progress moves with you to a new phone
+• New: home-screen widget and allowed apps in strict mode
 • No ads on the focus screen
 • Fixed streak and daily goal counting
 ```
