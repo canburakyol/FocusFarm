@@ -1,6 +1,7 @@
 package com.focusfarm.app.ui.screens.session
 
 import android.content.Context
+import android.os.PowerManager
 import android.os.SystemClock
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -850,7 +851,8 @@ class SessionViewModel @Inject constructor(
 
             Lifecycle.Event.ON_STOP -> {
                 val state = _uiState.value
-                if (state.sessionState == SessionState.RUNNING && state.isStrict) {
+                val screenInteractive = appContext.getSystemService(PowerManager::class.java)?.isInteractive ?: true
+                if (shouldStartStrictKillTimer(state.sessionState, state.isStrict, screenInteractive)) {
                     savedStateHandle[KEY_BACKGROUND_START_TIME_MS] = SystemClock.elapsedRealtime()
                     savedStateHandle[KEY_BACKGROUND_START_TIME_WALL_MS] = clock.nowMillis()
                     backgroundKillJob?.cancel()
@@ -1247,3 +1249,14 @@ class SessionViewModel @Inject constructor(
         savedStateHandle.remove<String>("ambience_sound")
     }
 }
+
+/**
+ * Strict focus only punishes leaving for another app. Locking the phone or letting the screen time out
+ * also stops the activity, but that is exactly "putting the phone aside", so the plant keeps growing.
+ * When the user unlocks, the session screen returns to the foreground and the check runs again.
+ */
+internal fun shouldStartStrictKillTimer(
+    sessionState: SessionState,
+    isStrict: Boolean,
+    screenInteractive: Boolean,
+): Boolean = sessionState == SessionState.RUNNING && isStrict && screenInteractive
