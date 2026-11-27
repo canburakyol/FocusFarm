@@ -54,6 +54,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.Icons
+import com.focusfarm.app.ui.components.plantName
 
 @Composable
 fun CollectionScreen(
@@ -270,7 +271,7 @@ private fun CollectionPlantCard(
 
             // Name
             Text(
-                text = item.plant.displayName,
+                text = plantName(item.plant.id, item.plant.displayName),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,

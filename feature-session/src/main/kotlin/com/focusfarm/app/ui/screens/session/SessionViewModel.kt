@@ -63,6 +63,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.focusfarm.core.ui.R
+import com.focusfarm.app.ui.components.plantName
 
 enum class SessionState {
     IDLE,
@@ -199,10 +200,10 @@ class SessionViewModel @Inject constructor(
                 val current = _uiState.value
                 val now = clock.nowMillis()
                 if (current.sessionType == FocusSessionType.STOPWATCH) {
-                    sessionProgressNotifier.showRunning(current.plant.name, now - current.elapsedSeconds * 1000L, null)
+                    sessionProgressNotifier.showRunning(appContext.plantName(current.plant.id, current.plant.name), now - current.elapsedSeconds * 1000L, null)
                 } else {
                     val elapsedMs = (current.targetMinutes * 60 - current.remainingSeconds).coerceAtLeast(0) * 1000L
-                    sessionProgressNotifier.showRunning(current.plant.name, now - elapsedMs, now + current.remainingSeconds * 1000L)
+                    sessionProgressNotifier.showRunning(appContext.plantName(current.plant.id, current.plant.name), now - elapsedMs, now + current.remainingSeconds * 1000L)
                 }
             }
             SessionNotificationAction.CANCEL -> sessionProgressNotifier.cancel()

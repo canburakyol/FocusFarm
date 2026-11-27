@@ -492,4 +492,16 @@
     <string name="shop_ad_unavailable">No ad is ready right now. Try again in a bit.</string>
     <string name="shop_reward_failed">Couldn\'t add the reward. Try again.</string>
     <string name="cd_open_shop">Open seed market</string>
+    <string name="plant_sprout">Green Sprout</string>
+    <string name="plant_sunflower">Sunflower</string>
+    <string name="plant_cactus">Cactus</string>
+    <string name="plant_tree">Oak</string>
+    <string name="plant_mushroom">Mushroom</string>
+    <string name="plant_cherry">Cherry Blossom</string>
+    <string name="plant_bamboo">Bamboo</string>
+    <string name="plant_lotus">Lotus</string>
+    <string name="plant_clover">Four-Leaf Clover</string>
+    <string name="plant_bonsai">Bonsai</string>
+    <string name="plant_carrot">Carrot</string>
+    <string name="plant_lavender">Lavender</string>
 </resources>

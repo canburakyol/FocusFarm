@@ -94,6 +94,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Insights
 import androidx.compose.material.icons.rounded.Flag
+import com.focusfarm.app.ui.components.plantName
 
 @Composable
 fun StatsScreen(
@@ -627,7 +628,7 @@ private fun SessionRow(session: FocusSession) {
         Spacer(Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                PlantSpeciesCatalog.getById(session.plantId)?.displayName ?: session.plantName,
+                plantName(session.plantId, PlantSpeciesCatalog.getById(session.plantId)?.displayName ?: session.plantName),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
             )

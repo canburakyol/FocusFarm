@@ -492,4 +492,16 @@
     <string name="shop_ad_unavailable">Aucune pub disponible pour l\'instant. Réessaie bientôt.</string>
     <string name="shop_reward_failed">Impossible d\'ajouter la récompense.</string>
     <string name="cd_open_shop">Ouvrir le marché</string>
+    <string name="plant_sprout">Pousse verte</string>
+    <string name="plant_sunflower">Tournesol</string>
+    <string name="plant_cactus">Cactus</string>
+    <string name="plant_tree">Chêne</string>
+    <string name="plant_mushroom">Champignon</string>
+    <string name="plant_cherry">Fleur de cerisier</string>
+    <string name="plant_bamboo">Bambou</string>
+    <string name="plant_lotus">Lotus</string>
+    <string name="plant_clover">Trèfle à quatre feuilles</string>
+    <string name="plant_bonsai">Bonsaï</string>
+    <string name="plant_carrot">Carotte</string>
+    <string name="plant_lavender">Lavande</string>
 </resources>

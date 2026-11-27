@@ -492,4 +492,16 @@
     <string name="shop_ad_unavailable">Gerade ist keine Werbung verfügbar. Versuch es gleich noch mal.</string>
     <string name="shop_reward_failed">Belohnung konnte nicht gutgeschrieben werden.</string>
     <string name="cd_open_shop">Samenmarkt öffnen</string>
+    <string name="plant_sprout">Grüner Spross</string>
+    <string name="plant_sunflower">Sonnenblume</string>
+    <string name="plant_cactus">Kaktus</string>
+    <string name="plant_tree">Eiche</string>
+    <string name="plant_mushroom">Pilz</string>
+    <string name="plant_cherry">Kirschblüte</string>
+    <string name="plant_bamboo">Bambus</string>
+    <string name="plant_lotus">Lotus</string>
+    <string name="plant_clover">Vierblättriges Kleeblatt</string>
+    <string name="plant_bonsai">Bonsai</string>
+    <string name="plant_carrot">Karotte</string>
+    <string name="plant_lavender">Lavendel</string>
 </resources>

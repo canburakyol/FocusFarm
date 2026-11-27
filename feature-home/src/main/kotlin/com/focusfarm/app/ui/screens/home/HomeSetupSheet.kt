@@ -42,6 +42,7 @@ import com.focusfarm.app.domain.GrowthStage
 import com.focusfarm.app.ui.components.PlantDisplay
 import com.focusfarm.app.ui.components.labelRes
 import com.focusfarm.core.ui.R
+import com.focusfarm.app.ui.components.plantName
 
 /**
  * Odak kurulum detayları (bitki, mod, süre, etiket, strict, ambiyans).
@@ -104,7 +105,7 @@ fun HomeSetupSheet(
             ) {
                 items(state.availablePlants) { plant ->
                     val isSelected = plant.id == state.selectedPlantId
-                    val selectLabel = stringResource(R.string.setup_select_plant, plant.name)
+                    val selectLabel = stringResource(R.string.setup_select_plant, plantName(plant.id, plant.name))
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier

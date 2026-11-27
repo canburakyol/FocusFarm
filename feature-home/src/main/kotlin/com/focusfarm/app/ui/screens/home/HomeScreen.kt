@@ -60,6 +60,7 @@ import com.focusfarm.app.ui.components.SeedIcon
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.core.ui.R
 import kotlinx.coroutines.flow.collectLatest
+import com.focusfarm.app.ui.components.plantName
 
 @Composable
 fun HomeScreen(
@@ -299,7 +300,7 @@ private fun PlantHero(plant: Plant, onClick: () -> Unit) {
         Spacer(Modifier.height(8.dp))
         TextButton(onClick = onClick) {
             Text(
-                text = plant.name,
+                text = plantName(plant.id, plant.name),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -453,11 +454,12 @@ private fun DailyGoalSection(
         if (plants.isNotEmpty()) {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 items(plants) { grown ->
+                    val grownName = plantName(grown.plantId, grown.name)
                     PlantDisplay(
                         plant = PlantCatalog.getById(grown.plantId) ?: PlantCatalog.FREE.first(),
                         stage = GrowthStage.FULL,
                         size = 40.dp,
-                        modifier = Modifier.semantics { contentDescription = grown.name },
+                        modifier = Modifier.semantics { contentDescription = grownName },
                     )
                 }
             }

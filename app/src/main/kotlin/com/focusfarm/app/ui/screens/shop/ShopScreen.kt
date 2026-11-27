@@ -56,6 +56,7 @@ import com.focusfarm.app.ui.components.FocusBackdrop
 import com.focusfarm.app.ui.components.PlantDisplay
 import com.focusfarm.app.ui.components.SeedIcon
 import kotlinx.coroutines.flow.collectLatest
+import com.focusfarm.app.ui.components.plantName
 
 /** Seed market: the one place seeds are spent, on plants that are locked by default. */
 @Composable
@@ -182,7 +183,7 @@ private fun PlantOffer(item: ShopItem, onBuy: () -> Unit) {
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                text = plant?.name ?: item.product.displayName,
+                text = plantName(item.product.id, plant?.name ?: item.product.displayName),
                 style = MaterialTheme.typography.titleSmall,
                 textAlign = TextAlign.Center,
                 maxLines = 1,

@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import com.focusfarm.app.ui.components.plantName
 
 data class CollectionPlantUiState(
     val plant: PlantSpecies,
@@ -123,7 +124,7 @@ class CollectionViewModel @Inject constructor(
             _statusMessage.value = if (success) {
                 context.getString(
                     R.string.status_collection_reward_claimed,
-                    target.plant.displayName,
+                    context.plantName(target.plant.id, target.plant.displayName),
                     target.rewardSeeds,
                 )
             } else {

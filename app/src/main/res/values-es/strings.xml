@@ -492,4 +492,16 @@
     <string name="shop_ad_unavailable">Ahora no hay anuncios. Inténtalo en un momento.</string>
     <string name="shop_reward_failed">No se pudo añadir la recompensa.</string>
     <string name="cd_open_shop">Abrir mercado de semillas</string>
+    <string name="plant_sprout">Brote verde</string>
+    <string name="plant_sunflower">Girasol</string>
+    <string name="plant_cactus">Cactus</string>
+    <string name="plant_tree">Roble</string>
+    <string name="plant_mushroom">Seta</string>
+    <string name="plant_cherry">Flor de cerezo</string>
+    <string name="plant_bamboo">Bambú</string>
+    <string name="plant_lotus">Loto</string>
+    <string name="plant_clover">Trébol de cuatro hojas</string>
+    <string name="plant_bonsai">Bonsái</string>
+    <string name="plant_carrot">Zanahoria</string>
+    <string name="plant_lavender">Lavanda</string>
 </resources>

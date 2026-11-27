@@ -507,4 +507,16 @@
     <string name="shop_ad_unavailable">Reklam şu an hazır değil. Biraz sonra tekrar dene.</string>
     <string name="shop_reward_failed">Ödül eklenemedi. Tekrar dene.</string>
     <string name="cd_open_shop">Tohum pazarını aç</string>
+    <string name="plant_sprout">Yeşil Filiz</string>
+    <string name="plant_sunflower">Ayçiçeği</string>
+    <string name="plant_cactus">Kaktüs</string>
+    <string name="plant_tree">Meşe</string>
+    <string name="plant_mushroom">Mantar</string>
+    <string name="plant_cherry">Kiraz Çiçeği</string>
+    <string name="plant_bamboo">Bambu</string>
+    <string name="plant_lotus">Nilüfer</string>
+    <string name="plant_clover">Dört Yapraklı Yonca</string>
+    <string name="plant_bonsai">Bonsai</string>
+    <string name="plant_carrot">Havuç</string>
+    <string name="plant_lavender">Lavanta</string>
 </resources>

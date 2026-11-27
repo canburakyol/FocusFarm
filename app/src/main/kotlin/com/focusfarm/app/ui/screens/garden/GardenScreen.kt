@@ -73,6 +73,7 @@ import com.focusfarm.app.ui.components.PlantDisplay
 import com.focusfarm.app.ui.components.PlantVectorRenderer
 import com.focusfarm.app.ui.components.ShareGardenDialog
 import java.util.Date
+import com.focusfarm.app.ui.components.plantName
 
 /**
  * The garden is a field the user fills over time: plants stand on soft plots, withered ones fade,
@@ -252,7 +253,7 @@ private fun GardenField(entries: List<GardenEntry>, onSelect: (GardenEntry) -> U
 @Composable
 private fun PlantPlot(entry: GardenEntry, onClick: () -> Unit) {
     val withered = entry.state == GardenPlantState.WITHERED
-    val name = PlantSpeciesCatalog.getById(entry.plantSpeciesId)?.displayName.orEmpty()
+    val name = plantName(entry.plantSpeciesId, PlantSpeciesCatalog.getById(entry.plantSpeciesId)?.displayName.orEmpty())
     val stateLabel = stringResource(if (withered) R.string.garden_withered else R.string.garden_bloomed)
     Box(
         contentAlignment = Alignment.BottomCenter,
@@ -280,7 +281,7 @@ private fun PlantPlot(entry: GardenEntry, onClick: () -> Unit) {
 private fun PlantDetailSheet(entry: GardenEntry, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val withered = entry.state == GardenPlantState.WITHERED
-    val name = PlantSpeciesCatalog.getById(entry.plantSpeciesId)?.displayName.orEmpty()
+    val name = plantName(entry.plantSpeciesId, PlantSpeciesCatalog.getById(entry.plantSpeciesId)?.displayName.orEmpty())
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.surface) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
