@@ -34,6 +34,8 @@ data class WeeklyChallengeProgress(
     val rewardSeeds: Int,
     val currentMinutes: Int,
     val currentSessions: Int,
+    /** 0..3, picks the localized season title and subtitle in the UI. */
+    val seasonIndex: Int = 0,
 ) {
     val isCompleted: Boolean
         get() = currentMinutes >= targetMinutes && currentSessions >= targetSessions
@@ -60,6 +62,7 @@ object FocusProgressEngine {
     private const val WEEKLY_TARGET_SESSIONS = 8
 
     private data class WeeklySeason(
+        val index: Int,
         val title: String,
         val subtitle: String,
         val targetMinutes: Int,
@@ -192,7 +195,8 @@ object FocusProgressEngine {
     ): WeeklyChallengeProgress {
         val startOfWeekDate = startOfWeekDate(nowMillis, zoneId)
         val startOfWeek = startOfWeekDate.atStartOfDay(zoneId).toInstant().toEpochMilli()
-        val weekSessions = sessions.filter { it.completedAt >= startOfWeek }
+        // Only completed sessions count; withered ones store their planned length and would pay out the reward.
+        val weekSessions = sessions.filter { it.status == SessionStatus.COMPLETED && it.completedAt >= startOfWeek }
         val season = seasonForWeek(startOfWeekDate)
         return WeeklyChallengeProgress(
             weekKey = startOfWeekDate.toString(),
@@ -203,6 +207,7 @@ object FocusProgressEngine {
             rewardSeeds = season.rewardSeeds,
             currentMinutes = weekSessions.sumOf { it.durationMinutes },
             currentSessions = weekSessions.size,
+            seasonIndex = season.index,
         )
     }
 
@@ -267,6 +272,7 @@ object FocusProgressEngine {
         val weekNumber = weekStartDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear())
         return when (weekNumber % 4) {
             0 -> WeeklySeason(
+                index = 0,
                 title = "Derin Çalışma Haftası",
                 subtitle = "Uzun odak bloklarıyla ritmini güçlendir.",
                 targetMinutes = WEEKLY_TARGET_MINUTES,
@@ -275,6 +281,7 @@ object FocusProgressEngine {
             )
 
             1 -> WeeklySeason(
+                index = 1,
                 title = "İstikrar Haftası",
                 subtitle = "Her gün kısa ama net bir ilerleme.",
                 targetMinutes = 220,
@@ -283,6 +290,7 @@ object FocusProgressEngine {
             )
 
             2 -> WeeklySeason(
+                index = 2,
                 title = "Maraton Haftası",
                 subtitle = "Toplam odak süreni zirveye taşı.",
                 targetMinutes = 420,
@@ -291,6 +299,7 @@ object FocusProgressEngine {
             )
 
             else -> WeeklySeason(
+                index = 3,
                 title = "Momentum Haftası",
                 subtitle = "Kısa seanslarla ivmeni koru.",
                 targetMinutes = 180,

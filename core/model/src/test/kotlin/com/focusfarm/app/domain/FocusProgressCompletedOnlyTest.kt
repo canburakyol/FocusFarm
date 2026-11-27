@@ -43,4 +43,14 @@ class FocusProgressCompletedOnlyTest {
         assertThat(FocusProgressEngine.currentStreakDays(sessions, dailyGoalMinutes = 10, nowMillis = noon, zoneId = zone))
             .isEqualTo(1)
     }
+
+    @Test
+    fun witheredSessionsDoNotAdvanceTheWeeklyChallenge() {
+        val sessions = listOf(session(5, SessionStatus.COMPLETED), session(25, SessionStatus.FAILED))
+
+        val challenge = FocusProgressEngine.weeklyChallenge(sessions, noon + 60_000, zone)
+
+        assertThat(challenge.currentMinutes).isEqualTo(5)
+        assertThat(challenge.currentSessions).isEqualTo(1)
+    }
 }
