@@ -60,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -296,6 +297,8 @@ private fun ActiveSessionScreen(
                 fontFamily = TimerFontFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = if (isLandscape) 44.sp else 60.sp,
+                // Fixed-width digits so the countdown does not shift sideways every second.
+                style = TextStyle(fontFeatureSettings = "tnum"),
                 color = MaterialTheme.colorScheme.onBackground,
             )
             Spacer(Modifier.height(4.dp))

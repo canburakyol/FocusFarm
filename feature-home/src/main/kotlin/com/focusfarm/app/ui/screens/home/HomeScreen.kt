@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -314,6 +315,7 @@ private fun DurationDisplay(state: HomeUiState, onClick: () -> Unit) {
             text = if (isStopwatch) "00:00" else "%02d:00".format(state.selectedMinutes),
             fontFamily = TimerFontFamily,
             fontSize = 64.sp,
+            style = TextStyle(fontFeatureSettings = "tnum"),
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface,
         )
