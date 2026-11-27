@@ -188,78 +188,7 @@ fun HomeSetupSheet(
                     steps = 35,
                     modifier = Modifier.padding(horizontal = 8.dp),
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    state.quickDurations.forEach { minutes ->
-                        val selected = state.selectedMinutes == minutes
-                        FilterChip(
-                            selected = selected,
-                            onClick = { onIntent(HomeIntent.SelectDuration(minutes)) },
-                            label = {
-                                Text(
-                                    text = stringResource(R.string.minutes_short, minutes),
-                                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-                                )
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.72f),
-                                selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                                selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
-                            ),
-                            shape = RoundedCornerShape(18.dp),
-                        )
-                    }
-                }
-            }
-        } else {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
-                ),
-            ) {
-                Text(
-                    text = stringResource(R.string.setup_stopwatch_note),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(16.dp),
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-
-        // Tags Selector
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.setup_tag),
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(state.availableTags) { tag ->
-                    val selected = state.selectedTag == tag
-                    FilterChip(
-                        selected = selected,
-                        onClick = { onIntent(HomeIntent.SelectTag(tag)) },
-                        label = { Text(stringResource(tag.labelRes())) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.58f),
-                            selectedContainerColor = MaterialTheme.colorScheme.secondary,
-                            selectedLabelColor = MaterialTheme.colorScheme.onSecondary,
-                        ),
-                        shape = RoundedCornerShape(18.dp),
-                    )
-                }
+                // Quick presets live on the home screen; the sheet keeps the fine-grained slider.
             }
         }
 
