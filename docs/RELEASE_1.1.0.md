@@ -72,7 +72,7 @@ Her maddeyi gerçek bir cihazda dene. En kritik kısım "güncelleme" bölümü.
 
 ## 3. Sürüm notları
 
-### Türkçe (tr-TR) — Play sınırı 500 karakter; bu metin 485
+### Türkçe (tr-TR) — Play sınırı 500 karakter; bu metin 479
 
 ```
 FocusFarm 1.1 ile odaklanmak daha sakin ve daha adil:
