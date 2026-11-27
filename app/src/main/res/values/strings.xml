@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="PluralsCandidate">
     <string name="app_name">Focus Farm</string>
 
@@ -10,6 +10,18 @@
     <string name="greeting">Focus Farm</string>
     <string name="greeting_subtitle">Bugün neye odaklanacaksın?</string>
     <string name="start_focus">Odak Oturumunu Başlat</string>
+    <string name="recovery_channel_name">Seans kurtarma</string>
+    <string name="recovery_resume_title">Odak seansın devam ediyor</string>
+    <string name="recovery_resume_text">Kaldığın yerden devam etmek için dokun.</string>
+    <string name="recovery_offer_title">Emeğin kaybolmadı</string>
+    <string name="recovery_offer_text">%d dakikalık kurtarma seansıyla devam et.</string>
+    <string name="recovery_finalize_title">Seansın tamamlanmayı bekliyor</string>
+    <string name="recovery_finalize_text">Ödülünü güvenle tamamlamak için dokun.</string>
+    <string name="session_evaluation_title">Bu seans nasıl hissettirdi?</string>
+    <string name="session_evaluation_easy">Kolay</string>
+    <string name="session_evaluation_moderate">Tam kıvamında</string>
+    <string name="session_evaluation_hard">Çok zorladı</string>
+    <string name="session_next_suggestion">Sonraki seans önerin: %d dakika</string>
     <string name="select_plant">Bitki Seç</string>
     <string name="select_duration">Süre Seç</string>
     <string name="minutes_short">%d dk</string>
@@ -27,6 +39,10 @@
     <string name="plant_died">Bitki Soldu</string>
     <string name="plant_died_desc">Oturum bitmeden uygulamadan uzun süre ayrı kaldığın için bitkin soldu. Yeniden deneyebilirsin.</string>
     <string name="session_complete">Oturum Tamamlandı</string>
+    <string name="session_finalizing_title">Oturum Kaydediliyor</string>
+    <string name="session_finalizing_body">Oturumun ve ödülün güvenli şekilde kaydediliyor. Bu adım tamamlanınca sonuç ekranı açılacak.</string>
+    <string name="session_finalizing_retry">Tekrar Dene</string>
+    <string name="session_persist_failed_retry">Oturum kaydı tamamlanamadı. Tekrar deneyerek kaydı güvenli şekilde bitirebilirsin.</string>
     <string name="go_garden">Bahçeye Git</string>
     <string name="go_home">Ana Sayfaya Dön</string>
     <string name="go_back">Geri</string>
@@ -111,7 +127,7 @@
     <string name="quest_claimed">Alındı</string>
     <string name="quest_reward_seeds">Ödül: +%d seed</string>
 
-    <string name="weekly_challenge_progress">Oturum %1$d/%2$d - Dakika %3$d/%4$d</string>
+    <string name="weekly_challenge_progress">Oturum %1$d/%2$d · Dakika %3$d/%4$d</string>
     <string name="weekly_reward_seeds">Haftalık ödül: +%d seed</string>
     <string name="weekly_reward_claim">Haftalık Ödülü Al</string>
     <string name="weekly_reward_claimed">Haftalık ödül alındı</string>
@@ -141,12 +157,14 @@
     <string name="day_sun_short">Paz</string>
 
     <string name="shop_subtitle">Koleksiyonunu genişlet</string>
-    <string name="admob_app_id">ca-app-pub-3074026744164717~3241143217</string>
-    <string name="admob_rewarded_unit_id">ca-app-pub-3074026744164717/3456765631</string>
-    <string name="admob_banner_unit_id">ca-app-pub-3074026744164717/8709092317</string>
+    <string name="admob_app_id" translatable="false">ca-app-pub-3074026744164717~3241143217</string>
+    <string name="admob_rewarded_unit_id" translatable="false">ca-app-pub-3074026744164717/3456765631</string>
+    <string name="admob_banner_unit_id" translatable="false">ca-app-pub-3074026744164717/8709092317</string>
     <string name="ad_banner_label">Destek için reklam</string>
     <string name="ad_rewards_title">Bonus Merkezi</string>
     <string name="ad_rewards_desc">Kısa reklam izleyerek ekstra ödül kazan.</string>
+    <string name="ad_consent_pending_title">Reklam izni bekleniyor</string>
+    <string name="ad_consent_pending_body">Reklam yüzeyleri, izin tercihin tamamlandıktan sonra açılacak.</string>
     <string name="ad_reward_quest_reroll_action">Reklam İzle • 1 Görevi Yenile</string>
     <string name="ad_reward_quest_reroll_done">Görev yenileme bugün kullanıldı</string>
     <string name="ad_reward_next_session_boost_action">Reklam İzle • Sonraki Oturum 2x Seed</string>
@@ -176,6 +194,8 @@
     <string name="reminder_body">Kısa bir oturumla ritmini koru.</string>
 
     <string name="action_ok">Tamam</string>
+    <string name="action_cancel">İptal</string>
+    <string name="action_share">Paylaş</string>
 
     <string name="status_quest_claimed">+%d seed kazanıldı.</string>
     <string name="status_quest_claim_failed">Görev ödülü alınamadı.</string>
@@ -201,4 +221,311 @@
     <string name="session_reward_loading">Oturum ödülü hesaplanıyor…</string>
     <string name="session_reward_seeds">Oturum ödülü: +%d seed</string>
     <string name="session_reward_seeds_boosted">Oturum ödülü: +%1$d seed (2x bonus, normal %2$d)</string>
+
+    <string name="settings_privacy_preferences">Gizlilik Tercihlerini Düzenle</string>
+    <string name="settings_privacy_policy_button">Gizlilik Politikasını Aç</string>
+    <string name="settings_account_data_title">Hesap ve Veriler</string>
+    <string name="settings_account_delete_body">Firebase hesabınız ve cihazdaki ilerlemeniz silinir. Play satın alma geçmişiniz etkilenmez.</string>
+    <string name="settings_delete_account_button">Hesabımı Sil</string>
+    <string name="settings_delete_account_title">Hesabı Sil?</string>
+    <string name="settings_delete_account_confirm_body">Hesabınız ve cihazdaki ilerlemeniz silinecek. Play satın alma geçmişiniz silinmez. Devam edilsin mi?</string>
+    <string name="settings_delete_account_confirm">Evet, Sil</string>
+    <string name="settings_clear_local_data_body">Oturum açık değil. Bu cihazdaki ilerlemeyi silebilirsiniz; çevrimiçi hesap silinmez.</string>
+    <string name="settings_clear_local_data_button">Cihazdaki Verileri Temizle</string>
+    <string name="settings_clear_local_data_title">Cihazdaki Veriler Silinsin mi?</string>
+    <string name="settings_clear_local_data_confirm_body">Bu cihazdaki ilerleme ve ayarlar silinecek. Çevrimiçi hesaplara ve Play satın alma geçmişine dokunulmaz.</string>
+    <string name="settings_clear_local_data_confirm">Verileri Temizle</string>
+    <string name="settings_delete_processing">Siliniyor…</string>
+    <string name="settings_delete_no_account">Hesap oturumu kapandı. Yalnızca cihazdaki verileri temizlemek için yeniden açın.</string>
+    <string name="settings_delete_reauth_required">Firebase hesabı silinmedi. Yeniden kimlik doğrulaması gerekiyor; bu uygulamada yeniden giriş akışı henüz yok. Verileriniz korunuyor.</string>
+    <string name="settings_delete_remote_failed">Firebase hesabı silinemedi. Verileriniz korunuyor; bağlantıyı kontrol edip tekrar deneyin.</string>
+    <string name="settings_delete_local_failed">Hesap silindi ancak cihazdaki veriler tamamen temizlenemedi. Uygulamayı yeniden açıp yerel temizlemeyi deneyin.</string>
+    <string name="settings_clear_local_failed">Cihazdaki veriler tamamen temizlenemedi. Tekrar deneyin.</string>
+    <string name="settings_feedback_title" tools:ignore="MissingTranslation">Geri Bildirim Gönder</string>
+    <string name="settings_feedback_body" tools:ignore="MissingTranslation">Optional, no account required.</string>
+    <string name="settings_feedback_rate_button" tools:ignore="MissingTranslation">Uygulamayı Değerlendir</string>
+    <string name="settings_feedback_send_button" tools:ignore="MissingTranslation">Geliştiriciye Yaz</string>
+    <string name="feedback_email" translatable="false">biyokimya58@gmail.com</string>
+    <string name="feedback_subject" tools:ignore="MissingTranslation">Focus Farm Geri Bildirim</string>
+    <string name="feedback_chooser_title" tools:ignore="MissingTranslation">E-posta uygulaması seç</string>
+    <string name="feedback_no_email_app" tools:ignore="MissingTranslation">E-posta uygulaması bulunamadı.</string>
+    <string name="share_garden_title">Bahçeni Paylaş</string>
+    <string name="share_garden_preview_content_description">Bahçe önizlemesi</string>
+    <string name="share_garden_message">Odaklanarak bahçemi büyüttüm! Sen de katıl.</string>
+    <string name="referral_share_text">FocusFarm ile odaklanarak bahçemi büyütüyorum! Sen de katıl: %s</string>
+    <string name="referral_share_chooser_title">Arkadaşını Davet Et</string>
+
+    <string name="paywall_title">FocusFarm Premium</string>
+    <string name="paywall_subtitle">Odak yolculuğunu zirveye taşı</string>
+    <string name="paywall_feature_1">Tüm premium bitkilere erişim</string>
+    <string name="paywall_feature_2">Reklamsız deneyim</string>
+    <string name="paywall_feature_3">Gelişmiş istatistikler</string>
+    <string name="paywall_feature_4">Özel bahçe temaları</string>
+    <string name="paywall_feature_5">Sonsuz freeze hakkı</string>
+    <string name="paywall_feature_6">2x seed kazancı</string>
+    <string name="paywall_trial_button">Ücretsiz Dene - 3 Gün</string>
+    <string name="paywall_restore">Satın Alımları Geri Yükle</string>
+    <string name="paywall_disclaimer">3 gün ücretsiz deneme sonrası otomatik olarak seçilen plan ücretlendirilir. İstediğin zaman iptal edebilirsin.</string>
+    <string name="paywall_close">Kapat</string>
+    <string name="paywall_recommended">ONERILEN</string>
+    <string name="paywall_error_purchase_failed">Satin alma basarisiz</string>
+    <string name="paywall_error_restore_failed">Geri yukleme basarisiz</string>
+    <string name="paywall_plan_monthly_desc">Her ay yenilenir</string>
+    <string name="paywall_plan_yearly_desc">Her yıl yenilenir</string>
+    <string name="paywall_plan_yearly_savings">%%44 tasarruf</string>
+    <string name="paywall_plan_lifetime_desc">Tek ödeme, sonsuza kadar</string>
+    <string name="paywall_error_connection">Bağlantı hatası: %s</string>
+    <string name="paywall_error_purchase_failed_with_message">Satın alma başarısız: %s</string>
+    <string name="paywall_error_restore_failed_with_message">Geri yükleme başarısız: %s</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_referral_title">Arkadaş Kodu Kullan</string>
+    <string name="settings_referral_desc">Bir arkadaşının kodunu girerek 50 Seed kazan.</string>
+    <string name="settings_referral_label">Kod</string>
+    <string name="settings_referral_apply">Uygula</string>
+    <string name="settings_privacy_title">Gizlilik ve Reklamlar</string>
+    <string name="settings_privacy_desc">Reklam rızanızı ve gizlilik seçeneklerinizi dilediğiniz zaman düzenleyebilirsiniz.</string>
+    <string name="referral_error_needs_session">Referral kodunu kullanabilmek için en az 1 odak oturumu tamamlamış olmalısın.</string>
+
+    <!-- Invite Friends Screen -->
+    <string name="referral_title">Arkadaşlarını Davet Et</string>
+    <string name="referral_subtitle">Her davet için 50 seed kazan!</string>
+    <string name="referral_your_code">Senin Kodun</string>
+    <string name="referral_loading">Yükleniyor...</string>
+    <string name="referral_friends_joined">%d arkadaş katıldı</string>
+    <string name="referral_how_it_works">Nasıl Çalışır?</string>
+    <string name="referral_step_1_title">Kodunu Paylaş</string>
+    <string name="referral_step_1_desc">Arkadaşlarına kodunu veya davet linkini gönder</string>
+    <string name="referral_step_2_title">Arkadaşin Katılır</string>
+    <string name="referral_step_2_desc">Arkadaşın kodu kullanarak FocusFarm\'a katılır</string>
+    <string name="referral_step_3_title">50 Seed Kazan</string>
+    <string name="referral_step_3_desc">Her başarılı davet için 50 seed kazanırsın</string>
+    <string name="action_close">Kapat</string>
+    <string name="referral_share_button">Davet Linkini Paylaş</string>
+
+    <!-- Focus Party Screen -->
+    <string name="party_title">Birlikte Odaklan</string>
+    <string name="party_subtitle">Arkadaşlarınla aynı anda odaklan, birlikte büyüyün!</string>
+    <string name="party_card_title">Parti Oluştur veya Katıl</string>
+    <string name="party_create_button">Yeni Parti Oluştur</string>
+    <string name="party_join_button">Kodla Katıl</string>
+    <string name="party_code_label">Parti Kodu: %s</string>
+    <string name="party_leave_button">Ayrıl</string>
+    <string name="party_members_count">%1$d/%2$d Üye</string>
+    <string name="party_start_session_button">Oturumu Başlat (%d dk)</string>
+
+    <!-- Billing strings -->
+    <string name="billing_ready_error">Satın alma servisi henüz hazır değil.</string>
+    <string name="billing_load_error">Bu plan şu an yüklenemedi, tekrar dene.</string>
+    <string name="billing_purchase_cancelled">Satın alma iptal edildi.</string>
+    <string name="billing_pending_activation">Satın alma işlemin tamamlanınca Premium aktif olacak.</string>
+    <string name="billing_net_error">Ağ hatası oluştu. Tekrar dene.</string>
+    <string name="billing_service_unavailable">Google Play servisine ulaşılamıyor.</string>
+    <string name="billing_unavailable">Cihazında faturalandırma kullanılamıyor.</string>
+    <string name="billing_item_unavailable">Bu ürün şu anda kullanılamıyor.</string>
+    <string name="billing_purchase_failed">Satın alma işlemi tamamlanamadı.</string>
+    <string name="home_change_plant">Bitkiyi değiştir</string>
+    <string name="home_edit_setup">Odak ayarlarını düzenle</string>
+    <string name="home_strict_mode">Katı mod</string>
+    <string name="home_stopwatch_label">Serbest süre</string>
+    <string name="home_goal_progress">%1$d / %2$d dk</string>
+    <string name="home_mission_progress">%1$d / %2$d · +%3$d Seed</string>
+    <string name="home_mission_claim">Ödülü al</string>
+    <string name="home_daily_bonus_title">Günlük bonus</string>
+    <string name="home_daily_bonus_ad">Kısa bir reklam izle, 50 Seed kazan.</string>
+    <string name="home_daily_bonus_premium">Premium üyeliğinle 50 Seed\'ini hemen al.</string>
+    <string name="session_pause">Durdur</string>
+    <string name="session_paused">Durduruldu</string>
+    <string name="session_finish">Tamamla</string>
+    <string name="ambience_off">Sessiz</string>
+    <string name="ambience_rain">Yağmur</string>
+    <string name="ambience_white_noise">Beyaz gürültü</string>
+    <string name="plant_gave_up_desc">Oturumu erken bitirdiğin için bitkin soldu. Bir sonraki oturumda yeniden dene.</string>
+    <string name="nav_focus">Odaklan</string>
+    <string name="tag_work">Çalışma</string>
+    <string name="tag_study">Ders</string>
+    <string name="tag_reading">Okuma</string>
+    <string name="tag_exercise">Egzersiz</string>
+    <string name="tag_other">Diğer</string>
+    <string name="mode_countdown">Geri sayım</string>
+    <string name="mode_stopwatch">Kronometre</string>
+    <string name="mode_pomodoro">Pomodoro</string>
+    <string name="mode_short_break">Kısa mola</string>
+    <string name="mode_long_break">Uzun mola</string>
+    <string name="nudge_celebrate_title">Bugünün bahçesi tamam</string>
+    <string name="nudge_celebrate_body">Hedefini doldurdun. İstersen sakin bir ek oturumla bahçeni büyüt.</string>
+    <string name="nudge_streak_title">Serini koru</string>
+    <string name="nudge_streak_body">%d günlük serin için bugün kısa bir odak oturumu yeterli.</string>
+    <string name="nudge_progress_title">Ritmini sürdür</string>
+    <string name="nudge_progress_body">Günlük hedefine ulaşmak için %d dakika daha odaklan.</string>
+    <string name="nudge_welcome_title">Bahçene küçük bir başlangıç yap</string>
+    <string name="nudge_welcome_body">Bugün kısa bir odak oturumu seç ve ilk filizini büyüt.</string>
+    <string name="mission_focus_minutes">%d dakika odaklan</string>
+    <string name="mission_deep_session">Tek seferde %d dakika odaklan</string>
+    <string name="mission_generic">Günlük görevi tamamla</string>
+    <string name="mission_reward_toast">Görev ödülü alındı: +%d Seed</string>
+    <string name="setup_title">Odak kurulumu</string>
+    <string name="setup_plant">Yetiştirilecek bitki</string>
+    <string name="setup_mode">Oturum modu</string>
+    <string name="setup_duration">Süre: %d dakika</string>
+    <string name="setup_stopwatch_note">Kronometre modunda süre sınırı yoktur.</string>
+    <string name="setup_tag">Oturum etiketi</string>
+    <string name="setup_strict_body">Uygulamadan ayrılırsan bitkin solar.</string>
+    <string name="setup_ambience">Ortam sesi</string>
+    <string name="setup_select_plant">%s seç</string>
+    <string name="milestone_seed_title" formatted="false">Tohum kök salıyor</string>
+    <string name="milestone_seed_body" formatted="false">İlk büyüme için %25\'e ulaş.</string>
+    <string name="milestone_sprout_title" formatted="false">İlk filiz çıktı</string>
+    <string name="milestone_sprout_body" formatted="false">Odak akışın %25 tamamlandı.</string>
+    <string name="milestone_growing_title" formatted="false">Bahçen canlanıyor</string>
+    <string name="milestone_growing_body" formatted="false">Yolun yarısındasın: %50 odaklandı.</string>
+    <string name="milestone_maturing_title" formatted="false">Bitkin güçleniyor</string>
+    <string name="milestone_maturing_body" formatted="false">Son hasada %25 kaldı: %75 tamamlandı.</string>
+    <string name="milestone_full_title" formatted="false">Hasat vakti</string>
+    <string name="milestone_full_body" formatted="false">Odak oturumun tamamlandı.</string>
+    <plurals name="mission_complete_sessions">
+        <item quantity="one">%d odak seansı tamamla</item>
+        <item quantity="other">%d odak seansı tamamla</item>
+    </plurals>
+    <string name="session_channel_name">Odak oturumu</string>
+    <string name="session_done_channel_name">Oturum tamamlandı</string>
+    <string name="session_notif_running_title">%s büyüyor</string>
+    <string name="session_notif_running_text">Telefonu kenara bırak. Bitince haber vereceğiz.</string>
+    <string name="session_notif_done_title">%s büyüdü</string>
+    <string name="session_notif_done_text">Hasadını görmek için FocusFarm\'ı aç.</string>
+    <string name="garden_withered">Soldu</string>
+    <string name="cd_back">Geri</string>
+    <string name="seeds_plus">+%d Seed</string>
+    <string name="missions_refreshed">Görevler yenilendi</string>
+    <string name="missions_today">Bugünün görevleri</string>
+    <string name="missions_intro">Oturumları tamamlayarak Seed kazan. Görevler her gece yarısı yenilenir.</string>
+    <string name="missions_reroll_premium">Görevleri yenile (Premium)</string>
+    <string name="missions_reroll_ad">Görevleri yenile (reklam)</string>
+    <string name="missions_reroll_used">Bugünkü yenileme hakkını kullandın.</string>
+    <string name="missions_claimed">Ödül alındı</string>
+    <string name="missions_in_progress">Devam ediyor</string>
+    <string name="missions_congrats_title">Tebrikler!</string>
+    <string name="missions_congrats_body">Görev tamamlandı, ödülün cüzdanına eklendi.</string>
+    <string name="streak_title">Odak serisi</string>
+    <string name="streak_freezes">Dondurma: %d</string>
+    <string name="streak_current">Aktif seri</string>
+    <string name="streak_best">En iyi seri</string>
+    <string name="streak_last30">Son 30 gün</string>
+    <string name="streak_legend">Renkler, hedefine ulaştığın, seriyi dondurduğun ya da kaçırdığın günleri gösterir.</string>
+    <string name="streak_rules_title">Seri kuralları</string>
+    <string name="streak_rules_body">• Serin için her gün günlük odak hedefine ulaş.\n• Bir günü kaçırırsan ve dondurman varsa serin otomatik olarak korunur.\n• Dondurmaları haftalık ödüllerden kazanırsın.</string>
+    <string name="streak_today_goal">Bugünün odak hedefi</string>
+    <string name="streak_goal_reached">Hedefe ulaşıldı</string>
+    <string name="streak_goal_left">Hedefe kalan: %d dk</string>
+    <string name="streak_set_goal">Günlük hedef: %d dakika</string>
+    <string name="collection_intro">Yeni bitkiler yetiştirerek koleksiyonunu doldur ve ödüllerini topla.</string>
+    <string name="rarity_all">Tümü</string>
+    <string name="rarity_common">Yaygın</string>
+    <string name="rarity_uncommon">Sıra dışı</string>
+    <string name="rarity_rare">Nadir</string>
+    <string name="rarity_epic">Destansı</string>
+    <string name="rarity_legendary">Efsanevi</string>
+    <string name="collection_empty_rarity">Bu nadirlikte bitki yok.</string>
+    <string name="collection_locked">Kilitli</string>
+    <string name="collection_grown">Yetiştirildi: %d</string>
+    <string name="collection_undiscovered">Keşfedilmedi</string>
+    <string name="collection_requires_premium">Premium gerekir</string>
+    <string name="collection_shop_locked">Bu tohum henüz açılamıyor</string>
+    <string name="collection_unlock_minutes">%d dk odak oturumu tamamla</string>
+    <string name="collection_first">İlk keşif: %s</string>
+    <string name="collection_last">Son oturum: %s</string>
+    <string name="collection_unlocked_hint">Kilidi açık. Bahçende yetiştirerek keşfet!</string>
+    <string name="collection_gift">Hediye: +%d Seed</string>
+    <plurals name="streak_days">
+        <item quantity="one">%d gün</item>
+        <item quantity="other">%d gün</item>
+    </plurals>
+    <string name="garden_filter_week">Hafta</string>
+    <string name="garden_filter_month">Ay</string>
+    <string name="garden_filter_all">Tümü</string>
+    <string name="garden_hide_withered">Solanları gizle</string>
+    <string name="garden_bloomed">Büyüdü</string>
+    <plurals name="garden_plants">
+        <item quantity="one">%d bitki</item>
+        <item quantity="other">%d bitki</item>
+    </plurals>
+    <string name="session_harvest_loading">Hasat hazırlanıyor</string>
+    <string name="session_harvest_done">Hasat tamamlandı</string>
+    <string name="session_harvest_bonus">%1$d odak ödülü + %2$d güçlendirme</string>
+    <string name="session_harvest_added">Hasat bahçene ve Seed bakiyene eklendi.</string>
+    <string name="stats_missions_body">Bugünün görevlerini tamamla, Seed topla.</string>
+    <string name="stats_empty_title">Henüz oturum yok</string>
+    <string name="stats_empty_body">Bu zaman aralığında tamamlanmış oturum yok.</string>
+    <string name="stats_error_title">Bir şeyler ters gitti</string>
+    <string name="stats_focus_time">Odak süresi</string>
+    <string name="stats_daily_avg">Günlük ortalama</string>
+    <string name="stats_success_rate">Başarı oranı</string>
+    <string name="stats_percent">%%%d</string>
+    <string name="stats_daily_chart">Günlük odak (dk)</string>
+    <string name="stats_by_tag">Etiketlere göre</string>
+    <string name="stats_tag_minutes">%1$d dk · %%%2$d</string>
+    <string name="stats_filter_7d">7 gün</string>
+    <string name="stats_filter_30d">30 gün</string>
+    <string name="stats_filter_month">Bu ay</string>
+    <string name="stats_filter_year">Bu yıl</string>
+    <string name="season_0_title">Derin Çalışma Haftası</string>
+    <string name="season_0_body">Uzun odak bloklarıyla ritmini güçlendir.</string>
+    <string name="season_1_title">İstikrar Haftası</string>
+    <string name="season_1_body">Her gün kısa ama net bir ilerleme.</string>
+    <string name="season_2_title">Maraton Haftası</string>
+    <string name="season_2_body">Toplam odak süreni zirveye taşı.</string>
+    <string name="season_3_title">Momentum Haftası</string>
+    <string name="season_3_body">Kısa seanslarla ivmeni koru.</string>
+    <string name="onb1_title">Odaklandıkça bitkin büyür</string>
+    <string name="onb1_body">Bir tohum seç ve odaklan. Her dakika onu biraz daha büyütür; erken bırakırsan solar.</string>
+    <string name="onb2_title">Her oturum bahçene eklenir</string>
+    <string name="onb2_body">Tamamladığın oturumlar bahçende kalıcı bitkilere dönüşür. Çiftliğini gün gün büyüt.</string>
+    <string name="onb3_title">Odaklandıkça Seed kazan</string>
+    <string name="onb3_body">Seed\'lerle yeni tohumlar açar, bahçene farklı bitkiler eklersin.</string>
+    <string name="onb_next">Devam</string>
+    <string name="onb_start">Başlayalım</string>
+    <string name="onb_goal_title">Günlük hedefini seç</string>
+    <string name="onb_goal_body">Başlangıç ayarlarını seç; istediğin zaman değiştirebilirsin.</string>
+    <string name="onb_default_duration">Varsayılan odak süresi</string>
+    <string name="onb_default_duration_body">Her oturumun başlangıç süresi.</string>
+    <string name="onb_daily_goal">Günlük odak hedefi</string>
+    <string name="onb_daily_goal_body">Her gün ulaşmak istediğin toplam süre.</string>
+    <string name="minutes_unit">dk</string>
+    <string name="shop_title">Tohum Pazarı</string>
+    <string name="shop_intro">Seed\'lerinle bahçene yeni bitkiler ekle.</string>
+    <string name="shop_balance">Bakiye</string>
+    <string name="shop_free_pack">Ücretsiz Seed paketi</string>
+    <string name="shop_free_pack_body">Kısa bir reklam izle, 25 Seed kazan.</string>
+    <string name="shop_owned">Sende var</string>
+    <string name="shop_buy">Al</string>
+    <string name="shop_premium_note">Premium ile tüm bitkiler açık.</string>
+    <string name="shop_bought">%s bahçene eklendi</string>
+    <string name="shop_not_enough">%d Seed daha gerekiyor</string>
+    <string name="shop_buy_failed">Satın alma tamamlanamadı. Tekrar dene.</string>
+    <string name="shop_premium_no_ads">Premium\'da reklam yok; Seed\'lerin oturumlardan gelir.</string>
+    <string name="shop_ad_unavailable">Reklam şu an hazır değil. Biraz sonra tekrar dene.</string>
+    <string name="shop_reward_failed">Ödül eklenemedi. Tekrar dene.</string>
+    <string name="cd_open_shop">Tohum pazarını aç</string>
+    <string name="plant_sprout">Yeşil Filiz</string>
+    <string name="plant_sunflower">Ayçiçeği</string>
+    <string name="plant_cactus">Kaktüs</string>
+    <string name="plant_tree">Meşe</string>
+    <string name="plant_mushroom">Mantar</string>
+    <string name="plant_cherry">Kiraz Çiçeği</string>
+    <string name="plant_bamboo">Bambu</string>
+    <string name="plant_lotus">Nilüfer</string>
+    <string name="plant_clover">Dört Yapraklı Yonca</string>
+    <string name="plant_bonsai">Bonsai</string>
+    <string name="plant_carrot">Havuç</string>
+    <string name="plant_lavender">Lavanta</string>
+    <string name="widget_today">Bugün %1$d / %2$d dk</string>
+    <string name="widget_description">Bugünkü odağını gör ve tek dokunuşla başla.</string>
+    <string name="allowed_apps_title">İzinli uygulamalar</string>
+    <string name="allowed_apps_count">%d uygulama</string>
+    <string name="allowed_apps_none">Yok, her uygulama sayılır</string>
+    <string name="allowed_apps_body">Katı modda bu uygulamalarda geçirdiğin süre bitkini soldurmaz.</string>
+    <string name="allowed_apps_access_title">Kullanım erişimi gerekli</string>
+    <string name="allowed_apps_access_body">FocusFarm\'ın hangi uygulamada olduğunu anlaması için Ayarlar\'dan kullanım erişimi ver. Bu bilgi cihazından çıkmaz.</string>
+    <string name="allowed_apps_access_button">Erişim ver</string>
 </resources>

@@ -1,6 +1,9 @@
 # Built outputs
 /build/
 /app/build/
+/app/release/
+**/build/
+functions/node_modules/
 
 # Gradle
 .gradle/
@@ -9,6 +12,9 @@ local.properties
 # Signing
 *.jks
 *.keystore
+app/local.properties
+
+# Other projects
 
 # Firebase
 app/google-services.json
@@ -30,6 +36,21 @@ Thumbs.db
 .planning/
 build-output.txt
 
+# JVM Crash & Replay Logs
+hs_err_pid*.log
+replay_pid*.log
+
+# Build artifacts (additional)
+app/bin/
+**/bin/
+
+# Certificates
+*.pem
+
+# Personal utility scripts
+cleanup.ps1
+relocate_subfolders.ps1
+
 # Project Notes & Scripts (Kept local only)
 *.md
 !README.md
@@ -37,3 +58,9 @@ scripts/
 privacy-policy/
 canburakyol.github.io/
 .firebaserc
+
+# Play Store compliance docs/pages must be versioned.
+!PLAY_STORE_DATA_SAFETY.md
+!PLAY_STORE_RELEASE_READINESS.md
+!privacy-policy/
+!privacy-policy/index.html

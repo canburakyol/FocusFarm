@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Referrals collection
+    match /referrals/{referralCode} {
+      // Sadece authenticated kullanıcılar okuyabilir
+      allow read: if request.auth != null;
+      // Sadece Cloud Functions yazabilir
+      allow write: if false;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Kullanıcı sadece kendi dokümanını okuyabilir
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Sadece Cloud Functions yazabilir
+      allow write: if false;
+    }
+  }
+}

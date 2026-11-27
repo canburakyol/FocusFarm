@@ -1,9 +1,29 @@
 plugins {
-    id("com.android.application") version "8.9.1" apply false
-    id("org.jetbrains.kotlin.android") version "2.0.10" apply false
-    id("com.google.devtools.ksp") version "2.0.10-1.0.24" apply false
-    id("com.google.dagger.hilt.android") version "2.54" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.10" apply false
-    id("com.google.gms.google-services") version "4.4.2" apply false
-    id("com.google.firebase.crashlytics") version "3.0.2" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.hilt.android) apply false
+    alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
+}
+
+subprojects {
+    fun registerIdeCompatibilityTask() {
+        if (tasks.findByName("prepareKotlinBuildScriptModel") == null) {
+            tasks.register("prepareKotlinBuildScriptModel") {
+                group = "ide"
+                description = "Compatibility task for IDE Kotlin build script model requests."
+            }
+        }
+    }
+
+    plugins.withId("org.jetbrains.kotlin.android") {
+        registerIdeCompatibilityTask()
+    }
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        registerIdeCompatibilityTask()
+    }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Widget colors mirror the app theme (Theme.kt); RemoteViews cannot read Compose colors. -->
+<resources>
+    <color name="widget_surface">#FFFFFFFF</color>
+    <color name="widget_on_surface">#FF1B2B22</color>
+    <color name="widget_on_surface_variant">#FF4D5F55</color>
+    <color name="widget_primary">#FF2D6A4F</color>
+    <color name="widget_on_primary">#FFFFFFFF</color>
+    <color name="widget_track">#FFD8F3DC</color>
+</resources>

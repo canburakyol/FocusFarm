@@ -1,0 +1,146 @@
+package com.focusfarm.app.ui.screens.stats
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.focusfarm.app.data.repository.GardenRepository
+import com.focusfarm.app.data.repository.ProgressRepository
+import com.focusfarm.app.data.repository.ReflectionRepository
+import com.focusfarm.app.data.repository.TimeFilter
+import com.focusfarm.app.data.repository.StatsSummary
+import com.focusfarm.app.data.repository.DailyTrendPoint
+import com.focusfarm.app.data.repository.TagDuration
+import com.focusfarm.app.data.repository.GetStatsSummaryUseCase
+import com.focusfarm.app.data.repository.GetDailyFocusTrendUseCase
+import com.focusfarm.app.data.repository.GetTagDistributionUseCase
+import com.focusfarm.app.domain.FocusSession
+import com.focusfarm.app.domain.FocusProgressEngine
+import com.focusfarm.app.domain.WeeklyChallengeProgress
+import com.focusfarm.app.time.Clock
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import javax.inject.Inject
+
+sealed interface StatsUiState {
+    object Loading : StatsUiState
+    data class Success(
+        val summary: StatsSummary,
+        val trend: List<DailyTrendPoint>,
+        val tagDistribution: List<TagDuration>
+    ) : StatsUiState
+    object Empty : StatsUiState
+    data class Error(val message: String) : StatsUiState
+}
+
+@HiltViewModel
+class StatsViewModel @Inject constructor(
+    repository: GardenRepository,
+    private val progressRepository: ProgressRepository,
+    reflectionRepository: ReflectionRepository,
+    private val clock: Clock,
+    private val getStatsSummary: GetStatsSummaryUseCase,
+    private val getDailyFocusTrend: GetDailyFocusTrendUseCase,
+    private val getTagDistribution: GetTagDistributionUseCase,
+) : ViewModel() {
+
+    private val _selectedFilter = MutableStateFlow(TimeFilter.LAST_7_DAYS)
+    val selectedFilter: StateFlow<TimeFilter> = _selectedFilter.asStateFlow()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val uiState: StateFlow<StatsUiState> = _selectedFilter.flatMapLatest { filter ->
+        combine(
+            getStatsSummary(filter),
+            getDailyFocusTrend(filter),
+            getTagDistribution(filter)
+        ) { summary, trend, tagDistribution ->
+            if (summary.successfulSessionCount == 0 && summary.failedSessionCount == 0) {
+                StatsUiState.Empty
+            } else {
+                StatsUiState.Success(
+                    summary = summary,
+                    trend = trend,
+                    tagDistribution = tagDistribution
+                )
+            }
+        }.catch { e ->
+            emit(StatsUiState.Error(e.message ?: "Bilinmeyen bir hata oluştu"))
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), StatsUiState.Loading)
+
+    fun onFilterSelected(filter: TimeFilter) {
+        _selectedFilter.value = filter
+    }
+
+    val recentSessions: StateFlow<List<FocusSession>> = repository
+        .getRecentSessions(5)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val dailyGoalMinutes = progressRepository.observeDailyGoalMinutes()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 10)
+
+    private val currentDate = clock.currentDateFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), clock.today())
+
+    private val currentDateAnchorMillis = currentDate
+        .map { today -> today.atStartOfDay(clock.zoneId).toInstant().toEpochMilli() }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            clock.today().atStartOfDay(clock.zoneId).toInstant().toEpochMilli(),
+        )
+
+    private val startOfWeekMillisFlow = currentDateAnchorMillis
+        .map { FocusProgressEngine.startOfWeekMillis(it, clock.zoneId) }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val weeklySessions: StateFlow<List<FocusSession>> = startOfWeekMillisFlow
+        .flatMapLatest { startOfWeek ->
+            repository.getSessionsSince(startOfWeek)
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val weeklyChallenge: StateFlow<WeeklyChallengeProgress> = startOfWeekMillisFlow
+        .flatMapLatest { startOfWeek ->
+            repository.getSessionsSince(startOfWeek).map { sessions ->
+                FocusProgressEngine.weeklyChallenge(
+                    sessions = sessions,
+                    nowMillis = clock.nowMillis(),
+                    zoneId = clock.zoneId
+                )
+            }
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            FocusProgressEngine.weeklyChallenge(emptyList(), clock.nowMillis(), clock.zoneId)
+        )
+
+    private val claimedWeeklyRewardKeys = progressRepository.observeClaimedWeeklyRewardKeys()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+
+    val isWeeklyRewardClaimed: StateFlow<Boolean> = combine(
+        weeklyChallenge,
+        claimedWeeklyRewardKeys,
+    ) { challenge, claimedKeys ->
+        claimedKeys.contains(challenge.weekKey)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val reflectionHistory = reflectionRepository.observeRecentHistory(limit = 20)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    init {
+        viewModelScope.launch {
+            progressRepository.ensureInitializedAndGrantWeeklyFreeze()
+        }
+    }
+}

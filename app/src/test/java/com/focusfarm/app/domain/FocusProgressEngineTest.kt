@@ -7,6 +7,34 @@ import java.time.ZoneId
 import org.junit.Test
 
 class FocusProgressEngineTest {
+    @Test
+    fun `completed recovery protects previous day as comeback link`() {
+        val zone = java.time.ZoneId.of("UTC")
+        val completedAt = java.time.LocalDate.of(2026, 6, 30)
+            .atStartOfDay(zone).toInstant().toEpochMilli()
+        val anchor = FocusSession(
+            id = 1,
+            plantId = "sprout",
+            plantName = "Sprout",
+            plantEmoji = "",
+            durationMinutes = 15,
+            completedAt = java.time.LocalDate.of(2026, 6, 28)
+                .atStartOfDay(zone).toInstant().toEpochMilli(),
+        )
+
+        assertThat(FocusProgressEngine.recoveryProtectionDates(listOf(completedAt), listOf(anchor), dailyGoalMinutes = 10, zoneId = zone))
+            .containsExactly(java.time.LocalDate.of(2026, 6, 29))
+    }
+
+    @Test
+    fun `completed recovery without prior streak does not create artificial link`() {
+        val zone = java.time.ZoneId.of("UTC")
+        val completedAt = java.time.LocalDate.of(2026, 6, 30)
+            .atStartOfDay(zone).toInstant().toEpochMilli()
+
+        assertThat(FocusProgressEngine.recoveryProtectionDates(listOf(completedAt), emptyList(), dailyGoalMinutes = 10, zoneId = zone))
+            .isEmpty()
+    }
     private val zone: ZoneId = ZoneId.of("UTC")
 
     @Test
@@ -20,6 +48,7 @@ class FocusProgressEngineTest {
 
         val streak = FocusProgressEngine.currentStreakDays(
             sessions = sessions,
+            dailyGoalMinutes = 10,
             nowMillis = now,
             zoneId = zone,
         )
@@ -37,6 +66,7 @@ class FocusProgressEngineTest {
 
         val streak = FocusProgressEngine.currentStreakDays(
             sessions = sessions,
+            dailyGoalMinutes = 10,
             nowMillis = now,
             zoneId = zone,
         )
@@ -53,6 +83,7 @@ class FocusProgressEngineTest {
 
         val streak = FocusProgressEngine.currentStreakDays(
             sessions = sessions,
+            dailyGoalMinutes = 10,
             nowMillis = now,
             zoneId = zone,
         )
@@ -72,6 +103,7 @@ class FocusProgressEngineTest {
 
         val streak = FocusProgressEngine.currentStreakDays(
             sessions = sessions,
+            dailyGoalMinutes = 10,
             freezeDates = freezeDates,
             nowMillis = now,
             zoneId = zone,
@@ -137,11 +169,50 @@ class FocusProgressEngineTest {
 
         val candidate = FocusProgressEngine.freezeCandidateDate(
             sessions = sessions,
+            dailyGoalMinutes = 10,
             nowMillis = now,
             zoneId = zone,
         )
 
         assertThat(candidate?.toString()).isEqualTo("2026-02-21")
+    }
+
+    @Test
+    fun `currentStreakDays ignores days that do not meet daily goal minutes`() {
+        val now = epoch("2026-02-22T12:00:00")
+        val sessions = listOf(
+            session("2026-02-22T10:00:00", 9),
+            session("2026-02-21T11:00:00", 30),
+            session("2026-02-20T09:00:00", 45),
+        )
+
+        val streak = FocusProgressEngine.currentStreakDays(
+            sessions = sessions,
+            dailyGoalMinutes = 10,
+            nowMillis = now,
+            zoneId = zone,
+        )
+
+        assertThat(streak).isEqualTo(2)
+    }
+
+    @Test
+    fun `currentStreakDays groups multiple sessions on same day to meet goal`() {
+        val now = epoch("2026-02-22T12:00:00")
+        val sessions = listOf(
+            session("2026-02-22T10:00:00", 5),
+            session("2026-02-22T15:00:00", 6),
+            session("2026-02-21T11:00:00", 30),
+        )
+
+        val streak = FocusProgressEngine.currentStreakDays(
+            sessions = sessions,
+            dailyGoalMinutes = 10,
+            nowMillis = now,
+            zoneId = zone,
+        )
+
+        assertThat(streak).isEqualTo(2)
     }
 
     private fun session(timestamp: String, minutes: Int): FocusSession = FocusSession(

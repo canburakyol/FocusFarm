@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 8-11 Auto Backup. Same file list as data_extraction_rules.xml. -->
+<full-backup-content>
+    <include domain="database" path="focus_farm_db" />
+    <include domain="database" path="focus_farm_db-wal" />
+    <include domain="database" path="focus_farm_db-shm" />
+    <include domain="sharedpref" path="product_onboarding.xml" />
+    <include domain="sharedpref" path="garden_preferences.xml" />
+    <include domain="sharedpref" path="focus_reminders.xml" />
+    <include domain="sharedpref" path="retention_cohort.xml" />
+    <include domain="sharedpref" path="local_first_week_cohort.xml" />
+    <include domain="sharedpref" path="focusfarm_review_prompt.xml" />
+    <include domain="sharedpref" path="focus_allowed_apps.xml" />
+</full-backup-content>
