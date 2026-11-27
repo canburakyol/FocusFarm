@@ -227,6 +227,9 @@ fun HomeSetupSheet(
                     ),
                 )
             }
+            if (state.isStrict) {
+                Box(Modifier.padding(horizontal = 16.dp)) { AllowedAppsRow() }
+            }
         }
 
         // Ambience Sound Selector

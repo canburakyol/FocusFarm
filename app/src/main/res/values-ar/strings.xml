@@ -506,4 +506,11 @@
     <string name="plant_lavender">خزامى</string>
     <string name="widget_today">اليوم %1$d / %2$d د</string>
     <string name="widget_description">شاهد تركيز اليوم وابدأ بلمسة واحدة.</string>
+    <string name="allowed_apps_title">التطبيقات المسموح بها</string>
+    <string name="allowed_apps_count">%d تطبيقات</string>
+    <string name="allowed_apps_none">لا شيء، كل تطبيق يُحتسب</string>
+    <string name="allowed_apps_body">في الوضع الصارم، لا يذبل نبتتك الوقت الذي تقضيه في هذه التطبيقات.</string>
+    <string name="allowed_apps_access_title">يلزم إذن الوصول إلى الاستخدام</string>
+    <string name="allowed_apps_access_body">امنح إذن الوصول إلى الاستخدام من الإعدادات ليعرف FocusFarm التطبيق الذي تستخدمه. تبقى هذه البيانات على جهازك.</string>
+    <string name="allowed_apps_access_button">منح الإذن</string>
 </resources>

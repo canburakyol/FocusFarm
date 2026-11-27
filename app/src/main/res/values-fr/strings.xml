@@ -506,4 +506,11 @@
     <string name="plant_lavender">Lavande</string>
     <string name="widget_today">Aujourd\'hui %1$d / %2$d min</string>
     <string name="widget_description">Vois ton focus du jour et lance-toi d\'un geste.</string>
+    <string name="allowed_apps_title">Apps autorisées</string>
+    <string name="allowed_apps_count">%d apps</string>
+    <string name="allowed_apps_none">Aucune, chaque app compte</string>
+    <string name="allowed_apps_body">En mode strict, le temps passé dans ces apps ne fait pas faner ta plante.</string>
+    <string name="allowed_apps_access_title">Accès à l\'utilisation requis</string>
+    <string name="allowed_apps_access_body">Accorde l\'accès à l\'utilisation dans les Paramètres pour que FocusFarm sache quelle app tu utilises. Rien ne quitte ton appareil.</string>
+    <string name="allowed_apps_access_button">Autoriser</string>
 </resources>

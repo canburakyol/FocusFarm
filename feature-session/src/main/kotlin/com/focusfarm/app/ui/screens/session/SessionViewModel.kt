@@ -53,6 +53,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -64,6 +65,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.focusfarm.core.ui.R
 import com.focusfarm.app.ui.components.plantName
+import com.focusfarm.app.domain.AwayTime
+import com.focusfarm.app.data.focus.DeviceUsageSource
+import com.focusfarm.app.data.focus.AllowedAppsStore
 
 enum class SessionState {
     IDLE,
@@ -121,6 +125,8 @@ class SessionViewModel @Inject constructor(
     private val statsRepository: StatsRepository,
     private val reviewPromptGate: ReviewPromptGate,
     private val sessionProgressNotifier: SessionProgressNotifier,
+    private val allowedAppsStore: AllowedAppsStore,
+    private val deviceUsageSource: DeviceUsageSource,
     @ApplicationContext private val appContext: Context,
 ) : ViewModel(), LifecycleEventObserver {
 
@@ -890,8 +896,16 @@ class SessionViewModel @Inject constructor(
                     savedStateHandle[KEY_BACKGROUND_START_TIME_MS] = SystemClock.elapsedRealtime()
                     savedStateHandle[KEY_BACKGROUND_START_TIME_WALL_MS] = clock.nowMillis()
                     backgroundKillJob?.cancel()
+                    val leftAtWallMs = clock.nowMillis()
                     backgroundKillJob = viewModelScope.launch {
-                        delay(BACKGROUND_KILL_DELAY_MS)
+                        if (allowedAppsActive()) {
+                            // Poll the usage history: only time in non-allowed apps counts.
+                            while (withContext(Dispatchers.IO) { allowedAppsKillTime(leftAtWallMs, clock.nowMillis()) } == null) {
+                                delay(ALLOWED_APPS_POLL_MS)
+                            }
+                        } else {
+                            delay(BACKGROUND_KILL_DELAY_MS)
+                        }
                         if (_uiState.value.sessionState == SessionState.RUNNING) {
                             val currentState = _uiState.value
                             val elapsedSeconds = (currentState.targetMinutes * 60 - currentState.remainingSeconds).coerceAtLeast(0)
@@ -936,7 +950,22 @@ class SessionViewModel @Inject constructor(
         }
     }
 
+    /** Allowed apps apply only when the user picked some and granted Usage Access. */
+    private fun allowedAppsActive(): Boolean =
+        allowedAppsStore.packages.value.isNotEmpty() && deviceUsageSource.hasAccess()
+
+    private fun allowedAppsKillTime(leftAtWallMs: Long, nowWallMs: Long): Long? =
+        AwayTime.limitReachedAt(
+            events = deviceUsageSource.events(leftAtWallMs, nowWallMs),
+            fromMillis = leftAtWallMs,
+            toMillis = nowWallMs,
+            ownPackage = deviceUsageSource.ownPackage,
+            allowedPackages = allowedAppsStore.packages.value,
+            limitMillis = BACKGROUND_KILL_DELAY_MS,
+        )
+
     private companion object {
+        const val ALLOWED_APPS_POLL_MS = 5_000L
         const val TIMER_TICK_INTERVAL_MS = 250L
         const val BACKGROUND_KILL_DELAY_MS = 90_000L
         const val RECENT_FAILURE_WINDOW_MS = 7 * 24 * 60 * 60 * 1_000L
@@ -1008,7 +1037,15 @@ class SessionViewModel @Inject constructor(
                 val backgroundStartTimeMs = savedStateHandle.get<Long>(KEY_BACKGROUND_START_TIME_MS) ?: 0L
                 val backgroundStartWallMs = savedStateHandle.get<Long>(KEY_BACKGROUND_START_TIME_WALL_MS) ?: 0L
 
-                val isKilledByBackgroundLimit = if (isStrict && backgroundStartTimeMs > 0L) {
+                val usesAllowedApps = isStrict && backgroundStartTimeMs > 0L && allowedAppsActive()
+                val allowedAppsKillWallMs = if (usesAllowedApps) {
+                    allowedAppsKillTime(backgroundStartWallMs, currentWallClock)
+                } else {
+                    null
+                }
+                val isKilledByBackgroundLimit = if (usesAllowedApps) {
+                    allowedAppsKillWallMs != null
+                } else if (isStrict && backgroundStartTimeMs > 0L) {
                     if (isRebooted || currentRealtime < backgroundStartTimeMs) {
                         val elapsedInBackgroundWall = currentWallClock - backgroundStartWallMs
                         elapsedInBackgroundWall >= BACKGROUND_KILL_DELAY_MS
@@ -1021,7 +1058,10 @@ class SessionViewModel @Inject constructor(
                 }
 
                 if (isKilledByBackgroundLimit) {
-                    val remainingSecondsAtDeath = if (isRebooted || currentRealtime < backgroundStartTimeMs) {
+                    val remainingSecondsAtDeath = if (allowedAppsKillWallMs != null) {
+                        val remainingMs = (sessionEndWallClockMs - allowedAppsKillWallMs).coerceAtLeast(0L)
+                        ((remainingMs + 999L) / 1000L).toInt()
+                    } else if (isRebooted || currentRealtime < backgroundStartTimeMs) {
                         val killWallTimeMs = backgroundStartWallMs + BACKGROUND_KILL_DELAY_MS
                         val remainingMs = (sessionEndWallClockMs - killWallTimeMs).coerceAtLeast(0L)
                         ((remainingMs + 999L) / 1000L).toInt()

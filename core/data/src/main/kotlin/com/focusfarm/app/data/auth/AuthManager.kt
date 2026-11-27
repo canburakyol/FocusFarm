@@ -62,7 +62,7 @@ class AuthManager @Inject constructor(
         listOf(
             "ad_reward_state", "garden_preferences", "product_onboarding", "retention_cohort",
             "local_first_week_cohort", "referral_state", "focus_reminders", "verified_billing_purchases",
-            "focusfarm_review_prompt", "secure_billing_cache",
+            "focusfarm_review_prompt", "secure_billing_cache", "focus_allowed_apps",
         ).forEach { name ->
             check(context.getSharedPreferences(name, Context.MODE_PRIVATE).edit().clear().commit()) {
                 "Failed to clear local preference: $name"

@@ -16,6 +16,7 @@
         <include domain="sharedpref" path="retention_cohort.xml" />
         <include domain="sharedpref" path="local_first_week_cohort.xml" />
         <include domain="sharedpref" path="focusfarm_review_prompt.xml" />
+        <include domain="sharedpref" path="focus_allowed_apps.xml" />
     </cloud-backup>
     <device-transfer>
         <include domain="database" path="focus_farm_db" />
@@ -27,5 +28,6 @@
         <include domain="sharedpref" path="retention_cohort.xml" />
         <include domain="sharedpref" path="local_first_week_cohort.xml" />
         <include domain="sharedpref" path="focusfarm_review_prompt.xml" />
+        <include domain="sharedpref" path="focus_allowed_apps.xml" />
     </device-transfer>
 </data-extraction-rules>

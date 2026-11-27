@@ -521,4 +521,11 @@
     <string name="plant_lavender">Lavanta</string>
     <string name="widget_today">Bugün %1$d / %2$d dk</string>
     <string name="widget_description">Bugünkü odağını gör ve tek dokunuşla başla.</string>
+    <string name="allowed_apps_title">İzinli uygulamalar</string>
+    <string name="allowed_apps_count">%d uygulama</string>
+    <string name="allowed_apps_none">Yok, her uygulama sayılır</string>
+    <string name="allowed_apps_body">Katı modda bu uygulamalarda geçirdiğin süre bitkini soldurmaz.</string>
+    <string name="allowed_apps_access_title">Kullanım erişimi gerekli</string>
+    <string name="allowed_apps_access_body">FocusFarm\'ın hangi uygulamada olduğunu anlaması için Ayarlar\'dan kullanım erişimi ver. Bu bilgi cihazından çıkmaz.</string>
+    <string name="allowed_apps_access_button">Erişim ver</string>
 </resources>
