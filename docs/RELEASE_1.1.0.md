@@ -7,11 +7,11 @@
 - [ ] `BILLING_PUBLIC_KEY` değerini Play Console'dan alıp `local.properties` dosyasına koy. Release derlemesi bu anahtar olmadan bilerek başarısız olur.
 - [ ] `./gradlew :app:bundleRelease` ile imzalı AAB üret.
 - [ ] **Data Safety formunu kontrol et:**
-  - Uygulama verisi artık Android Otomatik Yedekleme ile kullanıcının Google hesabına yedekleniyor (cihaz içi veri, uçtan uca şifreli).
+  - Uygulama verisi artık Android Otomatik Yedekleme ile kullanıcının Google hesabına yedekleniyor. Android 9+ bu yedeği kilit ekranı şifresiyle uçtan uca şifreliyor; Google'ın kuralına göre uçtan uca şifreli veri beyan gerektirmez. Bu yüzden büyük ihtimalle formda değişiklik gerekmiyor (Google bunu yedekleme için açıkça yazmıyor; emin olmak istersen Play desteğine sor).
   - Bildirim ve kesin alarm izni eklendi; bunlar Data Safety'yi etkilemez.
   - Reklam kimliği (AD_ID) kullanımı değişmedi.
 - [ ] **İzin beyanı:** `SCHEDULE_EXACT_ALARM` eklendi. Bu izin, `USE_EXACT_ALARM`'dan farklı olarak Play'de özel beyan gerektirmiyor (çıkarım; Play Console uyarı verirse oradaki yönlendirmeyi izle).
-- [ ] **Kullanım Erişimi (`PACKAGE_USAGE_STATS`) eklendi** (izinli uygulamalar için, isteğe bağlı). Kullanıcı Ayarlar'dan kendisi veriyor; Play'de beyan formu yok. Data Safety: "Uygulama etkinliği > Diğer uygulama etkinliği" cihazda işleniyor ama **toplanmıyor/paylaşılmıyor** (cihaz dışına çıkmıyor). Formda buna göre işaretle.
+- [ ] **Kullanım Erişimi (`PACKAGE_USAGE_STATS`) eklendi** (izinli uygulamalar için, isteğe bağlı). Kullanıcı Ayarlar'dan kendisi veriyor; Play'de beyan formu yok. Veri yalnızca cihazda işleniyor ve hiçbir yere gönderilmiyor; Google'ın kuralına göre yalnızca cihazda işlenen veri Data Safety'de **beyan edilmez**. Formda bu yüzden bir şey işaretlenmez.
 - [ ] Mağaza açıklamasına izinli uygulamaları ve widget'ı ekle.
 - [ ] İlk dağıtımı **dahili test** kanalına yap, ardından kademeli yayına geç (%10 → %50 → %100). Crashlytics'i her adımda kontrol et.
 
