@@ -373,4 +373,5 @@
         <item quantity="one">Schließe %d Fokus-Sitzung ab</item>
         <item quantity="other">Schließe %d Fokus-Sitzungen ab</item>
     </plurals>
+    <string name="garden_withered">Verwelkt</string>
 </resources>

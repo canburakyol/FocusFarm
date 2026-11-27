@@ -373,4 +373,5 @@
         <item quantity="one">Termine %d session de focus</item>
         <item quantity="other">Termine %d sessions de focus</item>
     </plurals>
+    <string name="garden_withered">Fanée</string>
 </resources>

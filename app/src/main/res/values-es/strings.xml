@@ -373,4 +373,5 @@
         <item quantity="one">Completa %d sesión de enfoque</item>
         <item quantity="other">Completa %d sesiones de enfoque</item>
     </plurals>
+    <string name="garden_withered">Marchita</string>
 </resources>

@@ -140,7 +140,9 @@ fun GardenScreen(
                 }
                 Spacer(Modifier.height(12.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    StatChip(value = "${gardenEntries.size}", label = stringResource(R.string.total_plants), modifier = Modifier.weight(1f))
+                    // Withered plants stay visible in the grid but are not grown plants.
+                    val grownCount = gardenEntries.count { it.state == GardenPlantState.BLOOMED }
+                    StatChip(value = "$grownCount", label = stringResource(R.string.total_plants), modifier = Modifier.weight(1f))
                     StatChip(
                         value = if (totalHours > 0) {
                             stringResource(R.string.total_focus_hours_minutes, totalHours, remainingMins)
@@ -339,7 +341,12 @@ private fun PlantCard(entry: GardenEntry) {
                 fontSize = 11.sp
             )
             Text(
-                stringResource(R.string.duration_minutes_short, entry.focusMinutes),
+                // A withered entry stores the planned length, not time actually focused.
+                if (entry.state == GardenPlantState.WITHERED) {
+                    stringResource(R.string.garden_withered)
+                } else {
+                    stringResource(R.string.duration_minutes_short, entry.focusMinutes)
+                },
                 fontFamily = TimerFontFamily,
                 fontSize = 12.sp,
                 color = if (entry.state == GardenPlantState.WITHERED) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,

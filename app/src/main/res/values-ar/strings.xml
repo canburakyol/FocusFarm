@@ -373,4 +373,5 @@
         <item quantity="one">أكمل جلسة تركيز واحدة (%d)</item>
         <item quantity="other">أكمل %d جلسات تركيز</item>
     </plurals>
+    <string name="garden_withered">ذبلت</string>
 </resources>

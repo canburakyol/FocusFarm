@@ -388,4 +388,5 @@
         <item quantity="one">%d odak seansı tamamla</item>
         <item quantity="other">%d odak seansı tamamla</item>
     </plurals>
+    <string name="garden_withered">Soldu</string>
 </resources>
