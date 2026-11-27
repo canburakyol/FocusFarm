@@ -21,6 +21,7 @@ import com.focusfarm.app.telemetry.AppTelemetry
 import com.focusfarm.app.ui.navigation.AppNavigation
 import com.focusfarm.app.ui.navigation.ReleaseFeatureScope
 import com.focusfarm.app.ui.theme.FocusFarmTheme
+import com.focusfarm.app.widget.FocusWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -80,6 +81,12 @@ class MainActivity : ComponentActivity() {
                 hasActiveSession = hasActiveSession,
             )
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Leaving the app is when today's focus may have changed; refresh the home-screen widget.
+        FocusWidgetProvider.requestUpdate(this)
     }
 
     override fun onNewIntent(intent: Intent) {

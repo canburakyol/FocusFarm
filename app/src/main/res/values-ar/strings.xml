@@ -504,4 +504,6 @@
     <string name="plant_bonsai">بونساي</string>
     <string name="plant_carrot">جزر</string>
     <string name="plant_lavender">خزامى</string>
+    <string name="widget_today">اليوم %1$d / %2$d د</string>
+    <string name="widget_description">شاهد تركيز اليوم وابدأ بلمسة واحدة.</string>
 </resources>

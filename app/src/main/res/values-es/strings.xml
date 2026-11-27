@@ -504,4 +504,6 @@
     <string name="plant_bonsai">Bonsái</string>
     <string name="plant_carrot">Zanahoria</string>
     <string name="plant_lavender">Lavanda</string>
+    <string name="widget_today">Hoy %1$d / %2$d min</string>
+    <string name="widget_description">Mira tu enfoque de hoy y empieza con un toque.</string>
 </resources>
