@@ -462,4 +462,19 @@
     <string name="season_2_body">Bring deine Fokuszeit auf Rekordniveau.</string>
     <string name="season_3_title">Momentum-Woche</string>
     <string name="season_3_body">Halte dein Tempo mit kurzen Sitzungen.</string>
+    <string name="onb1_title">Deine Pflanze wächst, während du dich konzentrierst</string>
+    <string name="onb1_body">Wähle einen Samen und konzentriere dich. Jede Minute lässt ihn wachsen; gibst du früh auf, verwelkt er.</string>
+    <string name="onb2_title">Jede Sitzung kommt in deinen Garten</string>
+    <string name="onb2_body">Abgeschlossene Sitzungen werden zu Pflanzen in deinem Garten. Lass deine Farm Tag für Tag wachsen.</string>
+    <string name="onb3_title">Verdiene Seeds beim Fokussieren</string>
+    <string name="onb3_body">Mit Seeds schaltest du neue Pflanzen für deinen Garten frei.</string>
+    <string name="onb_next">Weiter</string>
+    <string name="onb_start">Los geht\'s</string>
+    <string name="onb_goal_title">Wähle dein Tagesziel</string>
+    <string name="onb_goal_body">Wähle deine Startwerte. Du kannst sie jederzeit ändern.</string>
+    <string name="onb_default_duration">Standard-Fokusdauer</string>
+    <string name="onb_default_duration_body">Mit dieser Dauer startet jede Sitzung.</string>
+    <string name="onb_daily_goal">Tägliches Fokusziel</string>
+    <string name="onb_daily_goal_body">Die Gesamtzeit, die du täglich erreichen möchtest.</string>
+    <string name="minutes_unit">Min.</string>
 </resources>

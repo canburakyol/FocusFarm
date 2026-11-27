@@ -462,4 +462,19 @@
     <string name="season_2_body">Lleva tu tiempo de enfoque al máximo.</string>
     <string name="season_3_title">Semana de impulso</string>
     <string name="season_3_body">Mantén tu ritmo con sesiones cortas.</string>
+    <string name="onb1_title">Tu planta crece mientras te concentras</string>
+    <string name="onb1_body">Elige una semilla y concéntrate. Cada minuto la hace crecer; si abandonas antes, se marchita.</string>
+    <string name="onb2_title">Cada sesión se suma a tu jardín</string>
+    <string name="onb2_body">Las sesiones completadas se convierten en plantas de tu jardín. Haz crecer tu granja día a día.</string>
+    <string name="onb3_title">Gana seeds mientras te concentras</string>
+    <string name="onb3_body">Usa las seeds para desbloquear plantas nuevas para tu jardín.</string>
+    <string name="onb_next">Siguiente</string>
+    <string name="onb_start">Empezar</string>
+    <string name="onb_goal_title">Elige tu meta diaria</string>
+    <string name="onb_goal_body">Elige tu configuración inicial. Puedes cambiarla cuando quieras.</string>
+    <string name="onb_default_duration">Duración de enfoque predeterminada</string>
+    <string name="onb_default_duration_body">La duración con la que empieza cada sesión.</string>
+    <string name="onb_daily_goal">Meta diaria de enfoque</string>
+    <string name="onb_daily_goal_body">El tiempo total que quieres alcanzar cada día.</string>
+    <string name="minutes_unit">min</string>
 </resources>

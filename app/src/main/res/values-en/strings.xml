@@ -462,4 +462,19 @@
     <string name="season_2_body">Push your total focus time to the top.</string>
     <string name="season_3_title">Momentum Week</string>
     <string name="season_3_body">Keep your pace with short sessions.</string>
+    <string name="onb1_title">Your plant grows while you focus</string>
+    <string name="onb1_body">Pick a seed and focus. Every minute helps it grow; give up early and it withers.</string>
+    <string name="onb2_title">Every session joins your garden</string>
+    <string name="onb2_body">Finished sessions become plants that stay in your garden. Grow your farm day by day.</string>
+    <string name="onb3_title">Earn seeds as you focus</string>
+    <string name="onb3_body">Use seeds to unlock new plants for your garden.</string>
+    <string name="onb_next">Next</string>
+    <string name="onb_start">Get started</string>
+    <string name="onb_goal_title">Choose your daily goal</string>
+    <string name="onb_goal_body">Pick your starting setup. You can change it anytime.</string>
+    <string name="onb_default_duration">Default focus length</string>
+    <string name="onb_default_duration_body">The length each session starts with.</string>
+    <string name="onb_daily_goal">Daily focus goal</string>
+    <string name="onb_daily_goal_body">Total time you want to reach each day.</string>
+    <string name="minutes_unit">min</string>
 </resources>

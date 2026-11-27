@@ -462,4 +462,19 @@
     <string name="season_2_body">Porte ton temps de focus au sommet.</string>
     <string name="season_3_title">Semaine de l\'élan</string>
     <string name="season_3_body">Garde ton élan avec des sessions courtes.</string>
+    <string name="onb1_title">Ta plante pousse pendant que tu te concentres</string>
+    <string name="onb1_body">Choisis une graine et concentre-toi. Chaque minute la fait pousser ; abandonne trop tôt et elle fane.</string>
+    <string name="onb2_title">Chaque session rejoint ton jardin</string>
+    <string name="onb2_body">Les sessions terminées deviennent des plantes de ton jardin. Fais grandir ta ferme jour après jour.</string>
+    <string name="onb3_title">Gagne des seeds en te concentrant</string>
+    <string name="onb3_body">Utilise tes seeds pour débloquer de nouvelles plantes pour ton jardin.</string>
+    <string name="onb_next">Suivant</string>
+    <string name="onb_start">Commencer</string>
+    <string name="onb_goal_title">Choisis ton objectif quotidien</string>
+    <string name="onb_goal_body">Choisis tes réglages de départ. Tu peux les changer à tout moment.</string>
+    <string name="onb_default_duration">Durée de focus par défaut</string>
+    <string name="onb_default_duration_body">La durée de départ de chaque session.</string>
+    <string name="onb_daily_goal">Objectif de focus quotidien</string>
+    <string name="onb_daily_goal_body">Le temps total que tu veux atteindre chaque jour.</string>
+    <string name="minutes_unit">min</string>
 </resources>

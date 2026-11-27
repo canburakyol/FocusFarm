@@ -477,4 +477,19 @@
     <string name="season_2_body">Toplam odak süreni zirveye taşı.</string>
     <string name="season_3_title">Momentum Haftası</string>
     <string name="season_3_body">Kısa seanslarla ivmeni koru.</string>
+    <string name="onb1_title">Odaklandıkça bitkin büyür</string>
+    <string name="onb1_body">Bir tohum seç ve odaklan. Her dakika onu biraz daha büyütür; erken bırakırsan solar.</string>
+    <string name="onb2_title">Her oturum bahçene eklenir</string>
+    <string name="onb2_body">Tamamladığın oturumlar bahçende kalıcı bitkilere dönüşür. Çiftliğini gün gün büyüt.</string>
+    <string name="onb3_title">Odaklandıkça Seed kazan</string>
+    <string name="onb3_body">Seed\'lerle yeni tohumlar açar, bahçene farklı bitkiler eklersin.</string>
+    <string name="onb_next">Devam</string>
+    <string name="onb_start">Başlayalım</string>
+    <string name="onb_goal_title">Günlük hedefini seç</string>
+    <string name="onb_goal_body">Başlangıç ayarlarını seç; istediğin zaman değiştirebilirsin.</string>
+    <string name="onb_default_duration">Varsayılan odak süresi</string>
+    <string name="onb_default_duration_body">Her oturumun başlangıç süresi.</string>
+    <string name="onb_daily_goal">Günlük odak hedefi</string>
+    <string name="onb_daily_goal_body">Her gün ulaşmak istediğin toplam süre.</string>
+    <string name="minutes_unit">dk</string>
 </resources>

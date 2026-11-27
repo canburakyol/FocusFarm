@@ -462,4 +462,19 @@
     <string name="season_2_body">ارفع وقت تركيزك إلى القمة.</string>
     <string name="season_3_title">أسبوع الزخم</string>
     <string name="season_3_body">حافظ على زخمك بجلسات قصيرة.</string>
+    <string name="onb1_title">تنمو نبتتك بينما تركّز</string>
+    <string name="onb1_body">اختر بذرة وركّز. كل دقيقة تنمّيها، وإن استسلمت مبكرًا تذبل.</string>
+    <string name="onb2_title">كل جلسة تُضاف إلى حديقتك</string>
+    <string name="onb2_body">تتحول الجلسات المكتملة إلى نباتات تبقى في حديقتك. نمِّ مزرعتك يومًا بعد يوم.</string>
+    <string name="onb3_title">اربح البذور أثناء التركيز</string>
+    <string name="onb3_body">استخدم البذور لفتح نباتات جديدة لحديقتك.</string>
+    <string name="onb_next">التالي</string>
+    <string name="onb_start">لنبدأ</string>
+    <string name="onb_goal_title">اختر هدفك اليومي</string>
+    <string name="onb_goal_body">اختر إعداداتك الأولى، ويمكنك تغييرها في أي وقت.</string>
+    <string name="onb_default_duration">مدة التركيز الافتراضية</string>
+    <string name="onb_default_duration_body">المدة التي تبدأ بها كل جلسة.</string>
+    <string name="onb_daily_goal">هدف التركيز اليومي</string>
+    <string name="onb_daily_goal_body">الوقت الإجمالي الذي تريد بلوغه كل يوم.</string>
+    <string name="minutes_unit">د</string>
 </resources>
