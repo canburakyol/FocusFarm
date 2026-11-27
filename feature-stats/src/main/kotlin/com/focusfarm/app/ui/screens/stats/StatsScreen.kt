@@ -117,7 +117,7 @@ fun StatsScreen(
             ) {
                 Text(
                     text = stringResource(R.string.tab_stats),
-                    style = MaterialTheme.typography.displayMedium
+                    style = MaterialTheme.typography.headlineMedium
                 )
                 IconButton(onClick = { showSettings = true }) {
                     Icon(

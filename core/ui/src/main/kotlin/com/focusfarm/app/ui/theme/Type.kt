@@ -1,108 +1,72 @@
 package com.focusfarm.app.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.Font
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
+import com.focusfarm.core.ui.R
 
-private val provider = GoogleFont.Provider(
-    providerAuthority = "com.google.android.gms.fonts",
-    providerPackage = "com.google.android.gms",
-    certificates = com.focusfarm.core.ui.R.array.com_google_android_gms_fonts_certs
+/**
+ * DM Sans is bundled (one variable font file, SIL OFL 1.1; licence in assets/licenses), so every
+ * device renders the same type from the first launch. Scripts it lacks, such as Arabic, fall back
+ * to the system font.
+ */
+@OptIn(ExperimentalTextApi::class)
+private fun dmSans(weight: FontWeight) = Font(
+    resId = R.font.dm_sans,
+    weight = weight,
+    style = FontStyle.Normal,
+    variationSettings = FontVariation.Settings(FontVariation.weight(weight.weight)),
 )
 
-private val playfairDisplay = FontFamily(
-    Font(GoogleFont("Playfair Display"), provider, FontWeight.Normal),
-    Font(GoogleFont("Playfair Display"), provider, FontWeight.Bold),
+private val DmSans = FontFamily(
+    dmSans(FontWeight.Normal),
+    dmSans(FontWeight.Medium),
+    dmSans(FontWeight.SemiBold),
+    dmSans(FontWeight.Bold),
+    dmSans(FontWeight.ExtraBold),
+    dmSans(FontWeight.Black),
 )
 
-private val dmSans = FontFamily(
-    Font(GoogleFont("DM Sans"), provider, FontWeight.Normal),
-    Font(GoogleFont("DM Sans"), provider, FontWeight.Medium),
-    Font(GoogleFont("DM Sans"), provider, FontWeight.SemiBold),
-    Font(GoogleFont("DM Sans"), provider, FontWeight.Bold),
+private val base = Typography()
+
+private fun TextStyle.dm(
+    weight: FontWeight,
+    size: Int,
+    lineHeight: Int,
+    letterSpacing: Double = 0.0,
+) = copy(
+    fontFamily = DmSans,
+    fontWeight = weight,
+    fontSize = size.sp,
+    lineHeight = lineHeight.sp,
+    letterSpacing = letterSpacing.sp,
 )
 
-private val dmMono = FontFamily(
-    Font(GoogleFont("DM Mono"), provider, FontWeight.Normal),
-    Font(GoogleFont("DM Mono"), provider, FontWeight.Medium),
-)
-
+/** One family, one scale: Display 57/45/36, Headline 32/28/24, Title 22/16/14, Body 16/14/12, Label 14/12/11. */
 val Typography = Typography(
-    displayLarge = TextStyle(
-        fontFamily = playfairDisplay,
-        fontWeight = FontWeight.Bold,
-        fontSize = 38.sp,
-        lineHeight = 46.sp,
-        letterSpacing = 0.sp,
-    ),
-    displayMedium = TextStyle(
-        fontFamily = playfairDisplay,
-        fontWeight = FontWeight.Bold,
-        fontSize = 30.sp,
-        lineHeight = 38.sp,
-    ),
-    headlineLarge = TextStyle(
-        fontFamily = playfairDisplay,
-        fontWeight = FontWeight.Normal,
-        fontSize = 26.sp,
-        lineHeight = 34.sp,
-    ),
-    titleLarge = TextStyle(
-        fontFamily = dmSans,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp,
-        lineHeight = 28.sp,
-    ),
-    titleMedium = TextStyle(
-        fontFamily = dmSans,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-    ),
-    bodyLarge = TextStyle(
-        fontFamily = dmSans,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 23.sp,
-    ),
-    bodyMedium = TextStyle(
-        fontFamily = dmSans,
-        fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
-    ),
-    bodySmall = TextStyle(
-        fontFamily = dmSans,
-        fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
-        lineHeight = 16.sp,
-    ),
-    labelLarge = TextStyle(
-        fontFamily = dmSans,
-        fontWeight = FontWeight.Bold,
-        fontSize = 15.sp,
-        lineHeight = 20.sp,
-        letterSpacing = 0.2.sp,
-    ),
-    // Labels carry UI text in every language; wide tracking and mono glyphs read as broken words.
-    labelMedium = TextStyle(
-        fontFamily = dmSans,
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
-        letterSpacing = 0.1.sp,
-    ),
-    labelSmall = TextStyle(
-        fontFamily = dmSans,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.3.sp,
-    ),
+    displayLarge = base.displayLarge.dm(FontWeight.SemiBold, 57, 64, -0.25),
+    displayMedium = base.displayMedium.dm(FontWeight.SemiBold, 45, 52),
+    displaySmall = base.displaySmall.dm(FontWeight.SemiBold, 36, 44),
+    headlineLarge = base.headlineLarge.dm(FontWeight.SemiBold, 32, 40),
+    headlineMedium = base.headlineMedium.dm(FontWeight.SemiBold, 28, 36),
+    headlineSmall = base.headlineSmall.dm(FontWeight.SemiBold, 24, 32),
+    titleLarge = base.titleLarge.dm(FontWeight.SemiBold, 22, 28),
+    titleMedium = base.titleMedium.dm(FontWeight.Medium, 16, 24, 0.1),
+    titleSmall = base.titleSmall.dm(FontWeight.Medium, 14, 20, 0.1),
+    bodyLarge = base.bodyLarge.dm(FontWeight.Normal, 16, 24, 0.15),
+    bodyMedium = base.bodyMedium.dm(FontWeight.Normal, 14, 20, 0.15),
+    bodySmall = base.bodySmall.dm(FontWeight.Normal, 12, 16, 0.2),
+    // Labels carry UI text in every language; keep tracking near zero so words do not fall apart.
+    labelLarge = base.labelLarge.dm(FontWeight.SemiBold, 14, 20, 0.1),
+    labelMedium = base.labelMedium.dm(FontWeight.Medium, 12, 16, 0.3),
+    labelSmall = base.labelSmall.dm(FontWeight.Medium, 11, 16, 0.3),
 )
 
-val TimerFontFamily = dmMono
+/** Timers use the same family with tabular digits (set per text via fontFeatureSettings = "tnum"). */
+val TimerFontFamily: FontFamily = DmSans

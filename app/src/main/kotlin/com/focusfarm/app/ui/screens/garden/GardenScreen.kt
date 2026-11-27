@@ -120,7 +120,7 @@ fun GardenScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Text(stringResource(R.string.tab_garden), style = MaterialTheme.typography.displayMedium)
+                    Text(stringResource(R.string.tab_garden), style = MaterialTheme.typography.headlineMedium)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         TextButton(onClick = onOpenCollection) {
                             Text(
@@ -399,7 +399,7 @@ private fun EmptyGarden() {
     ) {
         Text("🌱", fontSize = 72.sp)
         Spacer(Modifier.height(16.dp))
-        Text(stringResource(R.string.empty_garden_title), style = MaterialTheme.typography.headlineLarge, textAlign = TextAlign.Center)
+        Text(stringResource(R.string.empty_garden_title), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
         Spacer(Modifier.height(8.dp))
         Text(stringResource(R.string.empty_garden_desc), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
     }

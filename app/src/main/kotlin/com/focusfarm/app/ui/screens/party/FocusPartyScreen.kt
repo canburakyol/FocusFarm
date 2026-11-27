@@ -60,7 +60,7 @@ fun FocusPartyScreen(
         ) {
             Text(
                 text = stringResource(R.string.party_title),
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.headlineMedium,
                 color = Color(0xFFE4B156),
                 textAlign = TextAlign.Center,
             )

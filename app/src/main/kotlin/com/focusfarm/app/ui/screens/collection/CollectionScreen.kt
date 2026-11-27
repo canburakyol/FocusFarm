@@ -69,7 +69,7 @@ fun CollectionScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(stringResource(R.string.collection_book), style = MaterialTheme.typography.displayMedium)
+                Text(stringResource(R.string.collection_book), style = MaterialTheme.typography.headlineMedium)
                 if (onBack != null) {
                     TextButton(onClick = onBack) {
                         Text(stringResource(R.string.go_back), color = MaterialTheme.colorScheme.onSurfaceVariant)

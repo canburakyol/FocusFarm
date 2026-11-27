@@ -56,7 +56,7 @@ fun InviteFriendsScreen(
         ) {
             Text(
                 text = stringResource(R.string.referral_title),
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.headlineMedium,
                 color = Color(0xFFE4B156),
                 textAlign = TextAlign.Center,
             )
@@ -104,7 +104,7 @@ fun InviteFriendsScreen(
                         ) {
                             Text(
                                 text = state.referralCode.ifEmpty { stringResource(R.string.referral_loading) },
-                                style = MaterialTheme.typography.headlineLarge,
+                                style = MaterialTheme.typography.headlineSmall,
                                 color = Color(0xFFE4B156),
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,

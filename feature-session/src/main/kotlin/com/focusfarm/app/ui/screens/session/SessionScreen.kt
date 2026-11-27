@@ -200,7 +200,7 @@ private fun FinalizingScreen(
             Spacer(Modifier.height(28.dp))
             Text(
                 stringResource(R.string.session_finalizing_title),
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(8.dp))
@@ -614,7 +614,7 @@ private fun CompletedScreen(
             Spacer(Modifier.height(32.dp))
             Text(
                 stringResource(R.string.session_complete),
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.height(8.dp))

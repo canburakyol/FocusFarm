@@ -44,7 +44,7 @@ fun ShareGardenDialog(
         ) {
             Text(
                 text = stringResource(R.string.share_garden_title),
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineSmall,
                 color = Color(0xFFE4B156),
             )
 

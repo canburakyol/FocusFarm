@@ -87,7 +87,7 @@ private fun StoreContent(
         Column(modifier = Modifier.padding(horizontal = 24.dp)) {
             Text(
                 text = "Çiftlik Mağazası",
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
             )
             Spacer(Modifier.height(6.dp))
