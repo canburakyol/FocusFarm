@@ -18,9 +18,9 @@
     <string name="recovery_finalize_title">Seansın tamamlanmayı bekliyor</string>
     <string name="recovery_finalize_text">Ödülünü güvenle tamamlamak için dokun.</string>
     <string name="session_evaluation_title">Bu seans nasıl hissettirdi?</string>
-    <string name="session_evaluation_easy">🙂 Kolay</string>
-    <string name="session_evaluation_moderate">👌 Tam kıvamında</string>
-    <string name="session_evaluation_hard">😮‍💨 Çok zorladı</string>
+    <string name="session_evaluation_easy">Kolay</string>
+    <string name="session_evaluation_moderate">Tam kıvamında</string>
+    <string name="session_evaluation_hard">Çok zorladı</string>
     <string name="session_next_suggestion">Sonraki seans önerin: %d dakika</string>
     <string name="select_plant">Bitki Seç</string>
     <string name="select_duration">Süre Seç</string>
@@ -450,4 +450,8 @@
         <item quantity="one">%d bitki</item>
         <item quantity="other">%d bitki</item>
     </plurals>
+    <string name="session_harvest_loading">Hasat hazırlanıyor</string>
+    <string name="session_harvest_done">Hasat tamamlandı</string>
+    <string name="session_harvest_bonus">%1$d odak ödülü + %2$d güçlendirme</string>
+    <string name="session_harvest_added">Hasat bahçene ve Seed bakiyene eklendi.</string>
 </resources>

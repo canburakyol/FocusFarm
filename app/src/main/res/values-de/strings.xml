@@ -297,9 +297,9 @@
     <string name="recovery_finalize_title">Deine Sitzung wartet auf den Abschluss</string>
     <string name="recovery_finalize_text">Tippe, um deine Belohnung sicher abzuschließen.</string>
     <string name="session_evaluation_title">Wie hat sich diese Sitzung angefühlt?</string>
-    <string name="session_evaluation_easy">🙂 Leicht</string>
-    <string name="session_evaluation_moderate">👌 Genau richtig</string>
-    <string name="session_evaluation_hard">😮‍💨 Zu schwer</string>
+    <string name="session_evaluation_easy">Leicht</string>
+    <string name="session_evaluation_moderate">Genau richtig</string>
+    <string name="session_evaluation_hard">Zu schwer</string>
     <string name="session_next_suggestion">Vorschlag für die nächste Sitzung: %d Minuten</string>
     <string name="billing_ready_error">Der Kaufdienst ist noch nicht bereit.</string>
     <string name="billing_load_error">Dieser Tarif konnte nicht geladen werden. Bitte versuche es erneut.</string>
@@ -435,4 +435,8 @@
         <item quantity="one">%d Pflanze</item>
         <item quantity="other">%d Pflanzen</item>
     </plurals>
+    <string name="session_harvest_loading">Ernte wird vorbereitet</string>
+    <string name="session_harvest_done">Ernte abgeschlossen</string>
+    <string name="session_harvest_bonus">%1$d für Fokus + %2$d Boost</string>
+    <string name="session_harvest_added">Zu deinem Garten und Seed-Guthaben hinzugefügt.</string>
 </resources>

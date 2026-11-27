@@ -297,9 +297,9 @@
     <string name="recovery_finalize_title">Votre session attend d’être terminée</string>
     <string name="recovery_finalize_text">Touchez pour finaliser votre récompense en toute sécurité.</string>
     <string name="session_evaluation_title">Comment avez-vous vécu cette session ?</string>
-    <string name="session_evaluation_easy">🙂 Facile</string>
-    <string name="session_evaluation_moderate">👌 Juste comme il faut</string>
-    <string name="session_evaluation_hard">😮‍💨 Trop difficile</string>
+    <string name="session_evaluation_easy">Facile</string>
+    <string name="session_evaluation_moderate">Juste comme il faut</string>
+    <string name="session_evaluation_hard">Trop difficile</string>
     <string name="session_next_suggestion">Prochaine session suggérée : %d minutes</string>
     <string name="billing_ready_error">Le service d’achat n’est pas encore prêt.</string>
     <string name="billing_load_error">Impossible de charger cette formule. Réessayez.</string>
@@ -435,4 +435,8 @@
         <item quantity="one">%d plante</item>
         <item quantity="other">%d plantes</item>
     </plurals>
+    <string name="session_harvest_loading">Préparation de ta récolte</string>
+    <string name="session_harvest_done">Récolte terminée</string>
+    <string name="session_harvest_bonus">%1$d pour le focus + %2$d de boost</string>
+    <string name="session_harvest_added">Ajouté à ton jardin et à ton solde de seeds.</string>
 </resources>

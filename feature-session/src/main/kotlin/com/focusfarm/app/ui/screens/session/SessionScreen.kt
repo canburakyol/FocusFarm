@@ -81,6 +81,12 @@ import com.focusfarm.app.ui.components.PlantDisplay
 import com.focusfarm.app.ui.components.labelRes
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.core.ui.R
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.Spring
 
 @Composable
 fun SessionScreen(
@@ -457,13 +463,13 @@ private fun HarvestRewardCard(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = if (isLoading) "Hasat hazırlanıyor" else "Hasat tamamlandı",
+            text = stringResource(if (isLoading) R.string.session_harvest_loading else R.string.session_harvest_done),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
         Spacer(Modifier.height(4.dp))
         Text(
-            text = if (isLoading) "…" else "+${reward.totalSeeds} Seed",
+            text = if (isLoading) "…" else stringResource(R.string.seeds_plus, reward.totalSeeds),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -472,14 +478,14 @@ private fun HarvestRewardCard(
             Spacer(Modifier.height(6.dp))
             if (reward.hasBonus) {
                 Text(
-                    text = "${reward.baseSeeds} odak ödülü + ${reward.bonusSeeds} aktif güçlendirme",
+                    text = stringResource(R.string.session_harvest_bonus, reward.baseSeeds, reward.bonusSeeds),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center,
                 )
             } else {
                 Text(
-                    text = "Bu hasat bahçene ve Seed bakiyene eklendi.",
+                    text = stringResource(R.string.session_harvest_added),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center,
@@ -601,16 +607,35 @@ private fun CompletedScreen(
     onBack: () -> Unit,
 ) {
     var reflection by remember { mutableStateOf("") }
+    var chosenDifficulty by rememberSaveable { mutableStateOf<SessionDifficulty?>(null) }
+    val haptics = LocalHapticFeedback.current
+    var grown by remember { mutableStateOf(false) }
+    val plantScale by animateFloatAsState(
+        targetValue = if (grown) 1f else 0.6f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+        label = "harvestPlant",
+    )
+    LaunchedEffect(Unit) {
+        grown = true
+        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
 
     FocusBackdrop {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding()
                 .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            PlantDisplay(plant = state.plant, stage = GrowthStage.FULL, size = 160.dp)
+            PlantDisplay(
+                plant = state.plant,
+                stage = GrowthStage.FULL,
+                size = 160.dp,
+                modifier = Modifier.graphicsLayer { scaleX = plantScale; scaleY = plantScale },
+            )
             Spacer(Modifier.height(32.dp))
             Text(
                 stringResource(R.string.session_complete),
@@ -642,7 +667,15 @@ private fun CompletedScreen(
                         SessionDifficulty.MODERATE -> stringResource(R.string.session_evaluation_moderate)
                         SessionDifficulty.HARD -> stringResource(R.string.session_evaluation_hard)
                     }
-                    TextButton(onClick = { onSubmitEvaluation(difficulty) }) { Text(label) }
+                    FilterChip(
+                        selected = chosenDifficulty == difficulty,
+                        onClick = {
+                            chosenDifficulty = difficulty
+                            onSubmitEvaluation(difficulty)
+                        },
+                        label = { Text(label) },
+                        shape = CircleShape,
+                    )
                 }
             }
             state.suggestedNextMinutes?.let { minutes ->

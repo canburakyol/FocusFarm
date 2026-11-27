@@ -297,9 +297,9 @@
     <string name="recovery_finalize_title">جلستك تنتظر الإكمال</string>
     <string name="recovery_finalize_text">اضغط لإكمال مكافأتك بأمان.</string>
     <string name="session_evaluation_title">كيف شعرت خلال هذه الجلسة؟</string>
-    <string name="session_evaluation_easy">🙂 سهلة</string>
-    <string name="session_evaluation_moderate">👌 مناسبة تمامًا</string>
-    <string name="session_evaluation_hard">😮‍💨 صعبة جدًا</string>
+    <string name="session_evaluation_easy">سهلة</string>
+    <string name="session_evaluation_moderate">مناسبة تمامًا</string>
+    <string name="session_evaluation_hard">صعبة جدًا</string>
     <string name="session_next_suggestion">اقتراح الجلسة التالية: %d دقيقة</string>
     <string name="billing_ready_error">خدمة الشراء ليست جاهزة بعد.</string>
     <string name="billing_load_error">تعذر تحميل هذه الخطة. حاول مرة أخرى.</string>
@@ -435,4 +435,8 @@
         <item quantity="one">%d نبتة</item>
         <item quantity="other">%d نبتة</item>
     </plurals>
+    <string name="session_harvest_loading">جارٍ تحضير الحصاد</string>
+    <string name="session_harvest_done">اكتمل الحصاد</string>
+    <string name="session_harvest_bonus">%1$d للتركيز + %2$d تعزيز</string>
+    <string name="session_harvest_added">أضيف إلى حديقتك ورصيد بذورك.</string>
 </resources>

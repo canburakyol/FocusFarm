@@ -297,9 +297,9 @@
     <string name="recovery_finalize_title">Tu sesión está pendiente de completar</string>
     <string name="recovery_finalize_text">Toca para completar tu recompensa de forma segura.</string>
     <string name="session_evaluation_title">¿Cómo te sentiste en esta sesión?</string>
-    <string name="session_evaluation_easy">🙂 Fácil</string>
-    <string name="session_evaluation_moderate">👌 En su punto</string>
-    <string name="session_evaluation_hard">😮‍💨 Demasiado difícil</string>
+    <string name="session_evaluation_easy">Fácil</string>
+    <string name="session_evaluation_moderate">En su punto</string>
+    <string name="session_evaluation_hard">Demasiado difícil</string>
     <string name="session_next_suggestion">Próxima sesión sugerida: %d minutos</string>
     <string name="billing_ready_error">El servicio de compras aún no está listo.</string>
     <string name="billing_load_error">No se pudo cargar este plan. Inténtalo de nuevo.</string>
@@ -435,4 +435,8 @@
         <item quantity="one">%d planta</item>
         <item quantity="other">%d plantas</item>
     </plurals>
+    <string name="session_harvest_loading">Preparando tu cosecha</string>
+    <string name="session_harvest_done">Cosecha completa</string>
+    <string name="session_harvest_bonus">%1$d por enfoque + %2$d de impulso</string>
+    <string name="session_harvest_added">Añadido a tu jardín y a tu saldo de seeds.</string>
 </resources>

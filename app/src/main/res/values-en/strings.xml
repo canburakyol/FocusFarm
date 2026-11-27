@@ -297,9 +297,9 @@
     <string name="recovery_finalize_title">Your session is waiting to be completed</string>
     <string name="recovery_finalize_text">Tap to safely finish claiming your reward.</string>
     <string name="session_evaluation_title">How did this session feel?</string>
-    <string name="session_evaluation_easy">🙂 Easy</string>
-    <string name="session_evaluation_moderate">👌 Just right</string>
-    <string name="session_evaluation_hard">😮‍💨 Too hard</string>
+    <string name="session_evaluation_easy">Easy</string>
+    <string name="session_evaluation_moderate">Just right</string>
+    <string name="session_evaluation_hard">Too hard</string>
     <string name="session_next_suggestion">Suggested next session: %d minutes</string>
     <string name="billing_ready_error">The purchase service is not ready yet.</string>
     <string name="billing_load_error">This plan could not be loaded. Please try again.</string>
@@ -435,4 +435,8 @@
         <item quantity="one">%d plant</item>
         <item quantity="other">%d plants</item>
     </plurals>
+    <string name="session_harvest_loading">Preparing your harvest</string>
+    <string name="session_harvest_done">Harvest complete</string>
+    <string name="session_harvest_bonus">%1$d for focus + %2$d boost</string>
+    <string name="session_harvest_added">Added to your garden and seed balance.</string>
 </resources>
