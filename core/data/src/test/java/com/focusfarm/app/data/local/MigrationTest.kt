@@ -90,6 +90,8 @@ class MigrationTest {
         assertThat(progressCursor.getInt(progressCursor.getColumnIndexOrThrow("streakFreezeTokens"))).isEqualTo(1)
         assertThat(progressCursor.getLong(progressCursor.getColumnIndexOrThrow("lastFreezeGrantWeekStart"))).isEqualTo(0L)
         progressCursor.close()
+        // A user's seed balance must survive every later migration.
+        db.execSQL("UPDATE user_progress SET seeds = 123 WHERE id = 0")
 
         val questClaimsCursor = db.query("SELECT * FROM quest_claims")
         assertThat(questClaimsCursor.columnNames.toList()).containsExactly("dateKey", "questType", "rewardSeeds", "claimedAt")
@@ -321,28 +323,18 @@ class MigrationTest {
             context,
             AppDatabase::class.java,
             dbName
-        ).addMigrations(
-            AppDatabase.MIGRATION_1_2,
-            AppDatabase.MIGRATION_2_3,
-            AppDatabase.MIGRATION_3_4,
-            AppDatabase.MIGRATION_4_5,
-            AppDatabase.MIGRATION_5_6,
-            AppDatabase.MIGRATION_6_7,
-            AppDatabase.MIGRATION_7_8,
-            AppDatabase.MIGRATION_8_9,
-            AppDatabase.MIGRATION_9_10,
-            AppDatabase.MIGRATION_10_11,
-            AppDatabase.MIGRATION_11_12,
-            AppDatabase.MIGRATION_12_13,
-            AppDatabase.MIGRATION_13_14,
-            AppDatabase.MIGRATION_14_15,
-        ).allowMainThreadQueries()
+        ).addMigrations(*AppDatabase.ALL_MIGRATIONS).allowMainThreadQueries()
         .build()
 
         val sessionDao = appDatabase.sessionDao()
         val allSessions = sessionDao.getRecentSessionsSnapshot(10)
         assertThat(allSessions).hasSize(1)
         assertThat(allSessions[0].plantId).isEqualTo("sprout")
+
+        appDatabase.openHelper.readableDatabase.query("SELECT seeds FROM user_progress WHERE id = 0").use { cursor ->
+            assertThat(cursor.moveToFirst()).isTrue()
+            assertThat(cursor.getInt(0)).isEqualTo(123)
+        }
 
         appDatabase.close()
     }
