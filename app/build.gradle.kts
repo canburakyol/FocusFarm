@@ -123,6 +123,11 @@ dependencies {
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
 
+    // Play In-App Review
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
+    implementation(libs.kotlinx.coroutines.play.services)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

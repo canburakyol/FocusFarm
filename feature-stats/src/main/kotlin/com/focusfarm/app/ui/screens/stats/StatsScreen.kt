@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.data.local.ReflectionHistoryItem
+import com.focusfarm.app.data.auth.AccountDeletionResult
 import com.focusfarm.app.data.repository.DailyTrendPoint
 import com.focusfarm.app.data.repository.TimeFilter
 import com.focusfarm.app.data.repository.TagDuration
@@ -73,6 +74,7 @@ import com.focusfarm.app.data.repository.StatsSummary
 import com.focusfarm.app.domain.FocusSession
 import com.focusfarm.app.domain.FocusTag
 import com.focusfarm.app.ui.components.FocusBackdrop
+import com.focusfarm.app.ui.navigation.ReleaseFeatureScope
 import com.focusfarm.app.ui.theme.TimerFontFamily
 import com.focusfarm.core.ui.R
 import kotlinx.coroutines.launch
@@ -896,15 +898,17 @@ private fun SettingsDialog(
     val scope = rememberCoroutineScope()
 
     val referralState by viewModel.referralState.collectAsStateWithLifecycle()
+    val currentUserId by viewModel.currentUserId.collectAsStateWithLifecycle()
     var referralInput by remember { mutableStateOf("") }
     var referralSuccessMessage by remember { mutableStateOf<String?>(null) }
     var isReferralLoading by remember { mutableStateOf(false) }
 
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     var isDeleting by remember { mutableStateOf(false) }
+    var deletionResult by remember { mutableStateOf<AccountDeletionResult?>(null) }
 
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = { if (!isDeleting) onDismiss() },
         title = {
             Text(
                 text = stringResource(R.string.settings_title),
@@ -919,8 +923,8 @@ private fun SettingsDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // SECTION 1: Enter Referral Code
-                Card(
+                // Referral is retained in source but hidden until its code and wallet paths agree.
+                if (ReleaseFeatureScope.REFERRAL_ENABLED) Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -1067,27 +1071,30 @@ private fun SettingsDialog(
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = stringResource(R.string.settings_account_delete_body),
+                            text = stringResource(if (currentUserId == null) R.string.settings_clear_local_data_body else R.string.settings_account_delete_body),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.bodySmall
                         )
 
                         Button(
-                            onClick = { showDeleteConfirmation = true },
+                            onClick = {
+                                deletionResult = null
+                                showDeleteConfirmation = true
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.error,
                                 contentColor = MaterialTheme.colorScheme.onError
                             ),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(stringResource(R.string.settings_delete_account_button))
+                            Text(stringResource(if (currentUserId == null) R.string.settings_clear_local_data_button else R.string.settings_delete_account_button))
                         }
                     }
                 }
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss, enabled = !isDeleting) {
                 Text(stringResource(R.string.paywall_close), color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -1096,22 +1103,38 @@ private fun SettingsDialog(
     if (showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = { if (!isDeleting) showDeleteConfirmation = false },
-            title = { Text(stringResource(R.string.settings_delete_account_title), color = MaterialTheme.colorScheme.error) },
+            title = { Text(stringResource(if (currentUserId == null) R.string.settings_clear_local_data_title else R.string.settings_delete_account_title), color = MaterialTheme.colorScheme.error) },
             containerColor = MaterialTheme.colorScheme.background,
             text = {
-                Text(
-                    text = stringResource(R.string.settings_delete_account_confirm_body),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Column {
+                    Text(
+                        text = stringResource(if (currentUserId == null) R.string.settings_clear_local_data_confirm_body else R.string.settings_delete_account_confirm_body),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    deletionResult?.takeIf { it != AccountDeletionResult.Success }?.let { result ->
+                        Text(
+                            text = stringResource(when (result) {
+                                AccountDeletionResult.NoSignedInAccount -> R.string.settings_delete_no_account
+                                AccountDeletionResult.RequiresRecentLogin -> R.string.settings_delete_reauth_required
+                                AccountDeletionResult.RemoteDeletionFailed -> R.string.settings_delete_remote_failed
+                                AccountDeletionResult.LocalCleanupFailed -> R.string.settings_clear_local_failed
+                                AccountDeletionResult.AccountDeletedLocalCleanupFailed -> R.string.settings_delete_local_failed
+                                AccountDeletionResult.Success -> R.string.settings_delete_remote_failed
+                            }),
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+                }
             },
             confirmButton = {
                 TextButton(
                     onClick = {
                         isDeleting = true
                         scope.launch {
-                            val success = viewModel.deleteAccount()
+                            val result = viewModel.deleteAccountOrClearLocalData()
                             isDeleting = false
-                            if (success) {
+                            deletionResult = result
+                            if (result == AccountDeletionResult.Success) {
                                 showDeleteConfirmation = false
                                 onDismiss()
                                 activity?.finishAffinity()
@@ -1123,7 +1146,7 @@ private fun SettingsDialog(
                     if (isDeleting) {
                         CircularProgressIndicator(color = MaterialTheme.colorScheme.error, modifier = Modifier.size(20.dp))
                     } else {
-                        Text(stringResource(R.string.settings_delete_account_confirm), color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(if (currentUserId == null) R.string.settings_clear_local_data_confirm else R.string.settings_delete_account_confirm), color = MaterialTheme.colorScheme.error)
                     }
                 }
             },

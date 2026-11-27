@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.focusfarm.app.data.auth.AuthManager
+import com.focusfarm.app.data.auth.AccountDeletionResult
 import com.focusfarm.app.data.repository.ReferralManager
 import com.focusfarm.app.data.repository.ReferralResult
 import com.focusfarm.app.data.repository.ReferralState
@@ -43,9 +44,11 @@ import javax.inject.Singleton
 
 interface StatsSettingsActions {
     val referralState: StateFlow<ReferralState>
+    val currentUserId: StateFlow<String?>
     suspend fun verifyReferral(referralCode: String): ReferralResult
     fun showPrivacyOptions(activity: Activity, onDismissed: (errorMessage: String?) -> Unit)
-    suspend fun deleteAccount(): Boolean
+    suspend fun deleteAccount(): AccountDeletionResult
+    suspend fun clearLocalData(): AccountDeletionResult
 }
 
 @Singleton
@@ -55,12 +58,14 @@ class DefaultStatsSettingsActions @Inject constructor(
     private val referralManager: ReferralManager,
 ) : StatsSettingsActions {
     override val referralState: StateFlow<ReferralState> = referralManager.state
+    override val currentUserId: StateFlow<String?> = authManager.currentUserId
     override suspend fun verifyReferral(referralCode: String): ReferralResult =
         referralManager.verifyReferral(referralCode)
     override fun showPrivacyOptions(activity: Activity, onDismissed: (errorMessage: String?) -> Unit) {
         consentManager.showPrivacyOptions(activity, onDismissed)
     }
-    override suspend fun deleteAccount(): Boolean = authManager.deleteAccount()
+    override suspend fun deleteAccount(): AccountDeletionResult = authManager.deleteAccount()
+    override suspend fun clearLocalData(): AccountDeletionResult = authManager.clearLocalData()
 }
 
 @Module
@@ -180,6 +185,7 @@ class StatsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val referralState: StateFlow<ReferralState> = settingsActions.referralState
+    val currentUserId: StateFlow<String?> = settingsActions.currentUserId
 
     suspend fun verifyReferral(referralCode: String): ReferralResult =
         settingsActions.verifyReferral(referralCode)
@@ -188,7 +194,9 @@ class StatsViewModel @Inject constructor(
         settingsActions.showPrivacyOptions(activity, onDismissed)
     }
 
-    suspend fun deleteAccount(): Boolean = settingsActions.deleteAccount()
+    suspend fun deleteAccountOrClearLocalData(): AccountDeletionResult =
+        if (currentUserId.value == null) settingsActions.clearLocalData()
+        else settingsActions.deleteAccount()
 
     init {
         viewModelScope.launch {

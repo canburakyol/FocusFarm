@@ -137,8 +137,8 @@ fun OnboardingScreen(
                             illustration = { GardenIllustration() }
                         )
                         2 -> OnboardingStepView(
-                            title = "Seed Kazanarak Yeni Türler Aç",
-                            subtitle = "Odaklandıkça kazandığın tohumlar (Seed) ile mağazadan daha nadir ve görkemli bitkiler satın alıp koleksiyonunu genişlet.",
+                            title = "Odaklandıkça Seed Kazan",
+                            subtitle = "Başarılı odak oturumları Seed kazandırır. İlerlemeni ve biriken Seed miktarını uygulamada takip edebilirsin.",
                             illustration = { SeedBagIllustration() }
                         )
                         3 -> OnboardingGoalSetupView(
@@ -454,7 +454,7 @@ private fun SeedBagIllustration() {
                 .padding(horizontal = 14.dp, vertical = 6.dp)
         ) {
             Text(
-                text = "Seed Mağazası",
+                text = "Seed Birikimi",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold

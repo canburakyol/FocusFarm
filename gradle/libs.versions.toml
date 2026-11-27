@@ -17,6 +17,7 @@ firebase-bom = "33.10.0"
 billing = "8.3.0"
 play-services-ads = "24.2.0"
 ump = "4.0.0"
+play-review = "2.0.2"
 coroutines = "1.9.0"
 junit = "4.13.2"
 truth = "1.4.4"
@@ -60,6 +61,8 @@ hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.re
 billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "play-services-ads" }
 ump = { module = "com.google.android.ump:user-messaging-platform", version.ref = "ump" }
+play-review = { module = "com.google.android.play:review", version.ref = "play-review" }
+play-review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "play-review" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }

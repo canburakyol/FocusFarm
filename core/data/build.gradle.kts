@@ -1,8 +1,35 @@
+import java.util.Base64
+import java.util.Properties
+import java.security.KeyFactory
+import java.security.spec.X509EncodedKeySpec
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+}
+
+val localBillingProperties = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+val billingPublicKey = (
+    providers.gradleProperty("BILLING_PUBLIC_KEY").orNull
+        ?: providers.environmentVariable("FOCUSFARM_BILLING_PUBLIC_KEY").orNull
+        ?: localBillingProperties.getProperty("BILLING_PUBLIC_KEY")
+).orEmpty().trim()
+
+fun hasValidBillingPublicKey(key: String): Boolean = runCatching {
+    val decoded = Base64.getDecoder().decode(key)
+    KeyFactory.getInstance("RSA").generatePublic(X509EncodedKeySpec(decoded))
+}.isSuccess
+
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    doFirst {
+        check(hasValidBillingPublicKey(billingPublicKey)) {
+            "Release billing requires a valid BILLING_PUBLIC_KEY from Play Console in local.properties, a Gradle property, or FOCUSFARM_BILLING_PUBLIC_KEY."
+        }
+    }
 }
 
 android {
@@ -12,6 +39,11 @@ android {
     defaultConfig {
         minSdk = 26
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "BILLING_PUBLIC_KEY", "\"$billingPublicKey\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {

@@ -169,7 +169,7 @@ fun StreakDetailScreen(
                         Text(
                             text = "• Serinin bozulmaması için her gün belirlediğin günlük odak hedefine ulaşman gerekir.\n" +
                                     "• Unuttuğun veya odaklanamadığın günlerde, cüzdanında dondurma tokenı (❄️) varsa serin otomatik olarak korunur.\n" +
-                                    "• Dondurma tokenlarını mağazadan alabilir veya haftalık ödüllerden kazanabilirsin.",
+                                    "• Dondurma tokenlarını haftalık ödüllerden kazanabilirsin.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 20.sp

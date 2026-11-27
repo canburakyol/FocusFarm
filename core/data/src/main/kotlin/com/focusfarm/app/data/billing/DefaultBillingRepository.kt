@@ -2,7 +2,6 @@ package com.focusfarm.app.data.billing
 
 import android.app.Activity
 import android.content.Context
-import androidx.core.content.edit
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
@@ -15,17 +14,19 @@ import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
 import com.focusfarm.app.telemetry.AppTelemetry
+import com.focusfarm.core.data.BuildConfig
 import com.focusfarm.core.ui.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import java.util.Collections
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.json.JSONArray
+import org.json.JSONObject
 
 @Singleton
 class DefaultBillingRepository @Inject constructor(
@@ -45,8 +46,8 @@ class DefaultBillingRepository @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     override val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _errorMessages = MutableSharedFlow<String?>(extraBufferCapacity = 1)
-    override val errorMessages: Flow<String?> = _errorMessages.asSharedFlow()
+    private val _errorMessages = MutableStateFlow<String?>(null)
+    override val errorMessages: Flow<String?> = _errorMessages.asStateFlow()
 
     private val cachedProductDetails = mutableMapOf<PremiumPlan, ProductDetails>()
     private val cachedOfferTokens = mutableMapOf<PremiumPlan, String?>()
@@ -62,9 +63,12 @@ class DefaultBillingRepository @Inject constructor(
         .build()
 
     private var connecting = false
+    private val verifiedPurchases = VerifiedPurchaseStore()
+    private var purchaseQueryGeneration = 0L
+    private val acknowledgementTokens = Collections.synchronizedSet(mutableSetOf<String>())
 
     init {
-        _entitlement.value = getEntitlementOffline()
+        loadVerifiedPurchases()
         startConnection()
     }
 
@@ -160,8 +164,16 @@ class DefaultBillingRepository @Inject constructor(
     override fun onPurchasesUpdated(result: BillingResult, purchases: MutableList<Purchase>?) {
         when (result.responseCode) {
             BillingClient.BillingResponseCode.OK -> {
-                handlePurchases(purchases.orEmpty())
-                trackSuccessfulPurchases(purchases.orEmpty())
+                val valid = processPurchases(purchases.orEmpty())
+                if (valid.isNotEmpty()) {
+                    verifiedPurchases.merge(valid.map { it.second })
+                    publishEntitlement()
+                    valid.map { it.first }.filterNot { it.isAcknowledged }.forEach(::acknowledgePurchase)
+                    _purchaseState.value = PurchaseState.Success(valid.last().first)
+                    trackSuccessfulPurchases(valid.map { it.first })
+                }
+                // Purchase updates are deltas; reconcile both complete product snapshots.
+                if (billingClient.isReady) queryPurchases()
             }
             BillingClient.BillingResponseCode.USER_CANCELED -> {
                 _purchaseState.value = PurchaseState.Canceled
@@ -259,115 +271,115 @@ class DefaultBillingRepository @Inject constructor(
     }
 
     private fun queryPurchases() {
+        val generation = ++purchaseQueryGeneration
         val subsParams = QueryPurchasesParams.newBuilder()
             .setProductType(BillingClient.ProductType.SUBS)
             .build()
 
-        billingClient.queryPurchasesAsync(subsParams) { subsResult, subsPurchases ->
+        billingClient.queryPurchasesAsync(subsParams) subsQuery@{ subsResult, subsPurchases ->
+            if (generation != purchaseQueryGeneration) return@subsQuery
+            applyPurchaseQueryResult(BillingClient.ProductType.SUBS, subsResult, subsPurchases)
             val inAppParams = QueryPurchasesParams.newBuilder()
                 .setProductType(BillingClient.ProductType.INAPP)
                 .build()
 
-            billingClient.queryPurchasesAsync(inAppParams) { inAppResult, inAppPurchases ->
-                val purchases = (subsPurchases + inAppPurchases)
-                    .distinctBy { it.purchaseToken }
-
-                handlePurchases(purchases)
-
-                val hasError = subsResult.responseCode != BillingClient.BillingResponseCode.OK ||
-                    inAppResult.responseCode != BillingClient.BillingResponseCode.OK
-
+            billingClient.queryPurchasesAsync(inAppParams) inAppQuery@{ inAppResult, inAppPurchases ->
+                if (generation != purchaseQueryGeneration) return@inAppQuery
+                applyPurchaseQueryResult(BillingClient.ProductType.INAPP, inAppResult, inAppPurchases)
                 _isLoading.value = false
-                if (hasError) {
-                    val errMsg = if (subsResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                        subsResult.toUserMessage()
-                    } else {
-                        inAppResult.toUserMessage()
-                    }
-                    _errorMessages.tryEmit(errMsg)
-                }
             }
         }
     }
 
-    private fun handlePurchases(purchases: List<Purchase>) {
-        var unlocked = false
-        var hasLifetime = false
-        var hasMonthly = false
-        var hasYearly = false
-        var activePurchaseToken: String? = null
-        var activeOriginalJson: String? = null
-        var activeSignature: String? = null
-        var hasPending = false
-        var lastCompletedPurchase: Purchase? = null
+    private fun applyPurchaseQueryResult(type: String, result: BillingResult, purchases: List<Purchase>) {
+        val valid = if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+            processPurchases(purchases).filter { it.second.plan.productType == type }
+        } else {
+            emptyList()
+        }
+        if (!verifiedPurchases.applyQueryResult(type, result.responseCode, valid.map { it.second })) {
+            telemetry.recordNonFatal(
+                tag = "query_purchases_failed",
+                message = "type=$type code=${result.responseCode} message=${result.debugMessage}",
+            )
+            _errorMessages.tryEmit(result.toUserMessage())
+            return
+        }
+        publishEntitlement()
+        valid.map { it.first }.filterNot { it.isAcknowledged }.forEach(::acknowledgePurchase)
+    }
 
-        purchases.forEach { purchase ->
-            val matchingPlan = purchase.products
-                .mapNotNull { PremiumPlan.fromProductId(it) }
-                .firstOrNull() ?: return@forEach
-
-            val isVerified = SecuritySignatureVerifier.isSignatureValid(context, purchase.originalJson, purchase.signature)
-            if (!isVerified) {
-                telemetry.recordNonFatal(
-                    tag = "billing_signature_failed",
-                    message = "Signature verification failed for products: ${purchase.products}"
-                )
-                return@forEach
+    private fun processPurchases(purchases: List<Purchase>): List<Pair<Purchase, VerifiedPurchase>> {
+        var pending = false
+        val valid = purchases.mapNotNull { purchase ->
+            if (purchase.purchaseState == Purchase.PurchaseState.PENDING) {
+                pending = true
+                return@mapNotNull null
             }
+            val record = verifiedPurchase(purchase) ?: return@mapNotNull null
+            purchase to record
+        }
+        if (pending) _errorMessages.tryEmit(context.getString(R.string.billing_pending_activation))
+        return valid
+    }
 
-            when (purchase.purchaseState) {
-                Purchase.PurchaseState.PURCHASED -> {
-                    unlocked = true
-                    activePurchaseToken = purchase.purchaseToken
-                    activeOriginalJson = purchase.originalJson
-                    activeSignature = purchase.signature
-                    lastCompletedPurchase = purchase
+    private fun verifiedPurchase(purchase: Purchase): VerifiedPurchase? {
+        if (purchase.purchaseState != Purchase.PurchaseState.PURCHASED) return null
+        val plan = purchase.products.mapNotNull(PremiumPlan::fromProductId).firstOrNull() ?: return null
+        if (!PurchaseSignatureVerifier.verify(
+                BuildConfig.BILLING_PUBLIC_KEY, purchase.originalJson, purchase.signature,
+            )) {
+            telemetry.recordNonFatal(
+                tag = "billing_signature_failed",
+                message = "Signature verification failed for products: ${purchase.products}",
+            )
+            return null
+        }
+        return VerifiedPurchase(plan, purchase.purchaseToken, purchase.originalJson, purchase.signature)
+    }
 
-                    when (matchingPlan) {
-                        PremiumPlan.LIFETIME -> hasLifetime = true
-                        PremiumPlan.MONTHLY -> hasMonthly = true
-                        PremiumPlan.YEARLY -> hasYearly = true
-                    }
+    private fun publishEntitlement() {
+        _entitlement.value = verifiedPurchases.entitlement()
+        val json = JSONArray()
+        verifiedPurchases.snapshot().forEach { purchase ->
+            json.put(JSONObject().put("purchase", purchase.originalJson).put("signature", purchase.signature))
+        }
+        context.getSharedPreferences(VERIFIED_PURCHASES_PREFS, Context.MODE_PRIVATE)
+            .edit().putString(VERIFIED_PURCHASES_KEY, json.toString()).apply()
+    }
 
-                    if (!purchase.isAcknowledged) {
-                        acknowledgePurchase(purchase)
-                    }
-                }
-                Purchase.PurchaseState.PENDING -> {
-                    hasPending = true
-                }
+    private fun loadVerifiedPurchases() {
+        val saved = context.getSharedPreferences(VERIFIED_PURCHASES_PREFS, Context.MODE_PRIVATE)
+            .getString(VERIFIED_PURCHASES_KEY, null) ?: return
+        val records = try {
+            val json = JSONArray(saved)
+            (0 until json.length()).mapNotNull { index ->
+                val entry = json.getJSONObject(index)
+                val purchase = Purchase(entry.getString("purchase"), entry.getString("signature"))
+                verifiedPurchase(purchase)
             }
+        } catch (error: Exception) {
+            telemetry.recordNonFatal(tag = "billing_cache_invalid", message = error.message.orEmpty())
+            emptyList()
         }
+        verifiedPurchases.merge(records)
+        _entitlement.value = verifiedPurchases.entitlement()
+    }
 
-        val entitlement = PremiumEntitlement(
-            isPremiumUnlocked = unlocked,
-            hasLifetime = hasLifetime,
-            hasMonthly = hasMonthly,
-            hasYearly = hasYearly,
-            purchaseToken = activePurchaseToken,
-            originalJson = activeOriginalJson,
-            signature = activeSignature
-        )
-
-        _entitlement.value = entitlement
-        saveEntitlementOffline(entitlement)
-
-        if (unlocked && lastCompletedPurchase != null) {
-            _purchaseState.value = PurchaseState.Success(lastCompletedPurchase!!)
-        }
-
-        if (hasPending) {
-            _errorMessages.tryEmit(context.getString(R.string.billing_pending_activation))
-        }
+    private companion object {
+        const val VERIFIED_PURCHASES_PREFS = "verified_billing_purchases"
+        const val VERIFIED_PURCHASES_KEY = "purchases_v1"
     }
 
     private fun acknowledgePurchase(purchase: Purchase) {
+        if (!acknowledgementTokens.add(purchase.purchaseToken)) return
         val params = AcknowledgePurchaseParams.newBuilder()
             .setPurchaseToken(purchase.purchaseToken)
             .build()
 
         billingClient.acknowledgePurchase(params) { result ->
             if (result.responseCode != BillingClient.BillingResponseCode.OK) {
+                acknowledgementTokens.remove(purchase.purchaseToken)
                 telemetry.recordNonFatal(
                     tag = "acknowledge_purchase_failed",
                     message = "code=${result.responseCode} message=${result.debugMessage}",
@@ -389,92 +401,6 @@ class DefaultBillingRepository @Inject constructor(
                         params = mapOf("product_id" to productId),
                     )
                 }
-        }
-    }
-
-    private fun saveEntitlementOffline(entitlement: PremiumEntitlement) {
-        val sharedPrefs = context.getSharedPreferences("secure_billing_cache", Context.MODE_PRIVATE)
-        val salt = "FocusFarmPremiumSalt2026"
-        val isPremiumVal = entitlement.isPremiumUnlocked
-        val hasLifetimeVal = entitlement.hasLifetime
-        val hasMonthlyVal = entitlement.hasMonthly
-        val hasYearlyVal = entitlement.hasYearly
-        val token = entitlement.purchaseToken ?: ""
-        val dataString = "$isPremiumVal|$hasLifetimeVal|$hasMonthlyVal|$hasYearlyVal|$token|$salt"
-        val checksum = sha256(dataString)
-
-        sharedPrefs.edit {
-            putBoolean("is_premium_unlocked", isPremiumVal)
-            putBoolean("has_lifetime", hasLifetimeVal)
-            putBoolean("has_monthly", hasMonthlyVal)
-            putBoolean("has_yearly", hasYearlyVal)
-            putString("purchase_token", token)
-            putString("checksum", checksum)
-        }
-    }
-
-    private fun getEntitlementOffline(): PremiumEntitlement {
-        val sharedPrefs = context.getSharedPreferences("secure_billing_cache", Context.MODE_PRIVATE)
-        val isPremiumVal = sharedPrefs.getBoolean("is_premium_unlocked", false)
-        val hasLifetimeVal = sharedPrefs.getBoolean("has_lifetime", false)
-        val hasMonthlyVal = sharedPrefs.getBoolean("has_monthly", false)
-        val hasYearlyVal = sharedPrefs.getBoolean("has_yearly", false)
-        val token = sharedPrefs.getString("purchase_token", "") ?: ""
-        val checksum = sharedPrefs.getString("checksum", "") ?: ""
-
-        val salt = "FocusFarmPremiumSalt2026"
-        val expectedData = "$isPremiumVal|$hasLifetimeVal|$hasMonthlyVal|$hasYearlyVal|$token|$salt"
-        val expectedChecksum = sha256(expectedData)
-
-        if (checksum != expectedChecksum) {
-            return PremiumEntitlement.NONE
-        }
-
-        return PremiumEntitlement(
-            isPremiumUnlocked = isPremiumVal,
-            hasLifetime = hasLifetimeVal,
-            hasMonthly = hasMonthlyVal,
-            hasYearly = hasYearlyVal,
-            purchaseToken = token.ifEmpty { null },
-            originalJson = null,
-            signature = null
-        )
-    }
-
-    private fun sha256(input: String): String {
-        val md = java.security.MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(input.toByteArray(Charsets.UTF_8))
-        return digest.fold("") { str, it -> str + "%02x".format(it) }
-    }
-
-    private object SecuritySignatureVerifier {
-        private const val BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzFocusFarmPlaceholderKey"
-
-        fun verifyPurchase(publicKey: String, signedData: String, signature: String): Boolean {
-            if (signedData.isEmpty() || signature.isEmpty() || publicKey.isEmpty()) {
-                return false
-            }
-            return try {
-                val keyBytes = android.util.Base64.decode(publicKey, android.util.Base64.DEFAULT)
-                val keySpec = java.security.spec.X509EncodedKeySpec(keyBytes)
-                val keyFactory = java.security.KeyFactory.getInstance("RSA")
-                val key = keyFactory.generatePublic(keySpec)
-
-                val sig = java.security.Signature.getInstance("SHA1withRSA")
-                sig.initVerify(key)
-                sig.update(signedData.toByteArray())
-                sig.verify(android.util.Base64.decode(signature, android.util.Base64.DEFAULT))
-            } catch (e: Exception) {
-                false
-            }
-        }
-
-        fun isSignatureValid(context: Context, signedData: String, signature: String): Boolean {
-            val isDebuggable = (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
-            if (isDebuggable && (BASE64_PUBLIC_KEY.isEmpty() || BASE64_PUBLIC_KEY.contains("Placeholder"))) {
-                return true
-            }
-            return verifyPurchase(BASE64_PUBLIC_KEY, signedData, signature)
         }
     }
 

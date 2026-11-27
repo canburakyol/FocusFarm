@@ -283,7 +283,7 @@ private fun CollectionPlantCard(
             if (!item.isUnlocked) {
                 val condition = when {
                     item.plant.isPremium -> "Premium gerektirir"
-                    item.plant.unlockType == "shop" -> "Mağazadan tohumunu satın al"
+                    item.plant.unlockType == "shop" -> "Bu tohum henüz açılamıyor"
                     else -> "${item.plant.minimumFocusMinutes} dk odak seansı tamamla"
                 }
                 Text(

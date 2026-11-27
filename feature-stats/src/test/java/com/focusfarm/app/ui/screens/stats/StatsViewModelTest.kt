@@ -263,6 +263,7 @@ private class TestClock(
 private class FakeStatsSettingsActions : StatsSettingsActions {
     private val _referralState = MutableStateFlow(ReferralState())
     override val referralState: StateFlow<ReferralState> = _referralState
+    override val currentUserId: StateFlow<String?> = MutableStateFlow<String?>(null)
 
     override suspend fun verifyReferral(referralCode: String): ReferralResult =
         ReferralResult(success = true, message = "ok")
@@ -271,5 +272,8 @@ private class FakeStatsSettingsActions : StatsSettingsActions {
         onDismissed(null)
     }
 
-    override suspend fun deleteAccount(): Boolean = true
+    override suspend fun deleteAccount(): com.focusfarm.app.data.auth.AccountDeletionResult =
+        com.focusfarm.app.data.auth.AccountDeletionResult.Success
+    override suspend fun clearLocalData(): com.focusfarm.app.data.auth.AccountDeletionResult =
+        com.focusfarm.app.data.auth.AccountDeletionResult.Success
 }

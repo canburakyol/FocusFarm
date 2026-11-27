@@ -62,12 +62,17 @@ fun SessionScreen(
     plantId: String,
     targetMinutes: Int,
     onBack: () -> Unit,
+    onReviewRequested: () -> Unit = {},
     viewModel: SessionViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val statusMessage by viewModel.statusMessage.collectAsStateWithLifecycle()
     val canRevive by viewModel.canRevive.collectAsStateWithLifecycle()
     var showAbandonDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(viewModel) {
+        viewModel.reviewRequest.collect { onReviewRequested() }
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {

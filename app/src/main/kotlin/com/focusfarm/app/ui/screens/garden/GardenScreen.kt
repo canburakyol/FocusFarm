@@ -152,13 +152,15 @@ fun GardenScreen(
                     )
                 }
                 Spacer(Modifier.height(10.dp))
-                GardenGoalCard(
-                    goal = GardenGoalPresentation.from(
-                        hasPlants = gardenEntries.isNotEmpty(),
-                        seedBalance = seedBalance,
-                        unlockedPlantIds = unlockedPlantIds,
-                    ),
-                )
+                if (gardenEntries.isEmpty()) {
+                    GardenGoalCard(
+                        goal = GardenGoalPresentation.from(
+                            hasPlants = false,
+                            seedBalance = seedBalance,
+                            unlockedPlantIds = unlockedPlantIds,
+                        ),
+                    )
+                }
             }
 
             Spacer(Modifier.height(8.dp))

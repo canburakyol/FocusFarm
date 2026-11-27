@@ -61,7 +61,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private fun seedBuiltInPlantSpecies(database: SupportSQLiteDatabase) {
+        internal fun seedBuiltInPlantSpecies(database: SupportSQLiteDatabase) {
             PlantSpeciesCatalog.ALL.forEach { species ->
                 database.execSQL(
                     """INSERT OR IGNORE INTO plant_species

@@ -10,11 +10,6 @@
     <string name="greeting">Focus Farm</string>
     <string name="greeting_subtitle">Bugün neye odaklanacaksın?</string>
     <string name="start_focus">Odak Oturumunu Başlat</string>
-    <string name="home_today_title">Bugünün odağı hazır</string>
-    <string name="home_today_support">Küçük bir süre seç, tek bir söz ver ve başla.</string>
-    <string name="home_selected_duration">%d dakika</string>
-    <string name="home_start_today_session">Bugünkü Seansı Başlat</string>
-    <string name="home_start_hint">Seans başladığında yalnızca odağın kalır.</string>
     <string name="recovery_channel_name">Seans kurtarma</string>
     <string name="recovery_resume_title">Odak seansın devam ediyor</string>
     <string name="recovery_resume_text">Kaldığın yerden devam etmek için dokun.</string>
@@ -230,11 +225,30 @@
     <string name="settings_privacy_preferences">Gizlilik Tercihlerini Düzenle</string>
     <string name="settings_privacy_policy_button">Gizlilik Politikasını Aç</string>
     <string name="settings_account_data_title">Hesap ve Veriler</string>
-    <string name="settings_account_delete_body">Hesabınızı sildiğinizde cihazdaki ve buluttaki tüm verileriniz kalıcı olarak temizlenir.</string>
-    <string name="settings_delete_account_button">Hesabımı ve Verilerimi Sil</string>
+    <string name="settings_account_delete_body">Firebase hesabınız ve cihazdaki ilerlemeniz silinir. Play satın alma geçmişiniz etkilenmez.</string>
+    <string name="settings_delete_account_button">Hesabımı Sil</string>
     <string name="settings_delete_account_title">Hesabı Sil?</string>
-    <string name="settings_delete_account_confirm_body">Tüm ilerlemeniz, satın almalarınız ve bahçeniz kalıcı olarak silinecektir. Bu işlem geri alınamaz. Emin misiniz?</string>
+    <string name="settings_delete_account_confirm_body">Hesabınız ve cihazdaki ilerlemeniz silinecek. Play satın alma geçmişiniz silinmez. Devam edilsin mi?</string>
     <string name="settings_delete_account_confirm">Evet, Sil</string>
+    <string name="settings_clear_local_data_body">Oturum açık değil. Bu cihazdaki ilerlemeyi silebilirsiniz; çevrimiçi hesap silinmez.</string>
+    <string name="settings_clear_local_data_button">Cihazdaki Verileri Temizle</string>
+    <string name="settings_clear_local_data_title">Cihazdaki Veriler Silinsin mi?</string>
+    <string name="settings_clear_local_data_confirm_body">Bu cihazdaki ilerleme ve ayarlar silinecek. Çevrimiçi hesaplara ve Play satın alma geçmişine dokunulmaz.</string>
+    <string name="settings_clear_local_data_confirm">Verileri Temizle</string>
+    <string name="settings_delete_processing">Siliniyor…</string>
+    <string name="settings_delete_no_account">Hesap oturumu kapandı. Yalnızca cihazdaki verileri temizlemek için yeniden açın.</string>
+    <string name="settings_delete_reauth_required">Firebase hesabı silinmedi. Yeniden kimlik doğrulaması gerekiyor; bu uygulamada yeniden giriş akışı henüz yok. Verileriniz korunuyor.</string>
+    <string name="settings_delete_remote_failed">Firebase hesabı silinemedi. Verileriniz korunuyor; bağlantıyı kontrol edip tekrar deneyin.</string>
+    <string name="settings_delete_local_failed">Hesap silindi ancak cihazdaki veriler tamamen temizlenemedi. Uygulamayı yeniden açıp yerel temizlemeyi deneyin.</string>
+    <string name="settings_clear_local_failed">Cihazdaki veriler tamamen temizlenemedi. Tekrar deneyin.</string>
+    <string name="settings_feedback_title" tools:ignore="MissingTranslation">Geri Bildirim Gönder</string>
+    <string name="settings_feedback_body" tools:ignore="MissingTranslation">Optional, no account required.</string>
+    <string name="settings_feedback_rate_button" tools:ignore="MissingTranslation">Uygulamayı Değerlendir</string>
+    <string name="settings_feedback_send_button" tools:ignore="MissingTranslation">Geliştiriciye Yaz</string>
+    <string name="feedback_email" translatable="false">biyokimya58@gmail.com</string>
+    <string name="feedback_subject" tools:ignore="MissingTranslation">Focus Farm Geri Bildirim</string>
+    <string name="feedback_chooser_title" tools:ignore="MissingTranslation">E-posta uygulaması seç</string>
+    <string name="feedback_no_email_app" tools:ignore="MissingTranslation">E-posta uygulaması bulunamadı.</string>
     <string name="share_garden_title">Bahçeni Paylaş</string>
     <string name="share_garden_preview_content_description">Bahçe önizlemesi</string>
     <string name="share_garden_message">Odaklanarak bahçemi büyüttüm! Sen de katıl.</string>
@@ -304,8 +318,6 @@
     <!-- Billing strings -->
     <string name="billing_ready_error">Satın alma servisi henüz hazır değil.</string>
     <string name="billing_load_error">Bu plan şu an yüklenemedi, tekrar dene.</string>
-    <string name="billing_activity_required">Satın alma için activity gerekli.</string>
-    <string name="billing_purchase_success">Satın alma başarılı. Premium aktif edildi.</string>
     <string name="billing_purchase_cancelled">Satın alma iptal edildi.</string>
     <string name="billing_pending_activation">Satın alma işlemin tamamlanınca Premium aktif olacak.</string>
     <string name="billing_net_error">Ağ hatası oluştu. Tekrar dene.</string>

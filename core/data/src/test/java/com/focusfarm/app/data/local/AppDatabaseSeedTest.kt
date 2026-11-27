@@ -52,6 +52,18 @@ class AppDatabaseSeedTest {
     }
 
     @Test
+    fun localDataClearRestoresBuiltInPlantSpecies(): Unit = runBlocking {
+        database.clearAllTables()
+        AppDatabase.seedBuiltInPlantSpecies(database.openHelper.writableDatabase)
+
+        val seededIds = PlantSpeciesCatalog.ALL.mapNotNull { species ->
+            database.plantSpeciesDao().getById(species.id)?.id
+        }
+        assertThat(seededIds).containsExactlyElementsIn(PlantSpeciesCatalog.ALL.map { it.id })
+        Unit
+    }
+
+    @Test
     fun openingExistingDatabaseRepairsMissingPlantSpecies() = runBlocking {
         database.close()
         database = Room.databaseBuilder(context, AppDatabase::class.java, repairDatabaseName)

@@ -10,9 +10,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.focusfarm.app.data.repository.CompleteSessionParams
 import com.focusfarm.app.data.repository.CompleteSessionUseCase
+import com.focusfarm.app.data.repository.ProgressRepository
 import com.focusfarm.app.data.repository.ReflectionRepository
 import com.focusfarm.app.data.repository.RetentionTracker
 import com.focusfarm.app.data.repository.RecoverySessionUseCase
+import com.focusfarm.app.data.repository.StatsRepository
 import com.focusfarm.app.data.local.ActiveSessionDao
 import com.focusfarm.app.data.local.ActiveSessionStatus
 import com.focusfarm.app.data.local.ActiveSessionConverters
@@ -33,6 +35,7 @@ import com.focusfarm.app.domain.GrowthStage
 import com.focusfarm.app.domain.Plant
 import com.focusfarm.app.domain.PlantCatalog
 import com.focusfarm.app.notifications.FocusReminderScheduler
+import com.focusfarm.app.review.ReviewPromptGate
 import com.focusfarm.app.telemetry.AppTelemetry
 import com.focusfarm.app.time.Clock
 import com.focusfarm.app.ui.audio.FocusAudioEngine
@@ -46,11 +49,13 @@ import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.focusfarm.core.ui.R
@@ -107,6 +112,9 @@ class SessionViewModel @Inject constructor(
     private val billingRepository: BillingRepository,
     private val rewardedAdManager: RewardedAdManager,
     private val claimRewardedAdReward: ClaimRewardedAdRewardUseCase,
+    private val progressRepository: ProgressRepository,
+    private val statsRepository: StatsRepository,
+    private val reviewPromptGate: ReviewPromptGate,
     @ApplicationContext private val appContext: Context,
 ) : ViewModel(), LifecycleEventObserver {
 
@@ -156,6 +164,9 @@ class SessionViewModel @Inject constructor(
     private val _canRevive = MutableStateFlow(false)
     val canRevive: StateFlow<Boolean> = _canRevive.asStateFlow()
 
+    private val _reviewRequest = Channel<Unit>(Channel.CONFLATED)
+    val reviewRequest = _reviewRequest.receiveAsFlow()
+
     private var timerJob: Job? = null
     private var backgroundKillJob: Job? = null
     private var persistJob: Job? = null
@@ -165,6 +176,7 @@ class SessionViewModel @Inject constructor(
     private var reviveUsedForCurrentSession = false
     private var pendingCompletion: CompleteSessionParams? = null
     private var activeSessionId: String? = null
+    private var lastSessionDurationMinutes: Int = 0
 
     init {
         restoreActiveSessionIfPresent()
@@ -569,6 +581,7 @@ class SessionViewModel @Inject constructor(
         focusAudioEngine.stopAndRelease()
         _canRevive.value = false
         val duration = if (state.sessionType == FocusSessionType.STOPWATCH) state.elapsedSeconds / 60 else state.targetMinutes
+        lastSessionDurationMinutes = duration
         pendingCompletion = CompleteSessionParams(
             activeSessionId = activeSessionId,
             plantId = state.plant.id,
@@ -777,6 +790,8 @@ class SessionViewModel @Inject constructor(
                         "reminder_rescheduled" to result.reminderRescheduled.toString(),
                     ),
                 )
+
+                maybeRequestReviewAfterGoal()
             } catch (t: Throwable) {
                 if (t is CancellationException) throw t
                 completionPersisted = false
@@ -791,6 +806,36 @@ class SessionViewModel @Inject constructor(
                 )
                 saveActiveSessionState()
             }
+        }
+    }
+
+    private suspend fun maybeRequestReviewAfterGoal() {
+        val sessionDuration = lastSessionDurationMinutes
+        if (sessionDuration <= 0) return
+
+        val dailyGoal = progressRepository.observeDailyGoalMinutes().first()
+        if (dailyGoal <= 0) return
+
+        val zoneId = clock.zoneId
+        val today = clock.today()
+        val startOfDay = today.atStartOfDay(zoneId).toInstant().toEpochMilli()
+        val endOfDay = today.plusDays(1).atStartOfDay(zoneId).toInstant().toEpochMilli()
+        val todayTotalMinutes = statsRepository.getTotalMinutesInRange(startOfDay, endOfDay).first()
+        val minutesBefore = (todayTotalMinutes - sessionDuration).coerceAtLeast(0)
+
+        val completesGoal = reviewPromptGate.checkGoalCompletion(
+            minutesBeforeSession = minutesBefore,
+            sessionDurationMinutes = sessionDuration,
+            dailyGoalMinutes = dailyGoal,
+        )
+        if (!completesGoal) return
+
+        val decision = reviewPromptGate.shouldPrompt(
+            isActiveSession = false,
+            isErrorVisible = false,
+        )
+        if (decision.shouldPrompt) {
+            _reviewRequest.send(Unit)
         }
     }
 

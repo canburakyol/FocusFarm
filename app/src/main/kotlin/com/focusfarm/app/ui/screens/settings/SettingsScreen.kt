@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,19 +39,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.R
-import com.focusfarm.app.data.auth.AuthManager
-import com.focusfarm.app.monetization.ConsentManager
+import com.focusfarm.app.data.auth.AccountDeletionResult
 import com.focusfarm.app.ui.components.FocusBackdrop
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 
 private const val PRIVACY_POLICY_URL = "https://canburakyol.github.io/focusfarm-privacy/"
 
@@ -62,6 +54,17 @@ fun SettingsScreen(
     val context = LocalContext.current
     val activity = remember(context) { context.findActivity() }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    val currentUserId by viewModel.currentUserId.collectAsStateWithLifecycle()
+    val isDeleting by viewModel.isDeleting.collectAsStateWithLifecycle()
+    val deletionResult by viewModel.deletionResult.collectAsStateWithLifecycle()
+
+    LaunchedEffect(deletionResult) {
+        if (deletionResult == AccountDeletionResult.Success) {
+            showDeleteDialog = false
+            activity?.finishAffinity()
+            viewModel.clearDeletionResult()
+        }
+    }
 
     FocusBackdrop {
         Column(
@@ -83,7 +86,7 @@ fun SettingsScreen(
                     )
                 }
                 if (onBack != null) {
-                    TextButton(onClick = onBack) {
+                    TextButton(onClick = onBack, enabled = !isDeleting) {
                         Text(stringResource(R.string.go_back))
                     }
                 }
@@ -125,37 +128,92 @@ fun SettingsScreen(
             }
 
             SettingsSectionCard(
-                title = stringResource(R.string.settings_account_data_title),
-                body = stringResource(R.string.settings_account_delete_body),
+                title = stringResource(R.string.settings_feedback_title),
+                body = stringResource(R.string.settings_feedback_body),
             ) {
+                Button(
+                    onClick = {
+                        val currentActivity = activity
+                        if (currentActivity != null) {
+                            viewModel.requestReview(currentActivity)
+                        }
+                    },
+                    enabled = activity != null,
+                    shape = RoundedCornerShape(50),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                ) {
+                    Text(stringResource(R.string.settings_feedback_rate_button))
+                }
+
                 OutlinedButton(
-                    onClick = { showDeleteDialog = true },
+                    onClick = {
+                        val currentActivity = activity
+                        if (currentActivity != null) {
+                            viewModel.sendFeedback(currentActivity)
+                        }
+                    },
+                    enabled = activity != null,
                     shape = RoundedCornerShape(50),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Text(stringResource(R.string.settings_delete_account_button))
+                    Text(stringResource(R.string.settings_feedback_send_button))
+                }
+            }
+
+            SettingsSectionCard(
+                title = stringResource(R.string.settings_account_data_title),
+                body = stringResource(if (currentUserId == null) R.string.settings_clear_local_data_body else R.string.settings_account_delete_body),
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        viewModel.clearDeletionResult()
+                        showDeleteDialog = true
+                    },
+                    shape = RoundedCornerShape(50),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(if (currentUserId == null) R.string.settings_clear_local_data_button else R.string.settings_delete_account_button))
                 }
             }
         }
 
         if (showDeleteDialog) {
             AlertDialog(
-                onDismissRequest = { showDeleteDialog = false },
-                title = { Text(stringResource(R.string.settings_delete_account_title)) },
-                text = { Text(stringResource(R.string.settings_delete_account_confirm_body)) },
+                onDismissRequest = { if (!isDeleting) showDeleteDialog = false },
+                title = { Text(stringResource(if (currentUserId == null) R.string.settings_clear_local_data_title else R.string.settings_delete_account_title)) },
+                text = {
+                    Column {
+                        Text(stringResource(if (currentUserId == null) R.string.settings_clear_local_data_confirm_body else R.string.settings_delete_account_confirm_body))
+                        deletionResult?.takeIf { it != AccountDeletionResult.Success }?.let { result ->
+                            Text(
+                                text = stringResource(when (result) {
+                                    AccountDeletionResult.NoSignedInAccount -> R.string.settings_delete_no_account
+                                    AccountDeletionResult.RequiresRecentLogin -> R.string.settings_delete_reauth_required
+                                    AccountDeletionResult.RemoteDeletionFailed -> R.string.settings_delete_remote_failed
+                                    AccountDeletionResult.LocalCleanupFailed -> R.string.settings_clear_local_failed
+                                    AccountDeletionResult.AccountDeletedLocalCleanupFailed -> R.string.settings_delete_local_failed
+                                    AccountDeletionResult.Success -> R.string.settings_delete_remote_failed
+                                }),
+                                color = MaterialTheme.colorScheme.error,
+                            )
+                        }
+                    }
+                },
                 confirmButton = {
                     Button(
-                        onClick = {
-                            showDeleteDialog = false
-                            viewModel.deleteAccount()
-                        },
+                        onClick = viewModel::deleteAccountOrClearLocalData,
+                        enabled = !isDeleting,
                         shape = RoundedCornerShape(50),
                     ) {
-                        Text(stringResource(R.string.settings_delete_account_confirm))
+                        Text(stringResource(if (isDeleting) R.string.settings_delete_processing else if (currentUserId == null) R.string.settings_clear_local_data_confirm else R.string.settings_delete_account_confirm))
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showDeleteDialog = false }) {
+                    TextButton(onClick = { showDeleteDialog = false }, enabled = !isDeleting) {
                         Text(stringResource(R.string.action_cancel))
                     }
                 },
@@ -200,4 +258,3 @@ private tailrec fun Context.findActivity(): Activity? = when (this) {
     is ContextWrapper -> baseContext.findActivity()
     else -> null
 }
-

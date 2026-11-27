@@ -1,14 +1,23 @@
 package com.focusfarm.app.ui.navigation
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.focusfarm.app.review.AppReviewManager
+import kotlinx.coroutines.launch
+
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -54,12 +63,16 @@ val TAB_ROUTES = listOf(Routes.GARDEN, Routes.COLLECTION, Routes.HOME, Routes.ST
 @Composable
 fun AppNavigation(
     onboardingCompleted: Boolean,
+    appReviewManager: AppReviewManager,
     bannerAdViewModel: BannerAdViewModel = hiltViewModel(),
 ) {
     val navController: NavHostController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
     val canShowAds by bannerAdViewModel.canShowAds.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val activity = remember(context) { context.findActivity() }
+    val coroutineScope = rememberCoroutineScope()
 
     val showBottomBar = currentRoute in TAB_ROUTES
 
@@ -118,7 +131,9 @@ fun AppNavigation(
                     onOpenStreak = { navController.navigate(Routes.STREAK_DETAIL) }
                 )
             }
-            composable(Routes.SHOP) { ShopScreen() }
+            if (ReleaseFeatureScope.SHOP_ENABLED) {
+                composable(Routes.SHOP) { ShopScreen() }
+            }
             composable(Routes.MISSIONS) {
                 MissionsScreen(
                     onBack = { navController.popBackStack() }
@@ -160,8 +175,20 @@ fun AppNavigation(
                             launchSingleTop = true
                         }
                     },
+                    onReviewRequested = {
+                        val currentActivity = activity ?: return@SessionScreen
+                        coroutineScope.launch {
+                            appReviewManager.onGoalCompleted(currentActivity)
+                        }
+                    },
                 )
             }
         }
     }
+}
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
