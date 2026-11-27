@@ -49,7 +49,7 @@ Her maddeyi gerçek bir cihazda dene. En kritik kısım "güncelleme" bölümü.
 
 ### D. Görünüm ve dil
 
-22. [ ] Sistem dilini İngilizce yap → ana ekran, oturum, bahçe, istatistik, koleksiyon, görevler, seri, onboarding ve mağaza İngilizce. (Bilinen istisna: bitki adları Türkçe kalıyor.)
+22. [ ] Sistem dilini İngilizce yap → ana ekran, oturum, bahçe, istatistik, koleksiyon, görevler, seri, onboarding ve mağaza İngilizce.
 23. [ ] Karanlık modu aç → tüm ekranlar okunaklı, beyaz parlama yok.
 24. [ ] Banner reklam yalnızca İstatistik ve Koleksiyon'da.
 25. [ ] Küçük ekranlı bir telefonda ana ekran ve oturum ekranı kaydırmadan sığıyor.
@@ -91,7 +91,7 @@ FocusFarm 1.1 makes focusing calmer and fairer:
 
 ## 4. Bilinen sınırlar (sonraki sürüm)
 
-- Bitki adları ("Yeşil Filiz" vb.) her dilde Türkçe görünüyor.
+- (Giderildi, 470cf2a) Bitki adları artık 6 dilde.
 - Bitiş bildirimi, Android 14+'da kesin alarm izni verilmemişse birkaç dakika gecikebilir.
 - Bulut senkronizasyonu, izinli uygulamalar listesi, widget ve odak partisi P2'de.
 - Arapça çeviriler ve sağdan sola düzen bir anadil konuşuru tarafından kontrol edilmedi.
