@@ -60,6 +60,8 @@ object Routes {
 
 val TAB_ROUTES = listOf(Routes.GARDEN, Routes.COLLECTION, Routes.HOME, Routes.STATS, Routes.SETTINGS)
 
+private val BANNER_ROUTES = setOf(Routes.STATS, Routes.COLLECTION)
+
 @Composable
 fun AppNavigation(
     onboardingCompleted: Boolean,
@@ -80,7 +82,8 @@ fun AppNavigation(
         bottomBar = {
             if (showBottomBar) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    BannerAdSlot(enabled = canShowAds)
+                    // Banners stay off the calm screens (focus, garden, settings); reading screens carry them.
+                    BannerAdSlot(enabled = canShowAds && currentRoute in BANNER_ROUTES)
                     BottomNavBar(
                         currentRoute = currentRoute ?: Routes.HOME,
                         onNavigate = { route ->
