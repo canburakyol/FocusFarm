@@ -373,5 +373,11 @@
         <item quantity="one">Complete %d focus session</item>
         <item quantity="other">Complete %d focus sessions</item>
     </plurals>
+    <string name="session_channel_name">Focus session</string>
+    <string name="session_done_channel_name">Session finished</string>
+    <string name="session_notif_running_title">%s is growing</string>
+    <string name="session_notif_running_text">Put your phone aside. We\'ll let you know when it\'s done.</string>
+    <string name="session_notif_done_title">%s has grown</string>
+    <string name="session_notif_done_text">Open FocusFarm to see your harvest.</string>
     <string name="garden_withered">Withered</string>
 </resources>

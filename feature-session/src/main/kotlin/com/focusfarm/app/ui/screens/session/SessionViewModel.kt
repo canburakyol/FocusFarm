@@ -2,6 +2,7 @@ package com.focusfarm.app.ui.screens.session
 
 import android.content.Context
 import android.os.PowerManager
+import com.focusfarm.app.notifications.SessionProgressNotifier
 import android.os.SystemClock
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -55,6 +56,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -116,6 +119,7 @@ class SessionViewModel @Inject constructor(
     private val progressRepository: ProgressRepository,
     private val statsRepository: StatsRepository,
     private val reviewPromptGate: ReviewPromptGate,
+    private val sessionProgressNotifier: SessionProgressNotifier,
     @ApplicationContext private val appContext: Context,
 ) : ViewModel(), LifecycleEventObserver {
 
@@ -181,6 +185,29 @@ class SessionViewModel @Inject constructor(
 
     init {
         restoreActiveSessionIfPresent()
+        viewModelScope.launch {
+            _uiState.map { it.sessionState }.distinctUntilChanged().collect(::syncSessionNotification)
+        }
+    }
+
+    /** Whether the session screen is visible; a session finishing off screen keeps its end alert. */
+    private var appInForeground = true
+
+    private fun syncSessionNotification(state: SessionState) {
+        when (sessionNotificationAction(state, appInForeground)) {
+            SessionNotificationAction.SHOW_RUNNING -> {
+                val current = _uiState.value
+                val now = clock.nowMillis()
+                if (current.sessionType == FocusSessionType.STOPWATCH) {
+                    sessionProgressNotifier.showRunning(current.plant.name, now - current.elapsedSeconds * 1000L, null)
+                } else {
+                    val elapsedMs = (current.targetMinutes * 60 - current.remainingSeconds).coerceAtLeast(0) * 1000L
+                    sessionProgressNotifier.showRunning(current.plant.name, now - elapsedMs, now + current.remainingSeconds * 1000L)
+                }
+            }
+            SessionNotificationAction.CANCEL -> sessionProgressNotifier.cancel()
+            SessionNotificationAction.KEEP -> Unit
+        }
     }
 
     fun startSession(sessionId: String, plant: Plant, minutes: Int) {
@@ -843,6 +870,11 @@ class SessionViewModel @Inject constructor(
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         when (event) {
             Lifecycle.Event.ON_START -> {
+                appInForeground = true
+                // Back on screen after the session ended in the background: the end alert has done its job.
+                if (_uiState.value.sessionState == SessionState.COMPLETED || _uiState.value.sessionState == SessionState.FINALIZING) {
+                    sessionProgressNotifier.cancel()
+                }
                 savedStateHandle.remove<Long>(KEY_BACKGROUND_START_TIME_MS)
                 savedStateHandle.remove<Long>(KEY_BACKGROUND_START_TIME_WALL_MS)
                 backgroundKillJob?.cancel()
@@ -850,6 +882,7 @@ class SessionViewModel @Inject constructor(
             }
 
             Lifecycle.Event.ON_STOP -> {
+                appInForeground = false
                 val state = _uiState.value
                 val screenInteractive = appContext.getSystemService(PowerManager::class.java)?.isInteractive ?: true
                 if (shouldStartStrictKillTimer(state.sessionState, state.isStrict, screenInteractive)) {

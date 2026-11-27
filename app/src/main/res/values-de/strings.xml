@@ -373,5 +373,11 @@
         <item quantity="one">Schließe %d Fokus-Sitzung ab</item>
         <item quantity="other">Schließe %d Fokus-Sitzungen ab</item>
     </plurals>
+    <string name="session_channel_name">Fokus-Sitzung</string>
+    <string name="session_done_channel_name">Sitzung beendet</string>
+    <string name="session_notif_running_title">%s wächst</string>
+    <string name="session_notif_running_text">Leg dein Handy weg. Wir sagen dir Bescheid, wenn es fertig ist.</string>
+    <string name="session_notif_done_title">%s ist gewachsen</string>
+    <string name="session_notif_done_text">Öffne FocusFarm, um deine Ernte zu sehen.</string>
     <string name="garden_withered">Verwelkt</string>
 </resources>

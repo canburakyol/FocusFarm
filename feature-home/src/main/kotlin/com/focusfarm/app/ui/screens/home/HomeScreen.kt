@@ -1,7 +1,13 @@
 package com.focusfarm.app.ui.screens.home
 
+import android.Manifest
 import android.app.Activity
+import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -125,8 +131,22 @@ internal fun HomeContent(
             Spacer(Modifier.height(8.dp))
             SetupSummaryButton(state = state, onClick = openSetup)
             Spacer(Modifier.height(16.dp))
+            val context = LocalContext.current
+            // The session's progress and end alerts need notification permission; ask in context, start either way.
+            val notificationPermission = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission(),
+            ) { onIntent(HomeIntent.StartTodaySession) }
             Button(
-                onClick = { onIntent(HomeIntent.StartTodaySession) },
+                onClick = {
+                    val needsPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+                        PackageManager.PERMISSION_GRANTED
+                    if (needsPermission) {
+                        notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    } else {
+                        onIntent(HomeIntent.StartTodaySession)
+                    }
+                },
                 enabled = !state.isStartingSession,
                 modifier = Modifier
                     .fillMaxWidth()

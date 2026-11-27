@@ -6,6 +6,8 @@
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Lets the session end alert fire on time where the system grants it (Android 12-13 by default). -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:name=".FocusFarmApp"
@@ -47,6 +49,10 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".session.SessionEndReceiver"
+            android:exported="false" />
 
         <receiver
             android:name=".session.RebootReceiver"

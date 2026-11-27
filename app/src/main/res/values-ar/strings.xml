@@ -373,5 +373,11 @@
         <item quantity="one">أكمل جلسة تركيز واحدة (%d)</item>
         <item quantity="other">أكمل %d جلسات تركيز</item>
     </plurals>
+    <string name="session_channel_name">جلسة التركيز</string>
+    <string name="session_done_channel_name">انتهت الجلسة</string>
+    <string name="session_notif_running_title">%s تنمو</string>
+    <string name="session_notif_running_text">ضع هاتفك جانبًا. سنخبرك عند الانتهاء.</string>
+    <string name="session_notif_done_title">نمت %s</string>
+    <string name="session_notif_done_text">افتح FocusFarm لترى حصادك.</string>
     <string name="garden_withered">ذبلت</string>
 </resources>

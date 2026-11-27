@@ -373,5 +373,11 @@
         <item quantity="one">Completa %d sesión de enfoque</item>
         <item quantity="other">Completa %d sesiones de enfoque</item>
     </plurals>
+    <string name="session_channel_name">Sesión de enfoque</string>
+    <string name="session_done_channel_name">Sesión terminada</string>
+    <string name="session_notif_running_title">%s está creciendo</string>
+    <string name="session_notif_running_text">Deja el teléfono a un lado. Te avisaremos cuando termine.</string>
+    <string name="session_notif_done_title">%s ha crecido</string>
+    <string name="session_notif_done_text">Abre FocusFarm para ver tu cosecha.</string>
     <string name="garden_withered">Marchita</string>
 </resources>

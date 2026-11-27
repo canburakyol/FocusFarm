@@ -388,5 +388,11 @@
         <item quantity="one">%d odak seansı tamamla</item>
         <item quantity="other">%d odak seansı tamamla</item>
     </plurals>
+    <string name="session_channel_name">Odak oturumu</string>
+    <string name="session_done_channel_name">Oturum tamamlandı</string>
+    <string name="session_notif_running_title">%s büyüyor</string>
+    <string name="session_notif_running_text">Telefonu kenara bırak. Bitince haber vereceğiz.</string>
+    <string name="session_notif_done_title">%s büyüdü</string>
+    <string name="session_notif_done_text">Hasadını görmek için FocusFarm\'ı aç.</string>
     <string name="garden_withered">Soldu</string>
 </resources>
