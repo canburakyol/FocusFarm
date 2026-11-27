@@ -9,6 +9,7 @@ import com.focusfarm.app.data.local.RecoverySessionDao
 import com.focusfarm.app.data.local.RecoverySessionEntity
 import com.focusfarm.app.data.local.RecoverySessionStatus
 import com.focusfarm.app.data.local.UnlockedSeedDao
+import com.focusfarm.app.data.repository.UnlockedPlantsRepository
 import com.focusfarm.app.data.local.UnlockedSeedEntity
 import com.focusfarm.app.data.local.GardenEntryDao
 import com.focusfarm.app.data.local.GardenEntryEntity
@@ -95,7 +96,7 @@ class HomeViewModelTest {
         return HomeViewModel(
             startSession = StartSessionUseCase(dao, sessionClock),
             recoveryManager = SessionRecoveryManager(dao, HomeFakeRecoverySessionDao(), sessionClock),
-            unlockedSeedDao = HomeFakeUnlockedSeedDao(),
+            unlockedPlantsRepository = UnlockedPlantsRepository(HomeFakeUnlockedSeedDao(), HomeFakeInventoryDao()),
             progressRepository = progressRepository,
             statsRepository = HomeFakeStatsRepository(),
             gardenEntryDao = HomeFakeGardenEntryDao(),
@@ -280,4 +281,13 @@ private class HomeFakeActiveSessionDao : ActiveSessionDao {
         active = null
         return 1
     }
+}
+
+private class HomeFakeInventoryDao : com.focusfarm.app.data.local.InventoryDao {
+    override suspend fun insertItem(item: com.focusfarm.app.data.local.InventoryItemEntity) = 1L
+    override suspend fun hasItem(itemType: String, itemId: String) = false
+    override fun observeAllItems(userId: String) = flowOf(emptyList<com.focusfarm.app.data.local.InventoryItemEntity>())
+    override fun observeItemsByType(itemType: String, userId: String) =
+        flowOf(emptyList<com.focusfarm.app.data.local.InventoryItemEntity>())
+    override suspend fun getAllItemsSnapshot(userId: String) = emptyList<com.focusfarm.app.data.local.InventoryItemEntity>()
 }

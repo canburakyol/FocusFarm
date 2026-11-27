@@ -2,11 +2,12 @@ package com.focusfarm.app.ui.screens.shop
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.focusfarm.app.data.local.InventoryDao
+import com.focusfarm.app.data.repository.UnlockedPlantsRepository
 import com.focusfarm.app.data.local.UserInventoryDao
 import com.focusfarm.app.data.repository.InsufficientSeedsException
 import com.focusfarm.app.data.repository.ProgressRepository
 import com.focusfarm.app.data.repository.PurchaseProductUseCase
+import com.focusfarm.app.domain.PlantCatalog
 import com.focusfarm.app.domain.ShopCategory
 import com.focusfarm.app.domain.ShopCatalog
 import com.focusfarm.app.domain.ShopProduct
@@ -57,7 +58,7 @@ sealed interface StoreEffect {
 class ShopViewModel @Inject constructor(
     private val progressRepository: ProgressRepository,
     private val inventoryDao: UserInventoryDao,
-    private val customInventoryDao: InventoryDao,
+    private val unlockedPlantsRepository: UnlockedPlantsRepository,
     private val purchaseProduct: PurchaseProductUseCase,
     private val billingRepository: BillingRepository,
     private val rewardedAdManager: RewardedAdManager,
@@ -79,16 +80,16 @@ class ShopViewModel @Inject constructor(
             combine(
                 progressRepository.observeSeeds(),
                 inventoryDao.observe(),
-                customInventoryDao.observeAllItems(),
+                unlockedPlantsRepository.observeUnlockedPlantIds(),
                 isPremiumFlow,
                 _uiState
-            ) { seeds, inventory, items, isPremium, currentState ->
-                val unlockedIds = items.mapTo(mutableSetOf()) { it.itemId }
+            ) { seeds, inventory, unlockedIds, isPremium, currentState ->
 
+                // Only plants are sold: the other catalog categories have no effect in the app yet.
                 val processedItems = ShopCatalog.PRODUCTS
-                    .filter { it.category == currentState.selectedCategory }
+                    .filter { it.category == ShopCategory.PLANT_SEED && it.id in PlantCatalog.SEED_SHOP_IDS }
                     .map { product ->
-                        val isUnlocked = isProductUnlockedByDefault(product.id) || product.id in unlockedIds
+                        val isUnlocked = isPremium || product.id in unlockedIds
                         ShopItem(
                             product = product,
                             isUnlocked = isUnlocked,
@@ -199,12 +200,5 @@ class ShopViewModel @Inject constructor(
                 }
             }
         )
-    }
-
-    private fun isProductUnlockedByDefault(productId: String): Boolean {
-        return when (productId) {
-            "sprout", "sunflower", "cactus", "mushroom", "tree" -> true
-            else -> false
-        }
     }
 }

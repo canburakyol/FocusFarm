@@ -143,6 +143,13 @@ object PlantCatalog {
 
     fun getById(id: String): Plant? = ALL.find { it.id == id }
 
+    /** Premium plants are open to Premium subscribers and to anyone who unlocked them with seeds. */
+    fun availableFor(unlockedIds: Set<String>, hasPremium: Boolean): List<Plant> =
+        ALL.filter { !it.isPremium || hasPremium || it.id in unlockedIds }
+
+    /** Plants sold for seeds in the shop: exactly the ones that are locked by default. */
+    val SEED_SHOP_IDS: Set<String> = ALL.filter { it.isPremium }.mapTo(mutableSetOf()) { it.id }
+
     fun getStageEmoji(plant: Plant, stage: GrowthStage): String =
         plant.stages[stage.ordinal]
 }

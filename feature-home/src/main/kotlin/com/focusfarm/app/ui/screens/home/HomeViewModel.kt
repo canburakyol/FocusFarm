@@ -2,7 +2,7 @@ package com.focusfarm.app.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.focusfarm.app.data.local.UnlockedSeedDao
+import com.focusfarm.app.data.repository.UnlockedPlantsRepository
 import com.focusfarm.app.data.local.GardenEntryDao
 import com.focusfarm.app.data.repository.OnboardingPreferences
 import com.focusfarm.app.data.repository.ProgressRepository
@@ -101,7 +101,7 @@ sealed interface HomeEffect {
 class HomeViewModel @Inject constructor(
     private val startSession: StartSessionUseCase,
     private val recoveryManager: SessionRecoveryManager,
-    private val unlockedSeedDao: UnlockedSeedDao,
+    private val unlockedPlantsRepository: UnlockedPlantsRepository,
     private val progressRepository: ProgressRepository,
     private val statsRepository: StatsRepository,
     private val gardenEntryDao: GardenEntryDao,
@@ -139,8 +139,10 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            unlockedSeedDao.observeUnlockedSeedIds().collectLatest { unlockedIds ->
-                val available = PlantCatalog.ALL.filter { !it.isPremium || unlockedIds.contains(it.id) }
+            combine(
+                unlockedPlantsRepository.observeUnlockedPlantIds(),
+                billingRepository.entitlement.map { it.isPremiumUnlocked },
+            ) { unlockedIds, hasPremium -> PlantCatalog.availableFor(unlockedIds, hasPremium) }.collectLatest { available ->
                 _uiState.update { it.copy(
                     availablePlants = available,
                     selectedPlantId = if (available.any { p -> p.id == it.selectedPlantId }) it.selectedPlantId else available.first().id
