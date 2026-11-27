@@ -125,6 +125,13 @@ fun AppNavigation(
             composable(Routes.GARDEN) {
                 GardenScreen(
                     onOpenCollection = { navController.navigate(Routes.COLLECTION) },
+                    onStartFocus = {
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                 )
             }
             composable(Routes.STATS) {

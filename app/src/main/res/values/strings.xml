@@ -441,4 +441,13 @@
         <item quantity="one">%d gün</item>
         <item quantity="other">%d gün</item>
     </plurals>
+    <string name="garden_filter_week">Hafta</string>
+    <string name="garden_filter_month">Ay</string>
+    <string name="garden_filter_all">Tümü</string>
+    <string name="garden_hide_withered">Solanları gizle</string>
+    <string name="garden_bloomed">Büyüdü</string>
+    <plurals name="garden_plants">
+        <item quantity="one">%d bitki</item>
+        <item quantity="other">%d bitki</item>
+    </plurals>
 </resources>

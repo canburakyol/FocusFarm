@@ -426,4 +426,13 @@
         <item quantity="one">%d Tag</item>
         <item quantity="other">%d Tage</item>
     </plurals>
+    <string name="garden_filter_week">Woche</string>
+    <string name="garden_filter_month">Monat</string>
+    <string name="garden_filter_all">Alle</string>
+    <string name="garden_hide_withered">Verwelkte ausblenden</string>
+    <string name="garden_bloomed">Gewachsen</string>
+    <plurals name="garden_plants">
+        <item quantity="one">%d Pflanze</item>
+        <item quantity="other">%d Pflanzen</item>
+    </plurals>
 </resources>

@@ -426,4 +426,13 @@
         <item quantity="one">%d día</item>
         <item quantity="other">%d días</item>
     </plurals>
+    <string name="garden_filter_week">Semana</string>
+    <string name="garden_filter_month">Mes</string>
+    <string name="garden_filter_all">Todo</string>
+    <string name="garden_hide_withered">Ocultar marchitas</string>
+    <string name="garden_bloomed">Creció</string>
+    <plurals name="garden_plants">
+        <item quantity="one">%d planta</item>
+        <item quantity="other">%d plantas</item>
+    </plurals>
 </resources>

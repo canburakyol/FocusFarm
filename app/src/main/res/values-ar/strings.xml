@@ -426,4 +426,13 @@
         <item quantity="one">%d يوم</item>
         <item quantity="other">%d يوم</item>
     </plurals>
+    <string name="garden_filter_week">الأسبوع</string>
+    <string name="garden_filter_month">الشهر</string>
+    <string name="garden_filter_all">الكل</string>
+    <string name="garden_hide_withered">إخفاء الذابلة</string>
+    <string name="garden_bloomed">نمت</string>
+    <plurals name="garden_plants">
+        <item quantity="one">%d نبتة</item>
+        <item quantity="other">%d نبتة</item>
+    </plurals>
 </resources>

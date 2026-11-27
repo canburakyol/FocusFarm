@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.focusfarm.app.data.repository.GardenRepository
 import com.focusfarm.app.data.repository.ProgressRepository
 import com.focusfarm.app.data.local.RecoverySessionDao
-import com.focusfarm.app.data.repository.UnlockedPlantsRepository
 import com.focusfarm.app.data.repository.GardenPreferences
 import com.focusfarm.app.domain.FocusProgressEngine
 import com.focusfarm.app.domain.FocusSession
@@ -28,7 +27,6 @@ class GardenViewModel @Inject constructor(
     private val repository: GardenRepository,
     private val progressRepository: ProgressRepository,
     private val recoverySessionDao: RecoverySessionDao,
-    private val unlockedPlantsRepository: UnlockedPlantsRepository,
     private val gardenPreferences: GardenPreferences,
 ) : ViewModel() {
 
@@ -36,12 +34,6 @@ class GardenViewModel @Inject constructor(
     val activeFilter: StateFlow<GardenFilter> = _activeFilter.asStateFlow()
 
     val hideWithered: StateFlow<Boolean> = gardenPreferences.hideWithered
-
-    val seedBalance: StateFlow<Int> = progressRepository.observeSeeds()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
-
-    val unlockedPlantIds: StateFlow<Set<String>> = unlockedPlantsRepository.observeUnlockedPlantIds()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val gardenEntries: StateFlow<List<GardenEntry>> = combine(

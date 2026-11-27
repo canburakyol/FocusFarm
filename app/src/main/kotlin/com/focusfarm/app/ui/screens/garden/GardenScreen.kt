@@ -1,70 +1,87 @@
 package com.focusfarm.app.ui.screens.garden
 
 import android.graphics.Bitmap
+import android.text.format.DateFormat
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AutoStories
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.focusfarm.app.R
 import com.focusfarm.app.domain.GardenEntry
 import com.focusfarm.app.domain.GardenFilter
 import com.focusfarm.app.domain.GardenPlantState
-import com.focusfarm.app.domain.GardenGoalPresentation
+import com.focusfarm.app.domain.GrowthStage
+import com.focusfarm.app.domain.PlantCatalog
 import com.focusfarm.app.domain.PlantSpeciesCatalog
 import com.focusfarm.app.domain.ShareGardenUseCase
-import com.focusfarm.app.domain.FocusSession
 import com.focusfarm.app.ui.components.FocusBackdrop
+import com.focusfarm.app.ui.components.PlantDisplay
 import com.focusfarm.app.ui.components.PlantVectorRenderer
 import com.focusfarm.app.ui.components.ShareGardenDialog
-import com.focusfarm.app.ui.theme.TimerFontFamily
-import com.focusfarm.app.ui.theme.plantAccentColor
-import androidx.compose.material3.Checkbox
-import androidx.compose.foundation.clickable
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
+/**
+ * The garden is a field the user fills over time: plants stand on soft plots, withered ones fade,
+ * and details open on tap instead of crowding every tile.
+ */
 @Composable
 fun GardenScreen(
     onOpenCollection: () -> Unit = {},
+    onStartFocus: () -> Unit = {},
     viewModel: GardenViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -74,13 +91,10 @@ fun GardenScreen(
     val hideWithered by viewModel.hideWithered.collectAsStateWithLifecycle()
     val totalMinutes by viewModel.totalMinutes.collectAsStateWithLifecycle()
     val streakDays by viewModel.streakDays.collectAsStateWithLifecycle()
-    val seedBalance by viewModel.seedBalance.collectAsStateWithLifecycle()
-    val unlockedPlantIds by viewModel.unlockedPlantIds.collectAsStateWithLifecycle()
-    val totalHours = totalMinutes / 60
-    val remainingMins = totalMinutes % 60
 
     var showShareDialog by remember { mutableStateOf(false) }
     var shareBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var selectedEntry by remember { mutableStateOf<GardenEntry?>(null) }
     val shareGardenUseCase = remember { ShareGardenUseCase() }
 
     if (showShareDialog && shareBitmap != null) {
@@ -110,299 +124,232 @@ fun GardenScreen(
     }
 
     FocusBackdrop {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(top = 16.dp),
-        ) {
-            // Header
-            Column(modifier = Modifier.padding(horizontal = 24.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(stringResource(R.string.tab_garden), style = MaterialTheme.typography.headlineMedium)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        TextButton(onClick = onOpenCollection) {
-                            Text(
-                                text = stringResource(R.string.collection_book),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelSmall,
-                            )
-                        }
-                        TextButton(onClick = { showShareDialog = true }) {
-                            Text(
-                                text = stringResource(R.string.action_share),
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.labelSmall,
-                            )
-                        }
-                    }
-                }
-                Spacer(Modifier.height(12.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    // Withered plants stay visible in the grid but are not grown plants.
-                    val grownCount = gardenEntries.count { it.state == GardenPlantState.BLOOMED }
-                    StatChip(value = "$grownCount", label = stringResource(R.string.total_plants), modifier = Modifier.weight(1f))
-                    StatChip(
-                        value = if (totalHours > 0) {
-                            stringResource(R.string.total_focus_hours_minutes, totalHours, remainingMins)
-                        } else {
-                            stringResource(R.string.total_focus_minutes, totalMinutes)
-                        },
-                        label = stringResource(R.string.total_focus),
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-                Spacer(Modifier.height(10.dp))
-                if (gardenEntries.isEmpty()) {
-                    GardenGoalCard(
-                        goal = GardenGoalPresentation.from(
-                            hasPlants = false,
-                            seedBalance = seedBalance,
-                            unlockedPlantIds = unlockedPlantIds,
-                        ),
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(8.dp))
-
-            // Filtering and Settings row
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    GardenFilter.entries.forEach { filterOption ->
-                        val label = when (filterOption) {
-                            GardenFilter.TODAY -> "Bugün"
-                            GardenFilter.WEEKLY -> "Haftalık"
-                            GardenFilter.MONTHLY -> "Aylık"
-                            GardenFilter.ALL_TIME -> "Tümü"
-                        }
-                        CustomFilterChip(
-                            label = label,
-                            selected = activeFilter == filterOption,
-                            onClick = { viewModel.setFilter(filterOption) }
-                        )
-                    }
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable { viewModel.setHideWithered(!hideWithered) }
-                        .padding(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    Checkbox(
-                        checked = hideWithered,
-                        onCheckedChange = { viewModel.setHideWithered(it) },
-                        modifier = Modifier.scale(0.7f)
-                    )
-                    Text(
-                        text = "Solanları Gizle",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontSize = 10.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(8.dp))
+        Column(modifier = Modifier.fillMaxSize().padding(top = 16.dp)) {
+            GardenHeader(
+                grownCount = gardenEntries.count { it.state == GardenPlantState.BLOOMED },
+                totalMinutes = totalMinutes,
+                canShare = sessions.isNotEmpty(),
+                onOpenCollection = onOpenCollection,
+                onShare = { showShareDialog = true },
+            )
+            Spacer(Modifier.height(16.dp))
+            GardenFilters(
+                activeFilter = activeFilter,
+                hideWithered = hideWithered,
+                onFilter = viewModel::setFilter,
+                onToggleWithered = { viewModel.setHideWithered(!hideWithered) },
+            )
+            Spacer(Modifier.height(12.dp))
 
             if (gardenEntries.isEmpty()) {
-                EmptyGarden()
+                EmptyGarden(onStartFocus = onStartFocus)
             } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(
-                        items = gardenEntries,
-                        key = { entry -> entry.id },
-                    ) { entry ->
-                        PlantCard(entry)
-                    }
-                }
+                GardenField(entries = gardenEntries, onSelect = { selectedEntry = it })
             }
         }
     }
-}
 
-@Composable
-private fun GardenGoalCard(goal: GardenGoalPresentation) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f),
-        ),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "BAHÇE HEDEFİ",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.secondary,
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = goal.title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = goal.detail,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f),
-            )
-            Spacer(Modifier.height(10.dp))
-            LinearProgressIndicator(
-                progress = { goal.progress },
-                modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(20.dp)),
-                color = MaterialTheme.colorScheme.secondary,
-                trackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f),
-            )
-        }
+    selectedEntry?.let { entry ->
+        PlantDetailSheet(entry = entry, onDismiss = { selectedEntry = null })
     }
 }
 
 @Composable
-private fun CustomFilterChip(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+private fun GardenHeader(
+    grownCount: Int,
+    totalMinutes: Int,
+    canShare: Boolean,
+    onOpenCollection: () -> Unit,
+    onShare: () -> Unit,
 ) {
-    val containerColor = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
-    val contentColor = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-    val borderColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
-
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(containerColor)
-            .border(1.dp, borderColor, RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        contentAlignment = Alignment.Center
+    val focusText = if (totalMinutes >= 60) {
+        stringResource(R.string.total_focus_hours_minutes, totalMinutes / 60, totalMinutes % 60)
+    } else {
+        stringResource(R.string.total_focus_minutes, totalMinutes)
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = contentColor,
-            fontSize = 10.sp
+        Column(modifier = Modifier.weight(1f)) {
+            Text(stringResource(R.string.tab_garden), style = MaterialTheme.typography.headlineMedium)
+            Text(
+                text = "${pluralStringResource(R.plurals.garden_plants, grownCount, grownCount)} · $focusText",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        IconButton(onClick = onOpenCollection) {
+            Icon(Icons.Rounded.AutoStories, contentDescription = stringResource(R.string.collection_book))
+        }
+        IconButton(onClick = onShare, enabled = canShare) {
+            Icon(Icons.Rounded.Share, contentDescription = stringResource(R.string.action_share))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun GardenFilters(
+    activeFilter: GardenFilter,
+    hideWithered: Boolean,
+    onFilter: (GardenFilter) -> Unit,
+    onToggleWithered: () -> Unit,
+) {
+    val filters = GardenFilter.entries
+    Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            filters.forEachIndexed { index, filter ->
+                SegmentedButton(
+                    selected = activeFilter == filter,
+                    onClick = { onFilter(filter) },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = filters.size),
+                    icon = {},
+                    colors = SegmentedButtonDefaults.colors(
+                        activeContainerColor = MaterialTheme.colorScheme.primary,
+                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
+                        inactiveContainerColor = Color.Transparent,
+                    ),
+                ) {
+                    Text(stringResource(filter.labelRes()), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        FilterChip(
+            selected = hideWithered,
+            onClick = onToggleWithered,
+            label = { Text(stringResource(R.string.garden_hide_withered)) },
+            leadingIcon = if (hideWithered) {
+                { Icon(Icons.Rounded.Check, contentDescription = null, modifier = Modifier.size(16.dp)) }
+            } else {
+                null
+            },
+            shape = CircleShape,
         )
     }
 }
 
 @Composable
-private fun PlantCard(entry: GardenEntry) {
-    val species = PlantSpeciesCatalog.getById(entry.plantSpeciesId)
-    val accent = species?.let { plantAccentColor(it.id) } ?: MaterialTheme.colorScheme.primary
-    val dateFormat = remember { SimpleDateFormat("d MMM", Locale.getDefault()) }
-
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-        modifier = Modifier.border(1.5.dp, accent.copy(alpha = 0.25f), RoundedCornerShape(20.dp)),
+private fun GardenField(entries: List<GardenEntry>, onSelect: (GardenEntry) -> Unit) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(4),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp)
+            .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainer),
     ) {
+        items(items = entries, key = { it.id }) { entry ->
+            PlantPlot(entry = entry, onClick = { onSelect(entry) })
+        }
+    }
+}
+
+@Composable
+private fun PlantPlot(entry: GardenEntry, onClick: () -> Unit) {
+    val withered = entry.state == GardenPlantState.WITHERED
+    val name = PlantSpeciesCatalog.getById(entry.plantSpeciesId)?.displayName.orEmpty()
+    val stateLabel = stringResource(if (withered) R.string.garden_withered else R.string.garden_bloomed)
+    Box(
+        contentAlignment = Alignment.BottomCenter,
+        modifier = Modifier
+            .aspectRatio(0.85f)
+            .clip(RoundedCornerShape(18.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable(onClick = onClick)
+            .semantics { contentDescription = "$name, $stateLabel" },
+    ) {
+        PlantVectorRenderer(
+            plantId = entry.plantSpeciesId,
+            stage = entry.growthStage,
+            state = entry.state,
+            size = 64.dp,
+            modifier = Modifier
+                .padding(bottom = 6.dp)
+                .alpha(if (withered) 0.45f else 1f),
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PlantDetailSheet(entry: GardenEntry, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val withered = entry.state == GardenPlantState.WITHERED
+    val name = PlantSpeciesCatalog.getById(entry.plantSpeciesId)?.displayName.orEmpty()
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.surface) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(12.dp).fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 40.dp),
         ) {
-            Box(
-                Modifier.size(56.dp).clip(CircleShape).background(accent.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center,
-            ) {
-                PlantVectorRenderer(
-                    plantId = entry.plantSpeciesId,
-                    stage = entry.growthStage,
-                    state = entry.state,
-                    size = 44.dp
-                )
-            }
-            Text(
-                text = species?.displayName ?: "Bitki",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                fontSize = 11.sp
+            PlantVectorRenderer(
+                plantId = entry.plantSpeciesId,
+                stage = entry.growthStage,
+                state = entry.state,
+                size = 120.dp,
+                modifier = Modifier.alpha(if (withered) 0.5f else 1f),
             )
+            Spacer(Modifier.height(12.dp))
+            Text(name, style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(4.dp))
             Text(
-                // A withered entry stores the planned length, not time actually focused.
-                if (entry.state == GardenPlantState.WITHERED) {
+                text = if (withered) {
                     stringResource(R.string.garden_withered)
                 } else {
                     stringResource(R.string.duration_minutes_short, entry.focusMinutes)
                 },
-                fontFamily = TimerFontFamily,
-                fontSize = 12.sp,
-                color = if (entry.state == GardenPlantState.WITHERED) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = if (withered) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
             )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = dateFormat.format(Date(entry.plantedAt)),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 9.sp
-                )
-                Text(
-                    text = when (entry.state) {
-                        GardenPlantState.BLOOMED -> "✓"
-                        GardenPlantState.WITHERED -> "✗"
-                        GardenPlantState.GROWING -> "⏳"
-                    },
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (entry.state == GardenPlantState.WITHERED) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                    fontSize = 9.sp
-                )
-            }
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = DateFormat.getMediumDateFormat(context).format(Date(entry.plantedAt)) + "  " +
+                    DateFormat.getTimeFormat(context).format(Date(entry.plantedAt)),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
 
 @Composable
-private fun StatChip(value: String, label: String, modifier: Modifier = Modifier) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier,
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(12.dp).fillMaxWidth()) {
-            Text(value, fontFamily = TimerFontFamily, fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
-            Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-    }
-}
-
-@Composable
-private fun EmptyGarden() {
+private fun EmptyGarden(onStartFocus: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text("🌱", fontSize = 72.sp)
+        PlantDisplay(plant = PlantCatalog.FREE.first(), stage = GrowthStage.SPROUT, size = 120.dp)
         Spacer(Modifier.height(16.dp))
-        Text(stringResource(R.string.empty_garden_title), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+        Text(
+            stringResource(R.string.empty_garden_title),
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Center,
+        )
         Spacer(Modifier.height(8.dp))
-        Text(stringResource(R.string.empty_garden_desc), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+        Text(
+            stringResource(R.string.empty_garden_desc),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(24.dp))
+        Button(onClick = onStartFocus, shape = CircleShape) {
+            Icon(Icons.Rounded.PlayArrow, contentDescription = null)
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.start_focus))
+        }
     }
 }
 
-
+private fun GardenFilter.labelRes(): Int = when (this) {
+    GardenFilter.TODAY -> R.string.today
+    GardenFilter.WEEKLY -> R.string.garden_filter_week
+    GardenFilter.MONTHLY -> R.string.garden_filter_month
+    GardenFilter.ALL_TIME -> R.string.garden_filter_all
+}
